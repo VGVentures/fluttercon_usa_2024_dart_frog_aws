@@ -31,4 +31,4 @@ jobs:
         run: mason get
 
       - name: Test Github Actions Generation
-        run: mason make github_actions_dart --on-conflict overwrite --exclude 'gallery' --minCoverage 100 --flutterVersion '3.19.5' --flutterChannel stable --dartChannel stable --dependabotFrequency weekly --generateDependabot false --generateSemanticPullRequest true --generateSpellCheck true --spellCheckConfig cspell.json --workflowRef main --set-exit-if-changed
+        run: mason make github_actions_dart --on-conflict overwrite --exclude '' --minCoverage 100 --flutterVersion '3.22.1' --flutterChannel stable --dartChannel stable --dependabotFrequency daily --generateDependabot false --generateSemanticPullRequest true --generateSpellCheck true --spellCheckConfig cspell.json --workflowRef main --generateLicenseCheck false --set-exit-if-changed
