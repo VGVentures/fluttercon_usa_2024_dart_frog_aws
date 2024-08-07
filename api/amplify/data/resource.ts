@@ -15,6 +15,7 @@ const schema = a.schema({
       room: a.string(),
       startTime: a.datetime(),
       endTime: a.datetime(),
+      isFavorite: a.boolean(),
       speakers: a.hasMany('SpeakerTalk', 'talkId'),
     }),
   Speaker: a
