@@ -29,7 +29,8 @@
     ".github/workflows/**",
     "**/.metadata",
     ".vscode/**",
-    "api/lib/amplify_outputs.dart"
+    "api/lib/amplify_outputs.dart",
+    "api/package.json"
   ],
   "words": [
     "Contador",
