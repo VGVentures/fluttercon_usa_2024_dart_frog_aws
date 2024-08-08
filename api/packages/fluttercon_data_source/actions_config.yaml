@@ -1,0 +1,2 @@
+coverage_exclude:
+  - 'lib/src/models/gen/**'
