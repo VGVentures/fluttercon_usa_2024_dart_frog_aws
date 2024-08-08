@@ -41,21 +41,12 @@ class AmplifyAPIClient {
 /// Wrapper around Amplify factories that GraphQL requests.
 /// {@endtemplate}
 class RequestGenerator {
-  GraphQLRequest<PaginatedResult<T>> list<T extends Model>(
+  GraphQLRequest<PaginatedResult<T>> Function<T extends Model>(
     ModelType<T> modelType, {
     int? limit,
     QueryPredicate? where,
     String? apiName,
     APIAuthorizationType? authorizationMode,
     Map<String, String>? headers,
-  }) {
-    return ModelQueries.list<T>(
-      modelType,
-      limit: limit,
-      where: where,
-      apiName: apiName,
-      authorizationMode: authorizationMode,
-      headers: headers,
-    );
-  }
+  }) list = ModelQueries.list;
 }
