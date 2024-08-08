@@ -28,6 +28,8 @@ jobs:
     uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/dart_package.yml@main
     with:
       working_directory: api
+      analyze_directories: "routes test"
+      format_directories: "routes test"
+      report_on: "routes"
       dart_sdk: stable
-      analyze_directories: test routes
       min_coverage: 100
