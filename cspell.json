@@ -30,7 +30,8 @@
     "**/.metadata",
     ".vscode/**",
     "api/lib/amplify_outputs.dart",
-    "api/package.json"
+    "api/package.json",
+    "apu/packages/fluttercon_data_source/lib/src/models/gen",
   ],
   "words": [
     "Contador",
