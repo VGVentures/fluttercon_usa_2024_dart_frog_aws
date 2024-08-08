@@ -29,4 +29,5 @@ jobs:
     with:
       working_directory: api
       dart_sdk: stable
+      analyze_directories: test routes
       min_coverage: 100
