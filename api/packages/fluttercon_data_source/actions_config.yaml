@@ -1,0 +1,12 @@
+format_directories:
+  - lib/src/data_source
+  - lib/src/exceptions
+  - lib/src/helpers
+  - test
+analyze_directories:
+  - lib/src/data_source
+  - lib/src/exceptions
+  - lib/src/helpers
+  - test
+coverage_exclude:
+  - '**/gen/*.dart'

@@ -30,11 +30,15 @@
     "**/.metadata",
     ".vscode/**",
     "api/lib/amplify_outputs.dart",
-    "api/package.json"
+    "api/package.json",
+    "api/packages/fluttercon_data_source/lib/src/models/gen"
   ],
   "words": [
+    "Fluttercon",
+    "fluttercon",
     "Contador",
     "datetime",
+    "ISFAVORITE",
     "localizable",
     "mostrado",
     "página",
