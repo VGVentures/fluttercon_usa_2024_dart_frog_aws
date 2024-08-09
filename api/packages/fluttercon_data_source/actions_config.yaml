@@ -9,4 +9,4 @@ analyze_directories:
   - lib/src/helpers
   - test
 coverage_exclude:
-  - '**/lib/src/models/gen'
+  - '**/gen/*.dart'
