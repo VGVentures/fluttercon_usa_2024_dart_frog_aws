@@ -28,7 +28,7 @@ jobs:
     uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/dart_package.yml@main
     with:
       working_directory: api/packages/fluttercon_data_source
-      coverage_excludes: "lib/src/models/gen/*.dart"
+      coverage_excludes: "lib/src/models/gen"
       analyze_directories: "lib/src/data_source lib/src/exceptions lib/src/helpers test"
       format_directories: "lib/src/data_source lib/src/exceptions lib/src/helpers test"
       dart_sdk: stable
