@@ -4,7 +4,8 @@ format_directories:
   - lib/src/
   - test
 analyze_directories:
-  - lib
+  - lib/src/exceptions
+  - lib/src/helpers
   - test
   - '!lib/src/models/gen'
 exclude:
