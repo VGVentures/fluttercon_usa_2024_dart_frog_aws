@@ -22,7 +22,7 @@ class FlutterconDataSource {
   /// Fetches a paginated list of speakers.
   Future<PaginatedResult<Speaker>> getSpeakers() async {
     try {
-      final request = ModelQueries.list(Speaker.classType);
+      final request = _apiClient.list(Speaker.classType);
       return await _sendGraphQLRequest(
         request: request,
         operation: (request) => _apiClient.query(request: request),
@@ -36,11 +36,11 @@ class FlutterconDataSource {
   Future<PaginatedResult<Talk>> getTalks({bool favorites = false}) async {
     try {
       final request = favorites
-          ? ModelQueries.list(
+          ? _apiClient.list(
               Talk.classType,
               where: Talk.ISFAVORITE.eq(true),
             )
-          : ModelQueries.list(Talk.classType);
+          : _apiClient.list(Talk.classType);
       return await _sendGraphQLRequest(
         request: request,
         operation: (request) => _apiClient.query(request: request),
