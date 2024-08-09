@@ -5,6 +5,8 @@ import 'package:fluttercon_data_source/src/models/models.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
+import '../helpers/test_helpers.dart';
+
 class _MockAmplifyApiClient extends Mock implements AmplifyAPIClient {}
 
 void main() {
@@ -48,8 +50,8 @@ void main() {
             ),
           ),
         ).thenReturn(
-          _TestData.graphQLOperation(
-            _TestData.paginatedResult(_TestData.speaker, Speaker.classType),
+          TestHelpers.graphQLOperation(
+            TestHelpers.paginatedResult(TestHelpers.speaker, Speaker.classType),
           ),
         );
 
@@ -66,8 +68,8 @@ void main() {
             ),
           ),
         ).thenReturn(
-          _TestData.graphQLOperation(
-            _TestData.paginatedResult(_TestData.speaker, Speaker.classType),
+          TestHelpers.graphQLOperation(
+            TestHelpers.paginatedResult(TestHelpers.speaker, Speaker.classType),
             errors: [GraphQLResponseError(message: 'Error')],
           ),
         );
@@ -89,7 +91,7 @@ void main() {
               ),
             ),
           ).thenReturn(
-            _TestData.graphQLOperation(null),
+            TestHelpers.graphQLOperation(null),
           );
 
           expect(
@@ -130,8 +132,8 @@ void main() {
             ),
           ),
         ).thenReturn(
-          _TestData.graphQLOperation(
-            _TestData.paginatedResult(_TestData.talk, Talk.classType),
+          TestHelpers.graphQLOperation(
+            TestHelpers.paginatedResult(TestHelpers.talk, Talk.classType),
           ),
         );
 
@@ -160,8 +162,9 @@ void main() {
             ),
           ),
         ).thenReturn(
-          _TestData.graphQLOperation(
-            _TestData.paginatedResult(_TestData.favoriteTalk, Talk.classType),
+          TestHelpers.graphQLOperation(
+            TestHelpers.paginatedResult(
+                TestHelpers.favoriteTalk, Talk.classType),
           ),
         );
 
@@ -171,7 +174,7 @@ void main() {
           isA<PaginatedResult<Talk>>().having(
             (result) => result.items,
             'talks',
-            contains(_TestData.favoriteTalk),
+            contains(TestHelpers.favoriteTalk),
           ),
         );
       });
@@ -185,8 +188,8 @@ void main() {
             ),
           ),
         ).thenReturn(
-          _TestData.graphQLOperation(
-            _TestData.paginatedResult(_TestData.talk, Talk.classType),
+          TestHelpers.graphQLOperation(
+            TestHelpers.paginatedResult(TestHelpers.talk, Talk.classType),
             errors: [GraphQLResponseError(message: 'Error')],
           ),
         );
@@ -208,7 +211,7 @@ void main() {
               ),
             ),
           ).thenReturn(
-            _TestData.graphQLOperation(null),
+            TestHelpers.graphQLOperation(null),
           );
 
           expect(
@@ -233,45 +236,4 @@ void main() {
       );
     });
   });
-}
-
-class _TestData {
-  static final speaker = Speaker(
-    id: '1',
-    name: 'John Doe',
-    bio: 'Speaker bio',
-  );
-
-  static final talk = Talk(
-    id: '1',
-    title: 'Talk title',
-    description: 'Talk description',
-    isFavorite: false,
-  );
-
-  static final favoriteTalk = Talk(
-    id: '2',
-    title: 'Talk title',
-    description: 'Talk description',
-    isFavorite: true,
-  );
-
-  static PaginatedResult<T> paginatedResult<T extends Model>(
-    T item,
-    ModelType<T> modelType,
-  ) =>
-      PaginatedResult<T>([item], null, null, null, modelType, null);
-
-  static GraphQLOperation<T> graphQLOperation<T extends Model>(
-    T? item, {
-    List<GraphQLResponseError> errors = const [],
-  }) =>
-      GraphQLOperation<T>(
-        CancelableOperation.fromValue(
-          GraphQLResponse(
-            data: item,
-            errors: errors,
-          ),
-        ),
-      );
 }
