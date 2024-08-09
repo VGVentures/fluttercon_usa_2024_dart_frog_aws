@@ -4,10 +4,9 @@ format_directories:
   - lib/src/
   - test
 analyze_directories:
-  - lib/src/exceptions
-  - lib/src/helpers
-  - lib/src/
+  - lib
   - test
+  - '!lib/src/models/gen'
 exclude:
   - lib/src/models/gen/**
 coverage_exclude:
