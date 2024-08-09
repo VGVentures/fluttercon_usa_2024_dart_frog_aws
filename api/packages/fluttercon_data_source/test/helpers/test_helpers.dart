@@ -1,4 +1,3 @@
-import 'package:amplify_api_dart/amplify_api_dart.dart';
 import 'package:amplify_core/amplify_core.dart';
 import 'package:fluttercon_data_source/src/models/models.dart';
 

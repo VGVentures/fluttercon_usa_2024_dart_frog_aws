@@ -164,7 +164,9 @@ void main() {
         ).thenReturn(
           TestHelpers.graphQLOperation(
             TestHelpers.paginatedResult(
-                TestHelpers.favoriteTalk, Talk.classType),
+              TestHelpers.favoriteTalk,
+              Talk.classType,
+            ),
           ),
         );
 
