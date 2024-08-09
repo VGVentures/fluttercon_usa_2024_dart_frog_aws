@@ -1,2 +1,14 @@
+format_directories:
+  - lib/src/exceptions
+  - lib/src/helpers
+  - lib/src/
+  - test
+analyze_directories:
+  - lib/src/exceptions
+  - lib/src/helpers
+  - lib/src/
+  - test
+exclude:
+  - lib/src/models/gen/**
 coverage_exclude:
   - 'lib/src/models/gen/**'

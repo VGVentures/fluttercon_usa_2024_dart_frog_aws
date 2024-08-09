@@ -29,5 +29,7 @@ jobs:
     with:
       working_directory: api/packages/fluttercon_data_source
       coverage_excludes: "lib/src/models/gen/**"
+      analyze_directories: "lib/src/exceptions lib/src/helpers lib/src/ test"
+      format_directories: "lib/src/exceptions lib/src/helpers lib/src/ test"
       dart_sdk: stable
       min_coverage: 100

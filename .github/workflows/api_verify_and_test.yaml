@@ -12,7 +12,7 @@ on:
     paths:
       - ".github/workflows/api_verify_and_test.yaml"
       - "api/**"
-
+      - "api/packages/fluttercon_data_source/**"
   push:
     branches:
       - master
@@ -20,7 +20,7 @@ on:
     paths:
       - ".github/workflows/**"
       - "api/**"
-
+      - "api/packages/fluttercon_data_source/**"
 
 jobs:
   verify_and_test:
