@@ -4,13 +4,17 @@
         "name": "Stefan Hodges-Kluck",
         "title": "Software Engineer at Very Good Ventures",
         "bio": "A software engineer with five years' experience working on full stack web and mobile applications in Dart/Flutter, .NET, Angular, Ionic, and React. In his current role, Stefan develops Flutter code for enterprise-level businesses while enforcing and strengthening best practices for testing and maintainability.",
-        "imageUrl": "https://flutterconusa.dev/wp-content/uploads/sites/8/2024/08/b5b7-400o400o1-V4KauUCkfWNGfmAXJ4EuBM-6.jpg"
+        "imageUrl": "https://flutterconusa.dev/wp-content/uploads/sites/8/2024/08/b5b7-400o400o1-V4KauUCkfWNGfmAXJ4EuBM-6.jpg",
+        "createdAt": "2023-01-01T00:00:00Z",
+        "updatedAt": "2023-01-01T00:00:00Z"
     },
     {
         "id": "2",
         "name": "Tom Arra",
         "title": "Director of Product Development at Very Good Ventures",
         "bio": "As the Director of Product Development at Very Good Ventures, Tom Arra has overseen the development of Dart Frog into a fully-fledged solution for backend Dart solutions. He has delivered talks on the capabilities of backend Dart at Google Cloud Next and Full Stack Flutter, and is involved in triaging issues and prioritizing updates for the framework. He has been part of the Flutter community since 2019 and his time at BMW.",
-        "imageUrl": "https://flutterconusa.dev/wp-content/uploads/sites/8/2024/08/6016-400o400o1-SjnZupTgAGkUkpHjdrZ5Jq-6.jpg"
+        "imageUrl": "https://flutterconusa.dev/wp-content/uploads/sites/8/2024/08/6016-400o400o1-SjnZupTgAGkUkpHjdrZ5Jq-6.jpg",
+        "createdAt": "2023-01-01T00:00:00Z",
+        "updatedAt": "2023-01-01T00:00:00Z"
     }
 ]

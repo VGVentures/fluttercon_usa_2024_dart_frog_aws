@@ -8,7 +8,9 @@ environment:
 
 dependencies:
   amplify_api_dart: ^0.5.3
+  amplify_auth_cognito_dart: ^0.11.3
   amplify_core: ^2.3.0
+  amplify_secure_storage_dart: ^0.5.1
   dart_frog: ^1.0.0
   fluttercon_data_source:
     path: packages/fluttercon_data_source

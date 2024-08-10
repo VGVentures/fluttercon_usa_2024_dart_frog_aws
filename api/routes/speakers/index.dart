@@ -13,6 +13,13 @@ Future<Response> onRequest(RequestContext context) async {
 
 Future<Response> _get(RequestContext context) async {
   final dataSource = context.read<FlutterconDataSource>();
-  final data = await dataSource.getSpeakers();
-  return Response(body: jsonEncode(data.toJson()));
+  try {
+    final data = await dataSource.getSpeakers();
+    return Response(body: jsonEncode(data.toJson()));
+  } on AmplifyApiException catch (e) {
+    return Response(
+      statusCode: HttpStatus.internalServerError,
+      body: jsonEncode({'error': e.toString()}),
+    );
+  }
 }
