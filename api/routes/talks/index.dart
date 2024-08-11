@@ -19,7 +19,7 @@ Future<Response> _get(RequestContext context) async {
   } on AmplifyApiException catch (e) {
     return Response(
       statusCode: HttpStatus.internalServerError,
-      body: jsonEncode({'error': e.toString()}),
+      body: jsonEncode(e.exception),
     );
   }
 }
