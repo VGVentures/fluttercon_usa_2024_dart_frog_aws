@@ -1,0 +1,16 @@
+[
+    {
+        "id": "1",
+        "speakerId": "1",
+        "talkId": "1",
+        "createdAt": "2023-01-01T00:00:00Z",
+        "updatedAt": "2023-01-01T00:00:00Z"
+    },
+    {
+        "id": "2",
+        "speakerId": "2",
+        "talkId": "1",
+        "createdAt": "2023-01-01T00:00:00Z",
+        "updatedAt": "2023-01-01T00:00:00Z"
+    }
+]
