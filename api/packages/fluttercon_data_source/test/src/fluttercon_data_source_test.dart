@@ -1,7 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 import 'package:amplify_core/amplify_core.dart';
 import 'package:fluttercon_data_source/fluttercon_data_source.dart';
-import 'package:fluttercon_data_source/src/models/models.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
