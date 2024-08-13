@@ -44,19 +44,6 @@ void main() {
         }
 
         when(() => requestWrapper.list).thenReturn(listFunc);
-
-        // expect(
-        //   client.list,
-        //   isA<
-        //       GraphQLRequest<PaginatedResult<T>> Function<T extends Model>(
-        //         ModelType<T> modelType, {
-        //         int? limit,
-        //         QueryPredicate? where,
-        //         String? apiName,
-        //         APIAuthorizationType? authorizationMode,
-        //         Map<String, String>? headers,
-        //       })>(),
-        // );
         expect(
           client.list(Speaker.classType),
           isA<GraphQLRequest<PaginatedResult<Speaker>>>(),

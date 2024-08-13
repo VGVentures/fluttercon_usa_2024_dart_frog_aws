@@ -1,8 +1,9 @@
 // ignore_for_file: prefer_const_constructors
-import 'package:amplify_auth_cognito_dart/amplify_auth_cognito_dart.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 import 'package:user_repository/user_repository.dart';
+
+import '../helpers/test_helpers.dart';
 
 class _MockAmplifyAuthClient extends Mock implements AmplifyAuthClient {}
 
@@ -10,14 +11,6 @@ void main() {
   group('UserRepository', () {
     late AmplifyAuthClient authClient;
     late UserRepository userRepo;
-    const username = 'username';
-    const userId = '123';
-
-    final user = AuthUser(
-      userId: userId,
-      username: username,
-      signInDetails: CognitoSignInDetailsApiBased(username: username),
-    );
 
     setUp(() async {
       authClient = _MockAmplifyAuthClient();
@@ -28,11 +21,48 @@ void main() {
     });
 
     group('getCurrentUser', () {
-      test('returns AuthUser when successful', () async {
-        when(() => authClient.getCurrentUser()).thenAnswer((_) async => user);
+      test('returns User when successful', () async {
+        when(() => authClient.getCurrentUser())
+            .thenAnswer((_) async => TestHelpers.amplifyUser);
+        when(() => authClient.getSessionToken())
+            .thenAnswer((_) async => TestHelpers.sessionToken);
 
         final result = await userRepo.getCurrentUser();
-        expect(result, isA<AuthUser>());
+        expect(result, isA<User>());
+      });
+
+      test('can return existing user without calling api', () async {
+        final repositoryWithUser = UserRepository(
+          authClient: authClient,
+          currentUser: User(
+            id: TestHelpers.userId,
+            sessionToken: TestHelpers.sessionToken,
+          ),
+        );
+
+        final result = await repositoryWithUser.getCurrentUser();
+        expect(result, isA<User>());
+        verifyNever(() => authClient.getCurrentUser());
+        verifyNever(() => authClient.getSessionToken());
+      });
+
+      test('returns null when no user is found', () async {
+        when(() => authClient.getCurrentUser()).thenAnswer((_) async => null);
+
+        final result = await userRepo.getCurrentUser();
+        expect(result, isNull);
+      });
+
+      test('throws AmplifyAuthException when session token is empty', () async {
+        when(() => authClient.getCurrentUser()).thenAnswer(
+          (_) async => TestHelpers.amplifyUser,
+        );
+        when(() => authClient.getSessionToken()).thenAnswer((_) async => '');
+
+        expect(
+          () async => userRepo.getCurrentUser(),
+          throwsA(isA<AmplifyAuthException>()),
+        );
       });
 
       test('throws AmplifyAuthException when unsuccessful', () async {

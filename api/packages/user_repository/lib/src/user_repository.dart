@@ -1,5 +1,3 @@
-import 'package:amplify_auth_cognito_dart/amplify_auth_cognito_dart.dart';
-import 'package:amplify_core/amplify_core.dart';
 import 'package:user_repository/user_repository.dart';
 
 /// {@template user_repository}
@@ -7,19 +5,57 @@ import 'package:user_repository/user_repository.dart';
 /// {@endtemplate}
 class UserRepository {
   /// {@macro user_repository}
-  const UserRepository({required AmplifyAuthClient authClient})
-      : _authClient = authClient;
+  UserRepository({
+    required AmplifyAuthClient authClient,
+    User? currentUser,
+  })  : _authClient = authClient,
+        _currentUser = currentUser,
+        _sessionToken = currentUser?.sessionToken;
 
   final AmplifyAuthClient _authClient;
+  User? _currentUser;
+  String? _sessionToken;
 
   /// Get current user from session.
-  Future<AuthUser?> getCurrentUser() async {
+  Future<User?> getCurrentUser() async {
     try {
-      final user = await _authClient.getCurrentUser();
+      if (_currentUser != null) {
+        return _currentUser;
+      }
 
-      final deets = user!.signInDetails as CognitoSignInDetailsApiBased;
+      final amplifyUser = await _authClient.getCurrentUser();
+      if (amplifyUser == null) {
+        return null;
+      }
 
-      return await _authClient.getCurrentUser();
+      _sessionToken ??= await _authClient.getSessionToken();
+      if (_sessionToken == null || _sessionToken!.isEmpty) {
+        throw const AmplifyAuthException(
+          exception: 'Session token is empty',
+        );
+      }
+
+      return _currentUser ??= User(
+        id: amplifyUser.userId,
+        sessionToken: _sessionToken!,
+      );
+    } on Exception catch (e) {
+      throw AmplifyAuthException(exception: e);
+    }
+  }
+
+  /// Verify that current user matches session token.
+  Future<User?> verifyUserFromToken(String token) async {
+    try {
+      final user = _currentUser ?? await getCurrentUser();
+      final currentToken = _sessionToken ?? await _authClient.getSessionToken();
+      if (currentToken == token) {
+        return user;
+      } else {
+        throw const AmplifyAuthException(
+          exception: 'Token does not match current user',
+        );
+      }
     } on Exception catch (e) {
       throw AmplifyAuthException(exception: e);
     }

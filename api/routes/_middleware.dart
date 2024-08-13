@@ -18,13 +18,10 @@ Handler middleware(Handler handler) {
         ),
       )
       .use(
-    bearerAuthentication<AuthUser>(
+    bearerAuthentication<User>(
       authenticator: (context, token) {
         final userRepository = context.read<UserRepository>();
-        //change this to fetch from access token
-        // maybe check provided token against the user in fetchAuthSession
-        // and return error if they don't match?
-        return userRepository.getCurrentUser();
+        return userRepository.verifyUserFromToken(token);
       },
     ),
   ).use(
