@@ -9,12 +9,10 @@ class UserRepository {
     required AmplifyAuthClient authClient,
     User? currentUser,
   })  : _authClient = authClient,
-        _currentUser = currentUser,
-        _sessionToken = currentUser?.sessionToken;
+        _currentUser = currentUser;
 
   final AmplifyAuthClient _authClient;
   User? _currentUser;
-  String? _sessionToken;
 
   /// Get current user from session.
   Future<User?> getCurrentUser() async {
@@ -23,21 +21,17 @@ class UserRepository {
         return _currentUser;
       }
 
-      final amplifyUser = await _authClient.getCurrentUser();
-      if (amplifyUser == null) {
-        return null;
-      }
-
-      _sessionToken ??= await _authClient.getSessionToken();
-      if (_sessionToken == null || _sessionToken!.isEmpty) {
+      final currentSession = await _authClient.getCurrentSession();
+      final token = currentSession.credentialsResult.value.sessionToken;
+      if (token == null || token.isEmpty) {
         throw const AmplifyAuthException(
           exception: 'Session token is empty',
         );
       }
 
       return _currentUser ??= User(
-        id: amplifyUser.userId,
-        sessionToken: _sessionToken!,
+        id: currentSession.identityIdResult.value,
+        sessionToken: token,
       );
     } on Exception catch (e) {
       throw AmplifyAuthException(exception: e);
@@ -48,8 +42,8 @@ class UserRepository {
   Future<User?> verifyUserFromToken(String token) async {
     try {
       final user = _currentUser ?? await getCurrentUser();
-      final currentToken = _sessionToken ?? await _authClient.getSessionToken();
-      if (currentToken == token) {
+
+      if (user?.sessionToken == token) {
         return user;
       } else {
         throw const AmplifyAuthException(

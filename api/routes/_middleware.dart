@@ -18,16 +18,19 @@ Handler middleware(Handler handler) {
         ),
       )
       .use(
-    bearerAuthentication<User>(
-      authenticator: (context, token) {
-        final userRepository = context.read<UserRepository>();
-        return userRepository.verifyUserFromToken(token);
-      },
-    ),
-  ).use(
-    provider<UserRepository>(
-      (context) =>
-          UserRepository(authClient: AmplifyAuthClient(auth: Amplify.Auth)),
-    ),
-  );
+        bearerAuthentication<User>(
+          authenticator: (context, token) {
+            final userRepository = context.read<UserRepository>();
+            return userRepository.verifyUserFromToken(token);
+          },
+          applies: (context) async =>
+              !context.request.uri.pathSegments.contains('user'),
+        ),
+      )
+      .use(
+        provider<UserRepository>(
+          (context) =>
+              UserRepository(authClient: AmplifyAuthClient(auth: Amplify.Auth)),
+        ),
+      );
 }

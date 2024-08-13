@@ -29,7 +29,8 @@ class TestHelpers {
     ),
     userSubResult: const AWSResult.success('userSub'),
     credentialsResult: const AWSResult.success(
-        AWSCredentials('accessKeyId', 'secretAccessKey')),
+      AWSCredentials('accessKeyId', 'secretAccessKey'),
+    ),
     identityIdResult: const AWSResult.success('identityId'),
   );
 }
