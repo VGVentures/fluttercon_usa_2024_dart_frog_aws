@@ -1,4 +1,5 @@
 // ignore_for_file: prefer_const_constructors
+import 'package:amplify_auth_cognito_dart/amplify_auth_cognito_dart.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 import 'package:user_repository/user_repository.dart';
@@ -11,69 +12,89 @@ void main() {
   group('UserRepository', () {
     late AmplifyAuthClient authClient;
     late UserRepository userRepo;
+    late CognitoAuthSession authSession;
 
     setUp(() async {
       authClient = _MockAmplifyAuthClient();
       userRepo = UserRepository(authClient: authClient);
+      authSession = TestHelpers.cognitoAuthSession();
+      when(() => authClient.fetchAuthSession())
+          .thenAnswer((_) async => authSession);
     });
     test('can be instantiated', () {
       expect(userRepo, isNotNull);
     });
 
     group('getCurrentUser', () {
-      test('returns User when successful', () async {
-        when(() => authClient.getCurrentUser())
-            .thenAnswer((_) async => TestHelpers.amplifyUser);
-        when(() => authClient.getSessionToken())
-            .thenAnswer((_) async => TestHelpers.sessionToken);
-
+      test('returns User with appropriate properties when successful',
+          () async {
         final result = await userRepo.getCurrentUser();
-        expect(result, isA<User>());
-      });
-
-      test('can return existing user without calling api', () async {
-        final repositoryWithUser = UserRepository(
-          authClient: authClient,
-          currentUser: User(
-            id: TestHelpers.userId,
-            sessionToken: TestHelpers.sessionToken,
-          ),
+        expect(
+          result,
+          isA<User>()
+              .having(
+                (user) => user.id,
+                'id',
+                equals(authSession.identityIdResult.value),
+              )
+              .having(
+                (user) => user.sessionToken,
+                'sessionToken',
+                equals(
+                  authSession.credentialsResult.value.sessionToken,
+                ),
+              ),
         );
-
-        final result = await repositoryWithUser.getCurrentUser();
-        expect(result, isA<User>());
-        verifyNever(() => authClient.getCurrentUser());
-        verifyNever(() => authClient.getSessionToken());
       });
 
-      test('returns null when no user is found', () async {
-        when(() => authClient.getCurrentUser()).thenAnswer((_) async => null);
+      test('returns null when user has no token', () async {
+        when(() => authClient.fetchAuthSession()).thenAnswer(
+          (_) async => TestHelpers.cognitoAuthSession(token: null),
+        );
 
         final result = await userRepo.getCurrentUser();
         expect(result, isNull);
       });
 
-      test('throws AmplifyAuthException when session token is empty', () async {
-        when(() => authClient.getCurrentUser()).thenAnswer(
-          (_) async => TestHelpers.amplifyUser,
+      test('returns null when user has empty token', () async {
+        when(() => authClient.fetchAuthSession()).thenAnswer(
+          (_) async => TestHelpers.cognitoAuthSession(token: ''),
         );
-        when(() => authClient.getSessionToken()).thenAnswer((_) async => '');
 
-        expect(
-          () async => userRepo.getCurrentUser(),
-          throwsA(isA<AmplifyAuthException>()),
-        );
+        final result = await userRepo.getCurrentUser();
+        expect(result, isNull);
       });
 
-      test('throws AmplifyAuthException when unsuccessful', () async {
-        when(() => authClient.getCurrentUser()).thenThrow(
+      test('returns null when unsuccessful', () async {
+        when(() => authClient.fetchAuthSession()).thenThrow(
           Exception('oops'),
         );
 
-        expect(
-          () async => userRepo.getCurrentUser(),
-          throwsA(isA<AmplifyAuthException>()),
+        final result = await userRepo.getCurrentUser();
+        expect(result, isNull);
+      });
+    });
+
+    group('verifyUserFromToken', () {
+      test('returns user when token matches', () async {
+        final result =
+            await userRepo.verifyUserFromToken(TestHelpers.sessionToken);
+        expect(result, equals(TestHelpers.user));
+      });
+
+      test('returns null when token does not match', () async {
+        final result = await userRepo.verifyUserFromToken('bad-token');
+        expect(result, isNull);
+      });
+
+      test('returns null when user is null', () async {
+        when(() => authClient.fetchAuthSession()).thenAnswer(
+          (_) async => TestHelpers.cognitoAuthSession(token: ''),
         );
+
+        final result =
+            await userRepo.verifyUserFromToken(TestHelpers.sessionToken);
+        expect(result, isNull);
       });
     });
   });

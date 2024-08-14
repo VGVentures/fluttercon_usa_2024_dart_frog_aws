@@ -20,7 +20,8 @@ void main() {
     setUp(() {
       auth = _MockAuthCategory();
       plugin = _MockAmplifyAuthCognitoDart();
-
+      when(() => auth.getPlugin(AmplifyAuthCognitoDart.pluginKey))
+          .thenReturn(plugin);
       client = AmplifyAuthClient(auth: auth);
     });
 
@@ -28,25 +29,12 @@ void main() {
       expect(client, isNotNull);
     });
 
-    group('getCurrentUser', () {
-      test('calls auth getCurrentUser', () async {
-        when(() => auth.getCurrentUser())
-            .thenAnswer((_) async => TestHelpers.amplifyUser);
-
-        await client.getCurrentUser();
-        verify(() => auth.getCurrentUser()).called(1);
-      });
-    });
-
-    group('getSessionToken', () {
+    group('fetchAuthSession', () {
       test('calls auth fetchAuthSession', () async {
-        when(() => auth.getPlugin(AmplifyAuthCognitoDart.pluginKey))
-            .thenReturn(plugin);
-        when(() => plugin.fetchAuthSession()).thenAnswer(
-          (_) async => TestHelpers.cognitoAuthSession,
-        );
+        when(() => plugin.fetchAuthSession())
+            .thenAnswer((_) async => TestHelpers.cognitoAuthSession());
 
-        await client.getSessionToken();
+        await client.fetchAuthSession();
         verify(() => plugin.fetchAuthSession()).called(1);
       });
     });

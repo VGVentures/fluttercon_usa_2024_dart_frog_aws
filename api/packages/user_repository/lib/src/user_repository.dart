@@ -7,51 +7,31 @@ class UserRepository {
   /// {@macro user_repository}
   UserRepository({
     required AmplifyAuthClient authClient,
-    User? currentUser,
-  })  : _authClient = authClient,
-        _currentUser = currentUser;
+  }) : _authClient = authClient;
 
   final AmplifyAuthClient _authClient;
-  User? _currentUser;
 
-  /// Get current user from session.
+  /// Get current user from Cognito auth session.
   Future<User?> getCurrentUser() async {
     try {
-      if (_currentUser != null) {
-        return _currentUser;
-      }
-
-      final currentSession = await _authClient.getCurrentSession();
+      final currentSession = await _authClient.fetchAuthSession();
       final token = currentSession.credentialsResult.value.sessionToken;
       if (token == null || token.isEmpty) {
-        throw const AmplifyAuthException(
-          exception: 'Session token is empty',
-        );
+        return null;
       }
 
-      return _currentUser ??= User(
+      return User(
         id: currentSession.identityIdResult.value,
         sessionToken: token,
       );
-    } on Exception catch (e) {
-      throw AmplifyAuthException(exception: e);
+    } on Exception {
+      return null;
     }
   }
 
   /// Verify that current user matches session token.
   Future<User?> verifyUserFromToken(String token) async {
-    try {
-      final user = _currentUser ?? await getCurrentUser();
-
-      if (user?.sessionToken == token) {
-        return user;
-      } else {
-        throw const AmplifyAuthException(
-          exception: 'Token does not match current user',
-        );
-      }
-    } on Exception catch (e) {
-      throw AmplifyAuthException(exception: e);
-    }
+    final user = await getCurrentUser();
+    return user?.sessionToken == token ? user : null;
   }
 }

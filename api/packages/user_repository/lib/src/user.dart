@@ -1,9 +1,11 @@
+import 'package:equatable/equatable.dart';
+
 /// {@template user}
 /// Data model representing a user.
 /// {@endtemplate}
-class User {
+class User extends Equatable {
   /// {@macro user}
-  User({
+  const User({
     required this.id,
     required this.sessionToken,
   });
@@ -26,5 +28,6 @@ class User {
   /// Valid session token for the user.
   final String sessionToken;
 
-  /// Serialize the user model to json.
+  @override
+  List<Object?> get props => [id, sessionToken];
 }

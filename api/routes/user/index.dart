@@ -13,18 +13,11 @@ Future<Response> onRequest(RequestContext context) async {
 
 Future<Response> _get(RequestContext context) async {
   final userRepository = context.read<UserRepository>();
-  try {
-    final user = await userRepository.getCurrentUser();
+  final user = await userRepository.getCurrentUser();
 
-    if (user == null) {
-      return Response(statusCode: HttpStatus.unauthorized);
-    }
-
-    return Response(body: jsonEncode(user.toJson()));
-  } on AmplifyAuthException catch (e) {
-    return Response(
-      statusCode: HttpStatus.internalServerError,
-      body: jsonEncode(e.exception),
-    );
+  if (user == null) {
+    return Response(statusCode: HttpStatus.unauthorized);
   }
+
+  return Response(body: jsonEncode(user.toJson()));
 }

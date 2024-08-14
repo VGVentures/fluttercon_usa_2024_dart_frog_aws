@@ -13,7 +13,7 @@ class AmplifyAuthClient {
   final AuthCategory _auth;
 
   /// Get the current Cognito session.
-  Future<CognitoAuthSession> getCurrentSession() async {
+  Future<CognitoAuthSession> fetchAuthSession() async {
     final cognitoPlugin = _auth.getPlugin(AmplifyAuthCognitoDart.pluginKey);
     return cognitoPlugin.fetchAuthSession();
   }

@@ -13,6 +13,7 @@ on:
       - ".github/workflows/api_verify_and_test.yaml"
       - "api/**"
       - "api/packages/fluttercon_data_source/**"
+      - "api/packages/user_repository/**"
   push:
     branches:
       - master
@@ -21,6 +22,7 @@ on:
       - ".github/workflows/**"
       - "api/**"
       - "api/packages/fluttercon_data_source/**"
+      - "api/packages/user_repository/**"
 
 jobs:
   verify_and_test:
@@ -28,6 +30,7 @@ jobs:
     uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/dart_package.yml@main
     with:
       working_directory: api
+      coverage_excludes: "**/_middleware.dart"
       analyze_directories: "routes test"
       format_directories: "routes test"
       report_on: "routes"
