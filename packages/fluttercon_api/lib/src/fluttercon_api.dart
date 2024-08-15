@@ -48,20 +48,19 @@ class FlutterconApi {
   final String _baseUrl;
   User? _currentUser;
 
-  /// The current app user.
-  User? get currentUser => _currentUser;
-
-  Future<User> getCurrentUser() async {
-    final user = await _sendRequest<User>(
-      uri: Uri.parse('$_baseUrl/user'),
-      method: HttpMethod.get,
-      fromJson: User.fromJson,
-    );
-
-    _client.token ??= user.sessionToken;
-    _currentUser = user;
-    return user;
+  /// Sets the session token to authenticate with the API.
+  Future<void> setToken() async {
+    _currentUser ??= await getUser();
+    _client.token = _currentUser?.sessionToken;
   }
+
+  /// GET /user
+  /// Fetches the current user.
+  Future<User> getUser() async => _sendRequest<User>(
+        uri: Uri.parse('$_baseUrl/user'),
+        method: HttpMethod.get,
+        fromJson: User.fromJson,
+      );
 
   Future<T> _sendRequest<T>({
     required Uri uri,
