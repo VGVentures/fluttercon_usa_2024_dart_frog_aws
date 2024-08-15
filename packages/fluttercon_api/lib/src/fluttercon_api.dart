@@ -37,16 +37,18 @@ class FlutterconApi {
   /// {@macro fluttercon_api}
   FlutterconApi({
     required String baseUrl,
-    Client? client,
+    BaseApiClient? client,
   })  : _baseUrl = baseUrl,
         _client = client ??
             BaseApiClient(
               innerClient: Client(),
             );
 
-  final Client _client;
+  final BaseApiClient _client;
   final String _baseUrl;
   User? _currentUser;
+
+  /// The current app user.
   User? get currentUser => _currentUser;
 
   Future<User> getCurrentUser() async {
@@ -56,15 +58,9 @@ class FlutterconApi {
       fromJson: User.fromJson,
     );
 
-    return _currentUser ??= await _sendRequest<User>(
-      uri: Uri.parse('$_baseUrl/user'),
-      method: HttpMethod.get,
-      fromJson: User.fromJson,
-    );
-  }
-
-  void setSessionToken(String token) {
-    (_client as BaseApiClient).token = token;
+    _client.token ??= user.sessionToken;
+    _currentUser = user;
+    return user;
   }
 
   Future<T> _sendRequest<T>({
