@@ -3,6 +3,7 @@ import 'dart:core';
 import 'dart:io';
 
 import 'package:fluttercon_api/fluttercon_api.dart';
+import 'package:fluttercon_data_source/fluttercon_data_source.dart';
 import 'package:http/http.dart';
 import 'package:user_repository/user_repository.dart';
 
@@ -60,6 +61,22 @@ class FlutterconApi {
         uri: Uri.parse('$_baseUrl/user'),
         method: HttpMethod.get,
         fromJson: User.fromJson,
+      );
+
+  /// GET /speakers
+  /// Fetches a paginated list of speakers.
+  Future<PaginatedResult<Speaker>> getSpeakers() async => _sendRequest(
+        uri: Uri.parse('$_baseUrl/speakers'),
+        method: HttpMethod.get,
+        fromJson: (json) => paginatedResultFromJson(json, Speaker.classType),
+      );
+
+  /// GET /talks
+  /// Fetches a paginated list of talks.
+  Future<PaginatedResult<Talk>> getTalks() async => _sendRequest(
+        uri: Uri.parse('$_baseUrl/talks'),
+        method: HttpMethod.get,
+        fromJson: (json) => paginatedResultFromJson(json, Talk.classType),
       );
 
   Future<T> _sendRequest<T>({
