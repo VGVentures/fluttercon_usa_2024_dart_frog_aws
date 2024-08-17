@@ -34,13 +34,14 @@
     "api/package.json",
     "api/packages/fluttercon_data_source/lib/src/models/gen",
     "api/packages/fluttercon_data_source/test/helpers",
-    "api/packages/user_repository/test/helpers",
+    "api/packages/user_repository/test/helpers"
   ],
   "words": [
-    "Fluttercon",
-    "fluttercon",
     "Contador",
     "datetime",
+    "fluttercon",
+    "Fluttercon",
+    "Github",
     "ISFAVORITE",
     "localizable",
     "mostrado",
