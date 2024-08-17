@@ -1,14 +1,14 @@
 import 'package:equatable/equatable.dart';
 
-enum LinkType {
+enum SpeakerLinkType {
   github,
   linkedIn,
   twitter,
   other,
 }
 
-class Link extends Equatable {
-  const Link({
+class SpeakerLink extends Equatable {
+  const SpeakerLink({
     required this.id,
     required this.url,
     required this.type,
@@ -17,7 +17,7 @@ class Link extends Equatable {
 
   final String id;
   final String url;
-  final LinkType type;
+  final SpeakerLinkType type;
   final String? description;
 
   @override

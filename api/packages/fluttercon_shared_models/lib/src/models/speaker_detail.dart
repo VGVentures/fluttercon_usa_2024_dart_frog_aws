@@ -17,7 +17,7 @@ class SpeakerDetail extends Equatable {
   final String title;
   final String imageUrl;
   final String bio;
-  final List<Link> links;
+  final List<SpeakerLink> links;
   final List<TalkPreview> talks;
 
   @override
