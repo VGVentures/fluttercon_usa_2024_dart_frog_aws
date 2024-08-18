@@ -1,3 +1,4 @@
+export 'paginated_data.dart';
 export 'speaker_detail.dart';
 export 'speaker_link.dart';
 export 'speaker_preview.dart';
