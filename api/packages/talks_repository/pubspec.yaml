@@ -17,4 +17,6 @@ dependencies:
   equatable: ^2.0.5
   fluttercon_data_source:
     path: ../fluttercon_data_source
+  fluttercon_shared_models:
+    path: ../fluttercon_shared_models
   json_annotation: ^4.8.1
