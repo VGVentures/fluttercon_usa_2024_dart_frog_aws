@@ -5,7 +5,7 @@ part 'speaker_link.g.dart';
 
 /// Common types of links that a speaker might have.
 enum SpeakerLinkType {
-  /// A link to the speaker's Github profile.
+  /// A link to the speaker's github profile.
   github,
 
   /// A link to the speaker's LinkedIn profile.
