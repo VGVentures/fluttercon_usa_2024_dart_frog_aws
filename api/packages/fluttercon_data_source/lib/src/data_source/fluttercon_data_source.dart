@@ -54,17 +54,17 @@ class FlutterconDataSource {
   /// A [SpeakerTalk] contains an ID for a speaker and
   /// an ID for a corresponding talk.
   ///
-  /// Consumers can optionally provide either a [speakerId]
-  /// and/or a [talkId] to filter the results.
+  /// Consumers can optionally provide either a [Speaker]
+  /// and/or a [Talk] to filter the results.
   Future<PaginatedResult<SpeakerTalk>> getSpeakerTalks({
-    String? speakerId,
-    String? talkId,
+    Speaker? speaker,
+    Talk? talk,
   }) async {
     try {
-      final queryPredicate = speakerId != null
-          ? SpeakerTalk.SPEAKER.eq(speakerId)
-          : talkId != null
-              ? SpeakerTalk.TALK.eq(talkId)
+      final queryPredicate = speaker != null
+          ? SpeakerTalk.SPEAKER.eq(speaker)
+          : talk != null
+              ? SpeakerTalk.TALK.eq(talk)
               : null;
       final request = _apiClient.list(
         SpeakerTalk.classType,
