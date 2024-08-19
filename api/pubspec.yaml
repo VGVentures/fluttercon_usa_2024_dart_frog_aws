@@ -15,6 +15,10 @@ dependencies:
   dart_frog_auth: ^1.1.0
   fluttercon_data_source:
     path: packages/fluttercon_data_source
+  fluttercon_shared_models:
+    path: packages/fluttercon_shared_models
+  talks_repository:
+    path: packages/talks_repository
   user_repository:
     path: packages/user_repository
 
