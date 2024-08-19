@@ -26,7 +26,7 @@ class TalksRepository {
         id: talk.id,
         title: talk.title ?? '',
         room: talk.room ?? '',
-        startTime: talk.startTime?.getDateTimeInUtc() ?? DateTime.now(),
+        startTime: talk.startTime?.getDateTimeInUtc() ?? DateTime(2024),
         speakerNames:
             speakerTalks.items.map((st) => st?.speaker?.name ?? '').toList(),
       );
