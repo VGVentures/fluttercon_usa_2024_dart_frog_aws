@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 import 'package:fluttercon_data_source/fluttercon_data_source.dart';
+import 'package:fluttercon_shared_models/fluttercon_shared_models.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:talks_repository/talks_repository.dart';
 import 'package:test/test.dart';
@@ -23,7 +24,7 @@ void main() {
     });
 
     group('getTalks', () {
-      test('returns PaginatedData<TalkPreview>', () async {
+      test('returns ${PaginatedData<TalkPreview>} when successful', () async {
         when(() => dataSource.getTalks())
             .thenAnswer((_) async => TestHelpers.talks);
         final talks = TestHelpers.talks.items;
@@ -41,7 +42,7 @@ void main() {
         expect(result, equals(TestHelpers.talkPreviews));
       });
 
-      test('does not return TalkPreview when talk data is null', () async {
+      test('does not return $TalkPreview when talk data is null', () async {
         when(() => dataSource.getTalks()).thenAnswer(
           (_) async => PaginatedResult(
             [null],

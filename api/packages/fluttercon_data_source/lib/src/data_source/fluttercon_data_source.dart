@@ -60,6 +60,7 @@ class FlutterconDataSource {
     Speaker? speaker,
     Talk? talk,
   }) async {
+    assert(speaker == null || talk == null, 'Only one filter can be applied');
     try {
       final queryPredicate = speaker != null
           ? SpeakerTalk.SPEAKER.eq(speaker)
