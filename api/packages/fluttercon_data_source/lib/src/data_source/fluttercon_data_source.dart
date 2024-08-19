@@ -62,19 +62,30 @@ class FlutterconDataSource {
   }) async {
     assert(speaker == null || talk == null, 'Only one filter can be applied');
     try {
-      final queryPredicate = speaker != null
-          ? SpeakerTalk.SPEAKER.eq(speaker)
-          : talk != null
-              ? SpeakerTalk.TALK.eq(talk)
-              : null;
       final request = _apiClient.list(
         SpeakerTalk.classType,
-        where: queryPredicate,
       );
-      return await _sendGraphQLRequest(
+      final apiResult = await _sendGraphQLRequest(
         request: request,
         operation: (request) => _apiClient.query(request: request),
       );
+      if (speaker != null || talk != null) {
+        final filteredResult = apiResult.items.where(
+          (element) => speaker != null
+              ? element?.speaker?.id == speaker.id
+              : element?.talk?.id == talk!.id,
+        );
+        return PaginatedResult(
+          filteredResult.toList(),
+          apiResult.limit,
+          apiResult.nextToken,
+          apiResult.filter,
+          apiResult.modelType,
+          apiResult.requestForNextResult,
+        );
+      }
+
+      return apiResult;
     } on Exception catch (e) {
       throw AmplifyApiException(exception: e);
     }

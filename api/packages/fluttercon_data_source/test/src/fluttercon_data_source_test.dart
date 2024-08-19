@@ -288,16 +288,6 @@ void main() {
 
       test('can filter by $Speaker', () async {
         when(
-          () => apiClient.list(
-            SpeakerTalk.classType,
-            where: any(named: 'where'),
-          ),
-        ).thenAnswer(
-          (_) => GraphQLRequest<PaginatedResult<SpeakerTalk>>(
-            document: '',
-          ),
-        );
-        when(
           () => apiClient.query<PaginatedResult<SpeakerTalk>>(
             request: any(
               named: 'request',
@@ -320,16 +310,6 @@ void main() {
       });
 
       test('can filter by $Talk', () async {
-        when(
-          () => apiClient.list(
-            SpeakerTalk.classType,
-            where: any(named: 'where'),
-          ),
-        ).thenAnswer(
-          (_) => GraphQLRequest<PaginatedResult<SpeakerTalk>>(
-            document: '',
-          ),
-        );
         when(
           () => apiClient.query<PaginatedResult<SpeakerTalk>>(
             request: any(
