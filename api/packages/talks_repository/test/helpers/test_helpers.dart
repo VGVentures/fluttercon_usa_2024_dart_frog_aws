@@ -62,28 +62,33 @@ class TestHelpers {
         null,
       );
 
-  static final talkPreviews = PaginatedData(
+  static final talkTimeSlots = PaginatedData(
     items: [
-      TalkPreview(
-        id: '1',
-        title: 'Test Talk 1',
-        room: 'Room 1',
+      TalkTimeSlot(
         startTime: DateTime(2024),
-        speakerNames: const ['Speaker 1', 'Speaker 2', 'Speaker 3'],
-      ),
-      TalkPreview(
-        id: '2',
-        title: 'Test Talk 2',
-        room: 'Room 2',
-        startTime: DateTime(2024),
-        speakerNames: const ['Speaker 1', 'Speaker 2', 'Speaker 3'],
-      ),
-      TalkPreview(
-        id: '3',
-        title: 'Test Talk 3',
-        room: 'Room 3',
-        startTime: DateTime(2024),
-        speakerNames: const ['Speaker 1', 'Speaker 2', 'Speaker 3'],
+        talks: [
+          TalkPreview(
+            id: '1',
+            title: 'Test Talk 1',
+            room: 'Room 1',
+            startTime: DateTime(2024),
+            speakerNames: const ['Speaker 1', 'Speaker 2', 'Speaker 3'],
+          ),
+          TalkPreview(
+            id: '2',
+            title: 'Test Talk 2',
+            room: 'Room 2',
+            startTime: DateTime(2024),
+            speakerNames: const ['Speaker 1', 'Speaker 2', 'Speaker 3'],
+          ),
+          TalkPreview(
+            id: '3',
+            title: 'Test Talk 3',
+            room: 'Room 3',
+            startTime: DateTime(2024),
+            speakerNames: const ['Speaker 1', 'Speaker 2', 'Speaker 3'],
+          ),
+        ],
       ),
     ],
   );

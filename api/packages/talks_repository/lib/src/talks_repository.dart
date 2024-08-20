@@ -13,9 +13,10 @@ class TalksRepository {
   final FlutterconDataSource _dataSource;
 
   /// Fetches a paginated list of talks from the data source.
-  /// Returns [TalkPreview] objects with speaker information
+  /// Returns [TalkTimeSlot] objects with speaker information
   /// for each one.
-  Future<PaginatedData<TalkPreview>> getTalks() async {
+  Future<PaginatedData<TalkTimeSlot>> getTalks() async {
+    final timeSlots = <TalkTimeSlot>[];
     final talks = <TalkPreview>[];
 
     final talksResponse = await _dataSource.getTalks();
@@ -32,9 +33,19 @@ class TalksRepository {
       );
       talks.add(talkPreview);
     }
+    final times = talks.map((t) => t.startTime).toSet();
+
+    for (final time in times) {
+      final talksForTime = talks.where((t) => t.startTime == time).toList();
+      final timeSlot = TalkTimeSlot(
+        startTime: time,
+        talks: talksForTime,
+      );
+      timeSlots.add(timeSlot);
+    }
 
     return PaginatedData(
-      items: talks,
+      items: timeSlots,
       limit: talksResponse.limit,
       nextToken: talksResponse.nextToken,
     );

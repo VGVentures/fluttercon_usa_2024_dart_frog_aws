@@ -20,7 +20,7 @@ TalkDetail _$TalkDetailFromJson(Map<String, dynamic> json) => TalkDetail(
 Map<String, dynamic> _$TalkDetailToJson(TalkDetail instance) =>
     <String, dynamic>{
       'startTime': instance.startTime.toIso8601String(),
-      'speakers': instance.speakers,
+      'speakers': instance.speakers.map((e) => e.toJson()).toList(),
       'description': instance.description,
       'id': instance.id,
       'room': instance.room,

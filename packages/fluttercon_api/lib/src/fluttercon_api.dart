@@ -68,12 +68,12 @@ class FlutterconApi {
 
   /// GET /talks
   /// Fetches a paginated list of talks.
-  Future<PaginatedData<TalkPreview>> getTalks() async => _sendRequest(
+  Future<PaginatedData<TalkTimeSlot>> getTalks() async => _sendRequest(
         uri: Uri.parse('$_baseUrl/talks'),
         method: HttpMethod.get,
         fromJson: (json) => PaginatedData.fromJson(
           json,
-          (item) => TalkPreview.fromJson((item ?? {}) as Map<String, dynamic>),
+          (item) => TalkTimeSlot.fromJson((item ?? {}) as Map<String, dynamic>),
         ),
       );
 

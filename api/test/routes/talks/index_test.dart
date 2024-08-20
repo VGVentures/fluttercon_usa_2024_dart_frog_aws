@@ -25,12 +25,17 @@ void main() {
   group('GET /talks', () {
     final responseData = PaginatedData(
       items: [
-        TalkPreview(
-          id: 'id',
-          title: 'title',
-          room: 'room',
+        TalkTimeSlot(
           startTime: DateTime(2024),
-          speakerNames: const ['speakerName'],
+          talks: [
+            TalkPreview(
+              id: 'id',
+              title: 'title',
+              room: 'room',
+              startTime: DateTime(2024),
+              speakerNames: const ['speakerName'],
+            ),
+          ],
         ),
       ],
     );

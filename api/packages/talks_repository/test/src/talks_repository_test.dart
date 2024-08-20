@@ -24,7 +24,7 @@ void main() {
     });
 
     group('getTalks', () {
-      test('returns ${PaginatedData<TalkPreview>} when successful', () async {
+      test('returns ${PaginatedData<TalkTimeSlot>} when successful', () async {
         when(() => dataSource.getTalks())
             .thenAnswer((_) async => TestHelpers.talks);
         final talks = TestHelpers.talks.items;
@@ -39,10 +39,10 @@ void main() {
         );
 
         final result = await talksRepository.getTalks();
-        expect(result, equals(TestHelpers.talkPreviews));
+        expect(result, equals(TestHelpers.talkTimeSlots));
       });
 
-      test('does not return $TalkPreview when talk data is null', () async {
+      test('does not return $TalkTimeSlot when talk data is null', () async {
         when(() => dataSource.getTalks()).thenAnswer(
           (_) async => PaginatedResult(
             [null],
