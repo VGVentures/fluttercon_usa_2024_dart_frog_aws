@@ -15,14 +15,8 @@ class BaseApiClient extends BaseClient {
 
   final Client _innerClient;
 
-  String? _token;
-
   /// The bearer token to authenticate API requests.
-  String? get token => _token;
-
-  set token(String? token) {
-    _token = token;
-  }
+  String? token;
 
   @override
   Future<StreamedResponse> send(BaseRequest request) async {
@@ -35,7 +29,7 @@ class BaseApiClient extends BaseClient {
       () => ContentType.json.value,
     );
 
-    if (_token != null) {
+    if (token != null) {
       request.headers.putIfAbsent(
         HttpHeaders.authorizationHeader,
         () => 'Bearer $token',

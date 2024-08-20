@@ -13,6 +13,8 @@ dev_dependencies:
 dependencies:
   fluttercon_data_source:
     path: ../../api/packages/fluttercon_data_source
+  fluttercon_shared_models:
+    path: ../../api/packages/fluttercon_shared_models
   http: ^1.2.2
   user_repository:
     path: ../../api/packages/user_repository
