@@ -35,32 +35,92 @@ void main() {
       expect(flutterconApi, isNotNull);
     });
 
-    group('setToken', () {
-      test(
-        'sets token from fetched user',
-        () {},
+    test('can be instantiated with default client', () {
+      expect(FlutterconApi(baseUrl: baseUrl), isNotNull);
+    });
+
+    void whenHttpClientSend<T>({
+      required Uri url,
+      int httpStatus = HttpStatus.ok,
+      T? response,
+      Exception? exception,
+    }) {
+      final whenCallback = when(
+        () => client.send(
+          any(
+            that: isA<Request>()
+                .having((req) => req.method, 'method', 'GET')
+                .having((req) => req.url, 'url', url),
+          ),
+        ),
       );
 
-      test('sets token from existing user', () {});
+      if (exception != null) {
+        whenCallback.thenThrow(exception);
+      } else {
+        whenCallback.thenAnswer(
+          (_) async => StreamedResponse(
+            Stream.value(
+              utf8.encode(jsonEncode(response)),
+            ),
+            httpStatus,
+          ),
+        );
+      }
+    }
+
+    group('setToken', () {
+      late BaseApiClient baseClientWithToken;
+      late FlutterconApi apiWithToken;
+
+      setUp(() {
+        baseClientWithToken = BaseApiClient(innerClient: client);
+        apiWithToken = FlutterconApi(
+          baseUrl: baseUrl,
+          client: baseClientWithToken,
+        );
+        whenHttpClientSend(
+          url: Uri.parse('$baseUrl/user'),
+          response: TestHelpers.userResponse,
+        );
+      });
+
+      test(
+        'sets token from api call',
+        () async {
+          await apiWithToken.setToken();
+
+          expect(
+            baseClientWithToken.token,
+            equals(
+              TestHelpers.userResponse['sessionToken'],
+            ),
+          );
+          verify(() => client.send(any())).called(1);
+        },
+      );
+
+      test('does not re-call api if current user has been fetched', () async {
+        await apiWithToken.getUser();
+        await apiWithToken.setToken();
+
+        expect(
+          baseClientWithToken.token,
+          equals(
+            TestHelpers.userResponse['sessionToken'],
+          ),
+        );
+        verify(() => client.send(any())).called(1);
+      });
     });
 
     group('getUser', () {
       final url = Uri.parse('$baseUrl/user');
 
       test('returns User on successful response', () async {
-        when(
-          () => client.send(
-            any(
-              that: isA<Request>()
-                  .having((req) => req.method, 'method', 'GET')
-                  .having((req) => req.url, 'url', url),
-            ),
-          ),
-        ).thenAnswer(
-          (_) async => StreamedResponse(
-            Stream.value(utf8.encode(jsonEncode(TestHelpers.userResponse))),
-            HttpStatus.ok,
-          ),
+        whenHttpClientSend(
+          url: url,
+          response: TestHelpers.userResponse,
         );
 
         final user = await flutterconApi.getUser();
@@ -72,20 +132,7 @@ void main() {
         'throws $FlutterconApiMalformedResponseException '
         'when body is malformed',
         () async {
-          when(
-            () => client.send(
-              any(
-                that: isA<Request>()
-                    .having((req) => req.method, 'method', 'GET')
-                    .having((req) => req.url, 'url', url),
-              ),
-            ),
-          ).thenAnswer(
-            (_) async => StreamedResponse(
-              Stream.value(utf8.encode('')),
-              HttpStatus.ok,
-            ),
-          );
+          whenHttpClientSend(url: url, response: '');
 
           expect(
             () async => flutterconApi.getUser(),
@@ -98,25 +145,21 @@ void main() {
         'throws $FlutterconApiClientException '
         'when response is not successful',
         () async {
-          when(
-            () => client.send(
-              any(
-                that: isA<Request>()
-                    .having((req) => req.method, 'method', 'GET')
-                    .having((req) => req.url, 'url', url),
-              ),
-            ),
-          ).thenAnswer(
-            (_) async => StreamedResponse(
-              Stream.value(utf8.encode(jsonEncode({}))),
-              HttpStatus.notFound,
-            ),
+          whenHttpClientSend(
+            url: url,
+            // ignore: inference_failure_on_collection_literal
+            response: {},
+            httpStatus: HttpStatus.notFound,
           );
 
           expect(
             () async => flutterconApi.getUser(),
             throwsA(
-              isA<FlutterconApiClientException>(),
+              isA<FlutterconApiClientException>().having(
+                (e) => e.statusCode,
+                'status code',
+                equals(HttpStatus.notFound),
+              ),
             ),
           );
         },
@@ -126,15 +169,7 @@ void main() {
         'throws $FlutterconApiClientException '
         'when an unexpected error occurs',
         () async {
-          when(
-            () => client.send(
-              any(
-                that: isA<Request>()
-                    .having((req) => req.method, 'method', 'GET')
-                    .having((req) => req.url, 'url', url),
-              ),
-            ),
-          ).thenThrow(Exception('oops'));
+          whenHttpClientSend<User>(url: url, exception: Exception('oops'));
 
           expect(
             () async => flutterconApi.getUser(),
@@ -147,27 +182,74 @@ void main() {
     });
 
     group('getTalks', () {
+      final url = Uri.parse('$baseUrl/talks');
+
       test(
         'returns ${PaginatedData<TalkPreview>} on successful response',
-        () async {},
+        () async {
+          whenHttpClientSend(url: url, response: TestHelpers.talksResponse);
+
+          final talks = await flutterconApi.getTalks();
+
+          expect(talks, isA<PaginatedData<TalkPreview>>());
+        },
       );
 
       test(
         'throws $FlutterconApiMalformedResponseException '
         'when body is malformed',
-        () async {},
+        () async {
+          whenHttpClientSend(url: url, response: '');
+
+          expect(
+            () async => flutterconApi.getTalks(),
+            throwsA(isA<FlutterconApiMalformedResponseException>()),
+          );
+        },
       );
 
       test(
         'throws $FlutterconApiClientException '
         'when response is not successful',
-        () async {},
+        () async {
+          whenHttpClientSend(
+            url: url,
+            // ignore: inference_failure_on_collection_literal
+            response: {},
+            httpStatus: HttpStatus.notFound,
+          );
+
+          expect(
+            () async => flutterconApi.getTalks(),
+            throwsA(
+              isA<FlutterconApiClientException>().having(
+                (e) => e.statusCode,
+                'status code',
+                equals(
+                  HttpStatus.notFound,
+                ),
+              ),
+            ),
+          );
+        },
       );
 
       test(
         'throws $FlutterconApiClientException '
         'when an unexpected error occurs',
-        () async {},
+        () async {
+          whenHttpClientSend<TalkPreview>(
+            url: url,
+            exception: Exception('oops'),
+          );
+
+          expect(
+            () async => flutterconApi.getTalks(),
+            throwsA(
+              isA<FlutterconApiClientException>(),
+            ),
+          );
+        },
       );
     });
   });

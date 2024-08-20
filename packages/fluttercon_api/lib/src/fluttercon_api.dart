@@ -57,13 +57,14 @@ class FlutterconApi {
 
   /// GET /user
   /// Fetches the current user.
-  Future<User> getUser() async =>
-      _currentUser ??
-      _sendRequest<User>(
-        uri: Uri.parse('$_baseUrl/user'),
-        method: HttpMethod.get,
-        fromJson: User.fromJson,
-      );
+  Future<User> getUser() async {
+    _currentUser ??= await _sendRequest<User>(
+      uri: Uri.parse('$_baseUrl/user'),
+      method: HttpMethod.get,
+      fromJson: User.fromJson,
+    );
+    return _currentUser!;
+  }
 
   /// GET /talks
   /// Fetches a paginated list of talks.
@@ -80,14 +81,10 @@ class FlutterconApi {
     required Uri uri,
     required HttpMethod method,
     required FromJson<T> fromJson,
-    Object? requestBody,
   }) async {
     try {
       final request = Request(method.name.toUpperCase(), uri);
 
-      if (requestBody != null) {
-        request.bodyBytes = utf8.encode(jsonEncode(requestBody));
-      }
       final responseStream = await _client.send(request);
       final response = await Response.fromStream(responseStream);
       final responseBody = response.json;
@@ -105,10 +102,14 @@ class FlutterconApi {
     } on FlutterconApiClientException {
       rethrow;
     } catch (e) {
-      throw FlutterconApiClientException(
-        statusCode: HttpStatus.internalServerError,
-        error: e,
-      );
+      if (e is FlutterconApiClientException) {
+        rethrow;
+      } else {
+        throw FlutterconApiClientException(
+          statusCode: HttpStatus.internalServerError,
+          error: e,
+        );
+      }
     }
   }
 }
