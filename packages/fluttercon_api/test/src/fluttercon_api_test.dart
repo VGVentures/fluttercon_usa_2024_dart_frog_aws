@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:fluttercon_api/fluttercon_api.dart';
 import 'package:fluttercon_shared_models/fluttercon_shared_models.dart';
@@ -11,8 +12,6 @@ import 'package:user_repository/user_repository.dart';
 import '../helpers/test_helpers.dart';
 
 class _MockBaseApiClient extends Mock implements BaseApiClient {}
-
-class _MockClient extends Mock implements Client {}
 
 void main() {
   group('FlutterconApi', () {
@@ -46,11 +45,21 @@ void main() {
     });
 
     group('getUser', () {
+      final url = Uri.parse('$baseUrl/user');
+
       test('returns User on successful response', () async {
-        when(() => client.send(any())).thenAnswer(
+        when(
+          () => client.send(
+            any(
+              that: isA<Request>()
+                  .having((req) => req.method, 'method', 'GET')
+                  .having((req) => req.url, 'url', url),
+            ),
+          ),
+        ).thenAnswer(
           (_) async => StreamedResponse(
             Stream.value(utf8.encode(jsonEncode(TestHelpers.userResponse))),
-            200,
+            HttpStatus.ok,
           ),
         );
 
@@ -62,19 +71,79 @@ void main() {
       test(
         'throws $FlutterconApiMalformedResponseException '
         'when body is malformed',
-        () async {},
+        () async {
+          when(
+            () => client.send(
+              any(
+                that: isA<Request>()
+                    .having((req) => req.method, 'method', 'GET')
+                    .having((req) => req.url, 'url', url),
+              ),
+            ),
+          ).thenAnswer(
+            (_) async => StreamedResponse(
+              Stream.value(utf8.encode('')),
+              HttpStatus.ok,
+            ),
+          );
+
+          expect(
+            () async => flutterconApi.getUser(),
+            throwsA(isA<FlutterconApiMalformedResponseException>()),
+          );
+        },
       );
 
       test(
         'throws $FlutterconApiClientException '
         'when response is not successful',
-        () async {},
+        () async {
+          when(
+            () => client.send(
+              any(
+                that: isA<Request>()
+                    .having((req) => req.method, 'method', 'GET')
+                    .having((req) => req.url, 'url', url),
+              ),
+            ),
+          ).thenAnswer(
+            (_) async => StreamedResponse(
+              Stream.value(utf8.encode(jsonEncode({}))),
+              HttpStatus.notFound,
+            ),
+          );
+
+          expect(
+            () async => flutterconApi.getUser(),
+            throwsA(
+              isA<FlutterconApiClientException>(),
+            ),
+          );
+        },
       );
 
       test(
-          'throws $FlutterconApiClientException '
-          'when an unexpected error occurs',
-          () async {});
+        'throws $FlutterconApiClientException '
+        'when an unexpected error occurs',
+        () async {
+          when(
+            () => client.send(
+              any(
+                that: isA<Request>()
+                    .having((req) => req.method, 'method', 'GET')
+                    .having((req) => req.url, 'url', url),
+              ),
+            ),
+          ).thenThrow(Exception('oops'));
+
+          expect(
+            () async => flutterconApi.getUser(),
+            throwsA(
+              isA<FlutterconApiClientException>(),
+            ),
+          );
+        },
+      );
     });
 
     group('getTalks', () {
