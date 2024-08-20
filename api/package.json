@@ -8,7 +8,7 @@
   },
   "scripts": {
     "watch": "npx ampx sandbox --outputs-format dart --outputs-out-dir lib --profile ${PROFILE}",
-    "modelgen": "npx ampx generate graphql-client-code --format modelgen --model-target dart --out packages/fluttercon_data_source/lib/src/models/gen"
+    "modelgen": "npx ampx generate graphql-client-code --format modelgen --model-target dart --out packages/fluttercon_data_source/lib/src/models/gen  --profile ${PROFILE}"
   },
   "keywords": [],
   "author": "",
