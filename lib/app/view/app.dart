@@ -22,7 +22,35 @@ class App extends StatelessWidget {
         ),
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
-        home: const CounterPage(),
+        home: DefaultTabController(
+          length: 3,
+          child: Scaffold(
+            appBar: AppBar(
+              bottom: const TabBar(
+                tabs: [
+                  Tab(
+                    text: 'Talks',
+                  ),
+                  Tab(
+                    text: 'Speakers',
+                  ),
+                  Tab(text: 'Favorites'),
+                ],
+              ),
+            ),
+            body: const TabBarView(
+              children: [
+                CounterPage(),
+                Center(
+                  child: Text('Speakers'),
+                ),
+                Center(
+                  child: Text('Favorites'),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
