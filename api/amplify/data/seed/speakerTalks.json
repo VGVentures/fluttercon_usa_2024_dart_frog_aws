@@ -1,6 +1,8 @@
 [
     {
         "id": "1",
+        "speakerId": "1",
+        "talkId": "1",
         "speaker": {
             "id": "1",
             "name": "Stefan Hodges-Kluck",
@@ -27,6 +29,8 @@
     },
     {
         "id": "2",
+        "speakerId": "2",
+        "talkId": "1",
         "speaker": {
             "id": "2",
             "name": "Tom Arra",
