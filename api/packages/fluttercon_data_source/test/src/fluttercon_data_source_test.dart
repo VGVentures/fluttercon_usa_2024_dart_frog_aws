@@ -288,14 +288,13 @@ void main() {
 
       group('can filter', () {
         test('by $Speaker', () async {
-          //fix this -- find specific QPO from debug
           when(
             () => apiClient.list(
               SpeakerTalk.classType,
               where: any(
                 named: 'where',
                 that: isA<QueryPredicateOperation>()
-                    .having((qpo) => qpo.field, 'Field', equals('speakerId')),
+                    .having((qpo) => qpo.field, 'Field', equals('speaker')),
               ),
             ),
           ).thenAnswer(
@@ -332,7 +331,7 @@ void main() {
               where: any(
                 named: 'where',
                 that: isA<QueryPredicateOperation>()
-                    .having((qpo) => qpo.field, 'Field', equals('talkId')),
+                    .having((qpo) => qpo.field, 'Field', equals('talk')),
               ),
             ),
           ).thenAnswer(
