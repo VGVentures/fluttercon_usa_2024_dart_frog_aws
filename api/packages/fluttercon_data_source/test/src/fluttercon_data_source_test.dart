@@ -286,50 +286,81 @@ void main() {
         },
       );
 
-      test('can filter by $Speaker', () async {
-        when(
-          () => apiClient.query<PaginatedResult<SpeakerTalk>>(
-            request: any(
-              named: 'request',
-              that: isA<GraphQLRequest<PaginatedResult<SpeakerTalk>>>(),
-            ),
-          ),
-        ).thenReturn(
-          TestHelpers.graphQLOperation(
-            TestHelpers.paginatedResult(
-              TestHelpers.speakerTalk,
+      group('can filter', () {
+        test('by $Speaker', () async {
+          //fix this -- find specific QPO from debug
+          when(
+            () => apiClient.list(
               SpeakerTalk.classType,
+              where: any(
+                named: 'where',
+                that: isA<QueryPredicateOperation>()
+                    .having((qpo) => qpo.field, 'Field', equals('speakerId')),
+              ),
             ),
-          ),
-        );
-
-        final result = await dataSource.getSpeakerTalks(
-          speaker: TestHelpers.speaker,
-        );
-        expect(result, isA<PaginatedResult<SpeakerTalk>>());
-      });
-
-      test('can filter by $Talk', () async {
-        when(
-          () => apiClient.query<PaginatedResult<SpeakerTalk>>(
-            request: any(
-              named: 'request',
-              that: isA<GraphQLRequest<PaginatedResult<SpeakerTalk>>>(),
+          ).thenAnswer(
+            (_) => GraphQLRequest<PaginatedResult<SpeakerTalk>>(
+              document: '',
             ),
-          ),
-        ).thenReturn(
-          TestHelpers.graphQLOperation(
-            TestHelpers.paginatedResult(
-              TestHelpers.speakerTalk,
+          );
+          when(
+            () => apiClient.query<PaginatedResult<SpeakerTalk>>(
+              request: any(
+                named: 'request',
+                that: isA<GraphQLRequest<PaginatedResult<SpeakerTalk>>>(),
+              ),
+            ),
+          ).thenReturn(
+            TestHelpers.graphQLOperation(
+              TestHelpers.paginatedResult(
+                TestHelpers.speakerTalk,
+                SpeakerTalk.classType,
+              ),
+            ),
+          );
+
+          final result = await dataSource.getSpeakerTalks(
+            speaker: TestHelpers.speaker,
+          );
+          expect(result, isA<PaginatedResult<SpeakerTalk>>());
+        });
+
+        test('by $Talk', () async {
+          when(
+            () => apiClient.list(
               SpeakerTalk.classType,
+              where: any(
+                named: 'where',
+                that: isA<QueryPredicateOperation>()
+                    .having((qpo) => qpo.field, 'Field', equals('talkId')),
+              ),
             ),
-          ),
-        );
+          ).thenAnswer(
+            (_) => GraphQLRequest<PaginatedResult<SpeakerTalk>>(
+              document: '',
+            ),
+          );
+          when(
+            () => apiClient.query<PaginatedResult<SpeakerTalk>>(
+              request: any(
+                named: 'request',
+                that: isA<GraphQLRequest<PaginatedResult<SpeakerTalk>>>(),
+              ),
+            ),
+          ).thenReturn(
+            TestHelpers.graphQLOperation(
+              TestHelpers.paginatedResult(
+                TestHelpers.speakerTalk,
+                SpeakerTalk.classType,
+              ),
+            ),
+          );
 
-        final result = await dataSource.getSpeakerTalks(
-          talk: TestHelpers.talk,
-        );
-        expect(result, isA<PaginatedResult<SpeakerTalk>>());
+          final result = await dataSource.getSpeakerTalks(
+            talk: TestHelpers.talk,
+          );
+          expect(result, isA<PaginatedResult<SpeakerTalk>>());
+        });
       });
 
       test('throws $AmplifyApiException when response has errors', () async {
