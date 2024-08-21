@@ -3,6 +3,8 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/widgets.dart';
+import 'package:fluttercon_api/fluttercon_api.dart';
+import 'package:fluttercon_usa_2024/app/view/app.dart';
 
 class AppBlocObserver extends BlocObserver {
   const AppBlocObserver();
@@ -30,4 +32,15 @@ Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
   // Add cross-flavor configuration here
 
   runApp(await builder());
+}
+
+FutureOr<Widget> buildApp(String baseUrl) async {
+  if (baseUrl.isEmpty) {
+    throw ArgumentError('baseUrl must not be empty.');
+  }
+
+  final api = FlutterconApi(baseUrl: baseUrl);
+  await api.setToken();
+
+  return App(api: api);
 }
