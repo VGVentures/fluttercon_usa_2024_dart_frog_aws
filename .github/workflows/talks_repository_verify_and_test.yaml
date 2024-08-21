@@ -1,4 +1,4 @@
-name: Api
+name: Talks Repository
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -10,33 +10,25 @@ on:
       - master
       - main
     paths:
-      - ".github/workflows/api_verify_and_test.yaml"
-      - "api/**"
+      - ".github/workflows/talks_repository_verify_and_test.yaml"
+      - "api/packages/talks_repository/**"
       - "api/packages/fluttercon_data_source/**"
       - "api/packages/fluttercon_shared_models/**"
-      - "api/packages/talks_repository/**"
-      - "api/packages/user_repository/**"
   push:
     branches:
       - master
       - main
     paths:
       - ".github/workflows/**"
-      - "api/**"
+      - "api/packages/talks_repository/**"
       - "api/packages/fluttercon_data_source/**"
       - "api/packages/fluttercon_shared_models/**"
-      - "api/packages/talks_repository/**"
-      - "api/packages/user_repository/**"
 
 jobs:
   verify_and_test:
     name: Verify and Test
     uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/dart_package.yml@main
     with:
-      working_directory: api
-      coverage_excludes: "**/_middleware.dart"
-      analyze_directories: "routes test"
-      format_directories: "routes test"
-      report_on: "routes"
+      working_directory: api/packages/talks_repository
       dart_sdk: stable
       min_coverage: 100
