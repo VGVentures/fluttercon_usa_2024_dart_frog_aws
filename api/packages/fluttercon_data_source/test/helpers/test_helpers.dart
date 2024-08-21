@@ -22,6 +22,12 @@ class TestHelpers {
     isFavorite: true,
   );
 
+  static final speakerTalk = SpeakerTalk(
+    id: '1',
+    speaker: speaker,
+    talk: talk,
+  );
+
   static PaginatedResult<T> paginatedResult<T extends Model>(
     T item,
     ModelType<T> modelType,

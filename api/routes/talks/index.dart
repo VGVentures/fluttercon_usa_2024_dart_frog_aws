@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:dart_frog/dart_frog.dart';
 import 'package:fluttercon_data_source/fluttercon_data_source.dart';
+import 'package:talks_repository/talks_repository.dart';
 
 Future<Response> onRequest(RequestContext context) async {
   return switch (context.request.method) {
@@ -12,14 +13,17 @@ Future<Response> onRequest(RequestContext context) async {
 }
 
 Future<Response> _get(RequestContext context) async {
-  final dataSource = context.read<FlutterconDataSource>();
+  final talksRepo = context.read<TalksRepository>();
   try {
-    final data = await dataSource.getTalks();
-    return Response(body: jsonEncode(data.toJson()));
+    final data = await talksRepo.getTalks();
+    final json = data.toJson(
+      (value) => value.toJson(),
+    );
+    return Response(body: jsonEncode(json));
   } on AmplifyApiException catch (e) {
     return Response(
       statusCode: HttpStatus.internalServerError,
-      body: jsonEncode(e.exception),
+      body: jsonEncode(e.exception.toString()),
     );
   }
 }

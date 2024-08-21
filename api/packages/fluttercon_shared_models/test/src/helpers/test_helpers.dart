@@ -93,4 +93,14 @@ class TestHelpers {
     'speakerNames': <String>[],
     'startTime': '2024-01-01T00:00:00.000',
   };
+
+  static final talkTimeSlot = TalkTimeSlot(
+    startTime: DateTime(2024),
+    talks: [talkPreview],
+  );
+
+  static final talkTimeSlotJson = {
+    'startTime': '2024-01-01T00:00:00.000',
+    'talks': [talkPreviewJson],
+  };
 }

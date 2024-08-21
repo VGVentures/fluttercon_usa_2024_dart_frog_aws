@@ -20,9 +20,12 @@ void main() {
       registerFallbackValue(
         GraphQLRequest<PaginatedResult<Talk>>(document: ''),
       );
+      registerFallbackValue(
+        GraphQLRequest<PaginatedResult<SpeakerTalk>>(document: ''),
+      );
     });
 
-    setUp(() async {
+    setUp(() {
       apiClient = _MockAmplifyApiClient();
       dataSource = FlutterconDataSource(apiClient: apiClient);
     });
@@ -231,6 +234,158 @@ void main() {
 
           expect(
             () => dataSource.getTalks(),
+            throwsA(isA<AmplifyApiException>()),
+          );
+        },
+      );
+    });
+
+    group('getSpeakerTalks', () {
+      setUp(() {
+        when(() => apiClient.list(SpeakerTalk.classType)).thenAnswer(
+          (_) => GraphQLRequest<PaginatedResult<SpeakerTalk>>(
+            document: '',
+          ),
+        );
+      });
+
+      test(
+        'throws assertion error if both speaker and talk are provided',
+        () async {
+          expect(
+            () => dataSource.getSpeakerTalks(
+              speaker: TestHelpers.speaker,
+              talk: TestHelpers.talk,
+            ),
+            throwsA(isA<AssertionError>()),
+          );
+        },
+      );
+
+      test(
+        'returns ${PaginatedResult<SpeakerTalk>} when successful',
+        () async {
+          when(
+            () => apiClient.query<PaginatedResult<SpeakerTalk>>(
+              request: any(
+                named: 'request',
+                that: isA<GraphQLRequest<PaginatedResult<SpeakerTalk>>>(),
+              ),
+            ),
+          ).thenReturn(
+            TestHelpers.graphQLOperation(
+              TestHelpers.paginatedResult(
+                TestHelpers.speakerTalk,
+                SpeakerTalk.classType,
+              ),
+            ),
+          );
+
+          final result = await dataSource.getSpeakerTalks();
+          expect(result, isA<PaginatedResult<SpeakerTalk>>());
+        },
+      );
+
+      test('can filter by $Speaker', () async {
+        when(
+          () => apiClient.query<PaginatedResult<SpeakerTalk>>(
+            request: any(
+              named: 'request',
+              that: isA<GraphQLRequest<PaginatedResult<SpeakerTalk>>>(),
+            ),
+          ),
+        ).thenReturn(
+          TestHelpers.graphQLOperation(
+            TestHelpers.paginatedResult(
+              TestHelpers.speakerTalk,
+              SpeakerTalk.classType,
+            ),
+          ),
+        );
+
+        final result = await dataSource.getSpeakerTalks(
+          speaker: TestHelpers.speaker,
+        );
+        expect(result, isA<PaginatedResult<SpeakerTalk>>());
+      });
+
+      test('can filter by $Talk', () async {
+        when(
+          () => apiClient.query<PaginatedResult<SpeakerTalk>>(
+            request: any(
+              named: 'request',
+              that: isA<GraphQLRequest<PaginatedResult<SpeakerTalk>>>(),
+            ),
+          ),
+        ).thenReturn(
+          TestHelpers.graphQLOperation(
+            TestHelpers.paginatedResult(
+              TestHelpers.speakerTalk,
+              SpeakerTalk.classType,
+            ),
+          ),
+        );
+
+        final result = await dataSource.getSpeakerTalks(
+          talk: TestHelpers.talk,
+        );
+        expect(result, isA<PaginatedResult<SpeakerTalk>>());
+      });
+
+      test('throws $AmplifyApiException when response has errors', () async {
+        when(
+          () => apiClient.query<PaginatedResult<SpeakerTalk>>(
+            request: any(
+              named: 'request',
+              that: isA<GraphQLRequest<PaginatedResult<SpeakerTalk>>>(),
+            ),
+          ),
+        ).thenReturn(
+          TestHelpers.graphQLOperation(
+            TestHelpers.paginatedResult(
+              TestHelpers.speakerTalk,
+              SpeakerTalk.classType,
+            ),
+            errors: [GraphQLResponseError(message: 'Error')],
+          ),
+        );
+
+        expect(
+          () => dataSource.getSpeakerTalks(),
+          throwsA(isA<AmplifyApiException>()),
+        );
+      });
+
+      test(
+        'throws $AmplifyApiException when response data is null',
+        () async {
+          when(
+            () => apiClient.query<PaginatedResult<SpeakerTalk>>(
+              request: any(
+                named: 'request',
+                that: isA<GraphQLRequest<PaginatedResult<SpeakerTalk>>>(),
+              ),
+            ),
+          ).thenReturn(
+            TestHelpers.graphQLOperation(null),
+          );
+
+          expect(
+            () => dataSource.getSpeakerTalks(),
+            throwsA(isA<AmplifyApiException>()),
+          );
+        },
+      );
+
+      test(
+        'throws $AmplifyApiException when an exception is thrown',
+        () async {
+          when(() => apiClient.list(SpeakerTalk.classType)).thenThrow(
+            Exception('Error'),
+          );
+
+          expect(
+            () => dataSource.getSpeakerTalks(),
             throwsA(isA<AmplifyApiException>()),
           );
         },

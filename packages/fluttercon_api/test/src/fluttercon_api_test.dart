@@ -185,13 +185,13 @@ void main() {
       final url = Uri.parse('$baseUrl/talks');
 
       test(
-        'returns ${PaginatedData<TalkPreview>} on successful response',
+        'returns ${PaginatedData<TalkTimeSlot>} on successful response',
         () async {
           whenHttpClientSend(url: url, response: TestHelpers.talksResponse);
 
           final talks = await flutterconApi.getTalks();
 
-          expect(talks, isA<PaginatedData<TalkPreview>>());
+          expect(talks, isA<PaginatedData<TalkTimeSlot>>());
         },
       );
 
@@ -238,7 +238,7 @@ void main() {
         'throws $FlutterconApiClientException '
         'when an unexpected error occurs',
         () async {
-          whenHttpClientSend<TalkPreview>(
+          whenHttpClientSend<TalkTimeSlot>(
             url: url,
             exception: Exception('oops'),
           );

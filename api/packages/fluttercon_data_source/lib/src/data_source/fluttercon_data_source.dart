@@ -50,6 +50,47 @@ class FlutterconDataSource {
     }
   }
 
+  /// Fetches a paginated list of [SpeakerTalk] entities.
+  /// A [SpeakerTalk] contains an ID for a speaker and
+  /// an ID for a corresponding talk.
+  ///
+  /// Consumers can optionally provide either a [Speaker]
+  /// and/or a [Talk] to filter the results.
+  Future<PaginatedResult<SpeakerTalk>> getSpeakerTalks({
+    Speaker? speaker,
+    Talk? talk,
+  }) async {
+    assert(speaker == null || talk == null, 'Only one filter can be applied');
+    try {
+      final request = _apiClient.list(
+        SpeakerTalk.classType,
+      );
+      final apiResult = await _sendGraphQLRequest(
+        request: request,
+        operation: (request) => _apiClient.query(request: request),
+      );
+      if (speaker != null || talk != null) {
+        final filteredResult = apiResult.items.where(
+          (element) => speaker != null
+              ? element?.speaker?.id == speaker.id
+              : element?.talk?.id == talk!.id,
+        );
+        return PaginatedResult(
+          filteredResult.toList(),
+          apiResult.limit,
+          apiResult.nextToken,
+          apiResult.filter,
+          apiResult.modelType,
+          apiResult.requestForNextResult,
+        );
+      }
+
+      return apiResult;
+    } on Exception catch (e) {
+      throw AmplifyApiException(exception: e);
+    }
+  }
+
   Future<T> _sendGraphQLRequest<T>({
     required GraphQLRequest<T> request,
     required GraphQLOperator<T> operation,

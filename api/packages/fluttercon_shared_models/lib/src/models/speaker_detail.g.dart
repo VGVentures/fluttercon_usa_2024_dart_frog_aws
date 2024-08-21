@@ -28,6 +28,6 @@ Map<String, dynamic> _$SpeakerDetailToJson(SpeakerDetail instance) =>
       'title': instance.title,
       'imageUrl': instance.imageUrl,
       'bio': instance.bio,
-      'links': instance.links,
-      'talks': instance.talks,
+      'links': instance.links.map((e) => e.toJson()).toList(),
+      'talks': instance.talks.map((e) => e.toJson()).toList(),
     };
