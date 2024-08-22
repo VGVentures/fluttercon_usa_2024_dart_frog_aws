@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttercon_api/fluttercon_api.dart';
 import 'package:fluttercon_shared_models/fluttercon_shared_models.dart';
 import 'package:fluttercon_usa_2024/talks/talks.dart';
+import 'package:intl/intl.dart';
 
 class TalksPage extends StatelessWidget {
   const TalksPage({super.key});
@@ -52,7 +53,7 @@ class TalksSchedule extends StatelessWidget {
         final timeSlot = talkTimeSlots[index];
         return Row(
           children: [
-            Text(timeSlot.startTime.toString()),
+            Text(DateFormat('MMM dd hh:mm:a').format(timeSlot.startTime)),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: timeSlot.talks
