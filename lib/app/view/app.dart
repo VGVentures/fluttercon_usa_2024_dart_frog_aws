@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttercon_api/fluttercon_api.dart';
 import 'package:fluttercon_usa_2024/l10n/l10n.dart';
+import 'package:fluttercon_usa_2024/talks/view/talks_page.dart';
 import 'package:fluttercon_usa_2024/user/cubit/user_cubit.dart';
 
 class App extends StatelessWidget {
@@ -69,9 +70,7 @@ class _HomePageState extends State<HomePage> {
               setState(() => _selectedIndex = index),
         ),
         body: const [
-          Center(
-            child: Text('Talks coming soon!'),
-          ),
+          TalksPage(),
           Center(
             child: Text('Speakers coming soon!'),
           ),
