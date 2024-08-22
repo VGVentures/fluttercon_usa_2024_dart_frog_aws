@@ -42,10 +42,10 @@ class App extends StatelessWidget {
               children: [
                 CounterPage(),
                 Center(
-                  child: Text('Speakers'),
+                  child: Text('Speakers coming soon!'),
                 ),
                 Center(
-                  child: Text('Favorites'),
+                  child: Text('Favorites coming soon!'),
                 ),
               ],
             ),
