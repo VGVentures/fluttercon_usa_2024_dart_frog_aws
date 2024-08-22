@@ -4,6 +4,8 @@ import 'package:fluttercon_api/fluttercon_api.dart';
 import 'package:fluttercon_usa_2024/app/app.dart';
 import 'package:mocktail/mocktail.dart';
 
+import '../../helpers/test_data.dart';
+
 class _MockFlutterconApi extends Mock implements FlutterconApi {}
 
 void main() {
@@ -12,6 +14,7 @@ void main() {
 
     setUp(() {
       api = _MockFlutterconApi();
+      when(api.getUser).thenAnswer((_) async => TestData.user);
     });
     testWidgets('renders $HomePage', (tester) async {
       await tester.pumpWidget(

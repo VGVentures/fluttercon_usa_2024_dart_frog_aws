@@ -7,7 +7,6 @@ import 'package:fluttercon_shared_models/fluttercon_shared_models.dart';
 import 'package:http/http.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
-import 'package:user_repository/user_repository.dart';
 
 import '../helpers/test_helpers.dart';
 
