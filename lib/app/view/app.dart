@@ -22,34 +22,47 @@ class App extends StatelessWidget {
         ),
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
-        home: DefaultTabController(
-          length: 3,
-          child: Scaffold(
-            appBar: AppBar(
-              bottom: const TabBar(
-                tabs: [
-                  Tab(
-                    text: 'Talks',
-                  ),
-                  Tab(
-                    text: 'Speakers',
-                  ),
-                  Tab(text: 'Favorites'),
-                ],
+        home: const HomePage(),
+      ),
+    );
+  }
+}
+
+class HomePage extends StatelessWidget {
+  const HomePage({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        appBar: AppBar(
+          bottom: TabBar(
+            tabs: [
+              Tab(
+                text: context.l10n.talksTabText,
               ),
-            ),
-            body: const TabBarView(
-              children: [
-                CounterPage(),
-                Center(
-                  child: Text('Speakers coming soon!'),
-                ),
-                Center(
-                  child: Text('Favorites coming soon!'),
-                ),
-              ],
-            ),
+              Tab(
+                text: context.l10n.speakersTabText,
+              ),
+              Tab(
+                text: context.l10n.favoritesTabText,
+              ),
+            ],
           ),
+        ),
+        body: const TabBarView(
+          children: [
+            CounterPage(),
+            Center(
+              child: Text('Speakers coming soon!'),
+            ),
+            Center(
+              child: Text('Favorites coming soon!'),
+            ),
+          ],
         ),
       ),
     );

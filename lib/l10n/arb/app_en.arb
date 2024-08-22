@@ -3,5 +3,17 @@
     "counterAppBarTitle": "Counter",
     "@counterAppBarTitle": {
         "description": "Text shown in the AppBar of the Counter Page"
+    },
+    "talksTabText": "Talks",
+    "@talksTabText": {
+        "description": "Text shown on 'Talks' tab"
+    },
+    "speakersTabText": "Speakers",
+    "@speakersTabText": {
+        "description": "Text shown on 'Speakers' tab"
+    },
+    "favoritesTabText": "Favorites",
+    "@favoritesTabText": {
+        "description": "Text shown on 'Favorites' tab"
     }
 }
