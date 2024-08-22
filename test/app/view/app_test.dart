@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttercon_api/fluttercon_api.dart';
 import 'package:fluttercon_usa_2024/app/app.dart';
@@ -19,6 +20,19 @@ void main() {
         ),
       );
       expect(find.byType(HomePage), findsOneWidget);
+    });
+
+    testWidgets('can select different tabs', (tester) async {
+      await tester.pumpWidget(
+        App(
+          api: api,
+        ),
+      );
+
+      await tester.tap(find.byIcon(Icons.people_outlined));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Speakers coming soon!'), findsOneWidget);
     });
   });
 }

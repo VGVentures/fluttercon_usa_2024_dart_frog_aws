@@ -28,43 +28,51 @@ class App extends StatelessWidget {
   }
 }
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({
     super.key,
   });
 
   @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int _selectedIndex = 0;
+
+  @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 3,
-      child: Scaffold(
-        appBar: AppBar(
-          bottom: TabBar(
-            tabs: [
-              Tab(
-                text: context.l10n.talksTabText,
-              ),
-              Tab(
-                text: context.l10n.speakersTabText,
-              ),
-              Tab(
-                text: context.l10n.favoritesTabText,
-              ),
-            ],
+    return Scaffold(
+      bottomNavigationBar: NavigationBar(
+        destinations: [
+          NavigationDestination(
+            icon: const Icon(
+              Icons.article_outlined,
+            ),
+            label: context.l10n.talksTabText,
           ),
-        ),
-        body: const TabBarView(
-          children: [
-            CounterPage(),
-            Center(
-              child: Text('Speakers coming soon!'),
-            ),
-            Center(
-              child: Text('Favorites coming soon!'),
-            ),
-          ],
-        ),
+          NavigationDestination(
+            icon: const Icon(Icons.people_outlined),
+            label: context.l10n.speakersTabText,
+          ),
+          NavigationDestination(
+            icon: const Icon(Icons.favorite_outline),
+            label: context.l10n.favoritesTabText,
+          ),
+        ],
+        selectedIndex: _selectedIndex,
+        onDestinationSelected: (index) =>
+            setState(() => _selectedIndex = index),
       ),
+      body: const [
+        CounterPage(),
+        Center(
+          child: Text('Speakers coming soon!'),
+        ),
+        Center(
+          child: Text('Favorites coming soon!'),
+        ),
+      ][_selectedIndex],
     );
   }
 }
