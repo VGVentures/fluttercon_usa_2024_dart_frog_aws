@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttercon_api/fluttercon_api.dart';
-import 'package:fluttercon_usa_2024/counter/counter.dart';
 import 'package:fluttercon_usa_2024/l10n/l10n.dart';
+import 'package:fluttercon_usa_2024/user/cubit/user_cubit.dart';
 
 class App extends StatelessWidget {
   const App({required this.api, super.key});
@@ -42,37 +42,44 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      bottomNavigationBar: NavigationBar(
-        destinations: [
-          NavigationDestination(
-            icon: const Icon(
-              Icons.article_outlined,
+    return BlocProvider(
+      lazy: false,
+      create: (context) =>
+          UserCubit(api: context.read<FlutterconApi>())..getUser(),
+      child: Scaffold(
+        bottomNavigationBar: NavigationBar(
+          destinations: [
+            NavigationDestination(
+              icon: const Icon(
+                Icons.article_outlined,
+              ),
+              label: context.l10n.talksTabText,
             ),
-            label: context.l10n.talksTabText,
+            NavigationDestination(
+              icon: const Icon(Icons.people_outlined),
+              label: context.l10n.speakersTabText,
+            ),
+            NavigationDestination(
+              icon: const Icon(Icons.favorite_outline),
+              label: context.l10n.favoritesTabText,
+            ),
+          ],
+          selectedIndex: _selectedIndex,
+          onDestinationSelected: (index) =>
+              setState(() => _selectedIndex = index),
+        ),
+        body: const [
+          Center(
+            child: Text('Talks coming soon!'),
           ),
-          NavigationDestination(
-            icon: const Icon(Icons.people_outlined),
-            label: context.l10n.speakersTabText,
+          Center(
+            child: Text('Speakers coming soon!'),
           ),
-          NavigationDestination(
-            icon: const Icon(Icons.favorite_outline),
-            label: context.l10n.favoritesTabText,
+          Center(
+            child: Text('Favorites coming soon!'),
           ),
-        ],
-        selectedIndex: _selectedIndex,
-        onDestinationSelected: (index) =>
-            setState(() => _selectedIndex = index),
+        ][_selectedIndex],
       ),
-      body: const [
-        CounterPage(),
-        Center(
-          child: Text('Speakers coming soon!'),
-        ),
-        Center(
-          child: Text('Favorites coming soon!'),
-        ),
-      ][_selectedIndex],
     );
   }
 }

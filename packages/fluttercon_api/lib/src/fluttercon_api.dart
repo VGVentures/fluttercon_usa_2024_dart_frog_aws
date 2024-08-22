@@ -5,7 +5,6 @@ import 'dart:io';
 import 'package:fluttercon_api/fluttercon_api.dart';
 import 'package:fluttercon_shared_models/fluttercon_shared_models.dart';
 import 'package:http/http.dart';
-import 'package:user_repository/user_repository.dart';
 
 /// Signature for the authentication token provider.
 typedef TokenProvider = Future<String?> Function();
