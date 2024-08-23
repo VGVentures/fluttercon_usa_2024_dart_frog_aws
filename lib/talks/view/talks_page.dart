@@ -30,7 +30,7 @@ class TalksView extends StatelessWidget {
           child: CircularProgressIndicator(),
         ),
       TalksError(error: final e) => Center(
-          child: Text('Error: $e'),
+          child: Text('$e'),
         ),
       TalksLoaded(talkTimeSlots: final talkTimeSlots) => TalksSchedule(
           talkTimeSlots: talkTimeSlots,
@@ -47,67 +47,82 @@ class TalksSchedule extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: talkTimeSlots.length,
-      itemBuilder: (context, index) {
-        final timeSlot = talkTimeSlots[index];
-        return Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8),
-              child: Text(
-                DateFormat('MMM dd hh:mm:a')
-                    .format(timeSlot.startTime.toLocal()),
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 800),
+      child: ListView.builder(
+        itemCount: talkTimeSlots.length,
+        itemBuilder: (context, index) {
+          final timeSlot = talkTimeSlots[index];
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Flexible(
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Text(
+                    DateFormat('MMM dd hh:mm:a')
+                        .format(timeSlot.startTime.toLocal()),
+                  ),
+                ),
               ),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: timeSlot.talks
-                  .map(
-                    (talk) => Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Flexible(
+                flex: 2,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: timeSlot.talks
+                      .map(
+                        (talk) => Card(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: Column(
                               children: [
-                                Text(talk.title),
-                                IconButton(
-                                  onPressed: () {},
-                                  icon: const Icon(Icons.favorite_border),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Flexible(flex: 4, child: Text(talk.title)),
+                                    Flexible(
+                                      child: IconButton(
+                                        onPressed: () {},
+                                        icon: const Icon(Icons.favorite_border),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 16),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        talk.speakerNames.join(', '),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 16),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        talk.room,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  talk.speakerNames.join(', '),
-                                  textAlign: TextAlign.left,
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                Text(
-                                  talk.room,
-                                  textAlign: TextAlign.right,
-                                ),
-                              ],
-                            ),
-                          ],
+                          ),
                         ),
-                      ),
-                    ),
-                  )
-                  .toList(),
-            ),
-          ],
-        );
-      },
+                      )
+                      .toList(),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
 }

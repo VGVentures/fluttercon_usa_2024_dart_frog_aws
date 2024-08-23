@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
 import 'package:fluttercon_api/fluttercon_api.dart';
 import 'package:fluttercon_shared_models/fluttercon_shared_models.dart';
 import 'package:meta/meta.dart';
@@ -11,7 +12,7 @@ part 'talks_state.dart';
 class TalksBloc extends Bloc<TalksEvent, TalksState> {
   TalksBloc({required FlutterconApi api})
       : _api = api,
-        super(TalksInitial()) {
+        super(const TalksInitial()) {
     on<TalksRequested>(_onTalksRequested);
   }
 
@@ -22,7 +23,7 @@ class TalksBloc extends Bloc<TalksEvent, TalksState> {
     Emitter<TalksState> emit,
   ) async {
     try {
-      emit(TalksLoading());
+      emit(const TalksLoading());
       final talks = await _api.getTalks();
       emit(TalksLoaded(talkTimeSlots: talks.items));
     } catch (e) {
