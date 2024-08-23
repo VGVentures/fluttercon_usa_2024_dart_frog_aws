@@ -19,7 +19,7 @@ dependencies:
   fluttercon_shared_models:
     path: api/packages/fluttercon_shared_models
   intl: ^0.19.0
-  meta: ^1.15.0
+  meta: ^1.12.0
 
 dev_dependencies:
   bloc_test: ^9.1.7
