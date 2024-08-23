@@ -10,15 +10,6 @@ Handler middleware(Handler handler) {
   return handler
       .use(requestLogger())
       .use(
-        fromShelfMiddleware(
-          corsHeaders(
-            headers: {
-              ACCESS_CONTROL_ALLOW_ORIGIN: '*',
-            },
-          ),
-        ),
-      )
-      .use(
         provider<TalksRepository>(
           (context) => TalksRepository(
             dataSource: context.read<FlutterconDataSource>(),
@@ -49,6 +40,15 @@ Handler middleware(Handler handler) {
         provider<UserRepository>(
           (context) =>
               UserRepository(authClient: AmplifyAuthClient(auth: Amplify.Auth)),
+        ),
+      )
+      .use(
+        fromShelfMiddleware(
+          corsHeaders(
+            headers: {
+              ACCESS_CONTROL_ALLOW_ORIGIN: '*',
+            },
+          ),
         ),
       );
 }
