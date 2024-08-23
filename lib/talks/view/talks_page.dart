@@ -52,28 +52,54 @@ class TalksSchedule extends StatelessWidget {
       itemBuilder: (context, index) {
         final timeSlot = talkTimeSlots[index];
         return Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text(DateFormat('MMM dd hh:mm:a').format(timeSlot.startTime)),
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: Text(
+                DateFormat('MMM dd hh:mm:a')
+                    .format(timeSlot.startTime.toLocal()),
+              ),
+            ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: timeSlot.talks
                   .map(
                     (talk) => Card(
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(talk.title),
-                              IconButton(
-                                onPressed: () {},
-                                icon: const Icon(Icons.favorite_border),
-                              ),
-                            ],
-                          ),
-                          Text(talk.speakerNames.join(', ')),
-                          Text(talk.room),
-                        ],
+                      child: Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(talk.title),
+                                IconButton(
+                                  onPressed: () {},
+                                  icon: const Icon(Icons.favorite_border),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  talk.speakerNames.join(', '),
+                                  textAlign: TextAlign.left,
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  talk.room,
+                                  textAlign: TextAlign.right,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   )
