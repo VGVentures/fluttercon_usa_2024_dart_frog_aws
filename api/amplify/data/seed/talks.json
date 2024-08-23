@@ -4,8 +4,8 @@
         "title": "Supercharging Development with Full Stack Dart and AWS",
         "description": "When building a product today, engineering teams need to use the building blocks they have to level up their team and get to market quickly and safely. One way we have seen this done is to adopt the use of Dart on the backend to ensure your frontend and backend developers are literally speaking the same language and can easily share code between systems without sacrificing performance. In this session we will dive into the logistics behind this and show it in practice with AWS. With the speed and flexibility that Amplify and Dart offer, we can easily connect AWS Cloud Services with a robust full stack application. We will demonstrate how you can create this stack from scratch but also link up your existing cloud infrastructure so you can start building in this setup now, instead of waiting for your next project. Come learn how AWS Amplify and Dart Frog can supercharge your development team today.",
         "room": "Room 3",
-        "startTime": "2024-09-20T16:25:00Z",
-        "endTime": "2024-09-20T17:05:00Z",
+        "startTime": "2024-09-20T20:25:00Z",
+        "endTime": "2024-09-20T21:05:00Z",
         "isFavorite": false,
         "createdAt": "2023-01-01T00:00:00Z",
         "updatedAt": "2023-01-01T00:00:00Z"
