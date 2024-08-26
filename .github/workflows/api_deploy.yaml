@@ -30,11 +30,8 @@ jobs:
           cd api
           npx ampx generate outputs  --outputs-format dart --outputs-out-dir lib
 
-      - name: Setup Amplify Pipeline Deploy
+      - name: Deploy Amplify Resources
         run: |
-          cd api
-          export CI=1
-          npm ci
           npx ampx pipeline-deploy
 
       - name: Install Dart SDK
