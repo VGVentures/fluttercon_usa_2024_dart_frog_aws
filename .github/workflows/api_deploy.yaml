@@ -37,6 +37,14 @@ jobs:
           cd api
           npm install
 
+      - name: Configure AWS credentials
+        id: aws-credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
       - name: Generate Amplify Outputs
         run: |
           cd api
@@ -59,15 +67,7 @@ jobs:
         run: cd api && very_good packages get -r
 
       - name: Build API
-        run: cd api && dart_frog build
-          
-      - name: Configure AWS credentials
-        id: aws-credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}     
+        run: cd api && dart_frog build     
 
       - name: Login to Amazon ECR
         id: login-ecr
