@@ -28,6 +28,10 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Install Amplify CLI
+        run: |
+          npm install -g @aws-amplify/cli
+
       - name: Generate Amplify Outputs
         run: |
           cd api
