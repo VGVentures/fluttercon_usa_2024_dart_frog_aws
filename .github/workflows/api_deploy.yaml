@@ -1,4 +1,4 @@
-name: api deploy
+name: Deploy Api
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -8,10 +8,12 @@ on:
   push:
     paths:
       - "api/**"
-      - ".github/workflows/api.yaml"
-      - ".github/workflows/deploy_api.yaml"
-      - ".github/workflows/blog_models.yaml"
-      - ".github/workflows/butter_cms_client.yaml"
+      - ".github/workflows/api_deploy.yaml"
+      - ".github/workflows/api_verify_and_test.yaml"
+      - ".github/workflows/fluttercon_data_source_verify_and_test.yaml"
+      - ".github/workflows/fluttercon_shared_models_verify_and_test.yaml"
+      - ".github/workflows/talks_repository_verify_and_test.yaml"
+      - ".github/workflows/user_repository_verify_and_test.yaml"
     branches:
       - main
 
