@@ -35,7 +35,7 @@ jobs:
           cd api
           export CI=1
           npm ci
-          npx ampx pipeline-deplo
+          npx ampx pipeline-deploy
 
       - name: Install Dart SDK
         uses: dart-lang/setup-dart@v1.6.4
