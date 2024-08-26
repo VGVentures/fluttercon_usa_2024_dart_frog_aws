@@ -40,7 +40,7 @@ jobs:
       - name: Generate Amplify Outputs
         run: |
           cd api
-          npx ampx generate outputs  --outputs-format dart --outputs-out-dir lib
+          npx ampx generate outputs  --format dart --out-dir lib
 
       - name: Deploy Amplify Resources
         run: |
