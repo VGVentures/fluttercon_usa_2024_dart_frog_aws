@@ -1,0 +1,78 @@
+name: api deploy
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+
+jobs:  
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:      
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Install Dart SDK
+        uses: dart-lang/setup-dart@v1.6.4
+        
+      - name: Install Dart Frog
+        run: dart pub global activate dart_frog_cli
+
+      - name: Install Very Good CLI
+        run: dart pub global activate very_good_cli
+
+      - name: Get Dependencies
+        run: cd api && very_good packages get -r
+
+      - name: Build API
+        run: cd api && dart_frog build
+          
+      - name: Configure AWS credentials
+        id: aws-credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}     
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          mask-password: true        
+
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          #TODO: add create ECR repository
+          ECR_REPOSITORY: name-for-your-ecr-repository
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          cd api
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG . 
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"  
+          
+      - name: Deploy to App Runner
+        id: deploy-apprunner
+        uses: awslabs/amazon-app-runner-deploy@main        
+        with:
+          #TODO: create App Runner service
+          service: name-you-want-for-your-app-runner-service
+          image: ${{ steps.build-image.outputs.image }}          
+          access-role-arn: ${{ secrets.ROLE_ARN }}
+          runtime: NODEJS_12          
+          region: ${{ secrets.AWS_REGION }}
+          cpu : 1
+          memory : 2
+          port: 8080
+          wait-for-service-stability: true
+      
+      - name: App Runner output
+        run: echo "App runner output ${{ steps.deploy-apprunner.outputs.service-id }}" 
