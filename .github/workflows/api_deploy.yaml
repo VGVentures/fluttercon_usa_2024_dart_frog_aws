@@ -5,7 +5,15 @@ concurrency:
   cancel-in-progress: true
 
 on:
-  workflow_dispatch:
+  push:
+    paths:
+      - "api/**"
+      - ".github/workflows/api.yaml"
+      - ".github/workflows/deploy_api.yaml"
+      - ".github/workflows/blog_models.yaml"
+      - ".github/workflows/butter_cms_client.yaml"
+    branches:
+      - main
 
 jobs:  
   deploy:
@@ -20,14 +28,14 @@ jobs:
       - name: Generate Amplify Outputs
         run: |
           cd api
-          npx ampx generate outputs  --outputs-format dart --outputs-out-dir lib --branch ${{ github.ref_name }} --app-id ${{ secrets.AMPLIFY_APP_ID }}
+          npx ampx generate outputs  --outputs-format dart --outputs-out-dir lib
 
       - name: Setup Amplify Pipeline Deploy
         run: |
           cd api
           export CI=1
           npm ci
-          npx ampx pipeline-deploy --branch ${{ github.ref_name }} --app-id ${{ secrets.AMPLIFY_APP_ID }}
+          npx ampx pipeline-deplo
 
       - name: Install Dart SDK
         uses: dart-lang/setup-dart@v1.6.4
