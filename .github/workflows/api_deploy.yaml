@@ -17,6 +17,18 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Generate Amplify Outputs
+        run: |
+          cd api
+          npx ampx generate outputs --branch ${{ github.ref_name }} --app-id ${{ secrets.AMPLIFY_APP_ID }} --output-file amplify-outputs.json
+
+      - name: Setup Amplify Pipeline Deploy
+        run: |
+          cd api
+          export CI=1
+          npm ci
+          npx ampx pipeline-deploy --branch ${{ github.ref_name }} --app-id ${{ secrets.AMPLIFY_APP_ID }}
+
       - name: Install Dart SDK
         uses: dart-lang/setup-dart@v1.6.4
         
