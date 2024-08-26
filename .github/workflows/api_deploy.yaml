@@ -50,8 +50,7 @@ jobs:
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          #TODO: add create ECR repository
-          ECR_REPOSITORY: name-for-your-ecr-repository
+          ECR_REPOSITORY: fluttercon_usa_2024/api
           IMAGE_TAG: ${{ github.sha }}
         run: |
           cd api
@@ -63,8 +62,7 @@ jobs:
         id: deploy-apprunner
         uses: awslabs/amazon-app-runner-deploy@main        
         with:
-          #TODO: create App Runner service
-          service: name-you-want-for-your-app-runner-service
+          service: fluttercon_usa_2024_api 
           image: ${{ steps.build-image.outputs.image }}          
           access-role-arn: ${{ secrets.ROLE_ARN }}
           runtime: NODEJS_12          
