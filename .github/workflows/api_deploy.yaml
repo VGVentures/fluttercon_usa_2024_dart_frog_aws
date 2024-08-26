@@ -20,7 +20,7 @@ jobs:
       - name: Generate Amplify Outputs
         run: |
           cd api
-          npx ampx generate outputs --branch ${{ github.ref_name }} --app-id ${{ secrets.AMPLIFY_APP_ID }} --output-file amplify-outputs.json
+          npx ampx generate outputs --branch ${{ github.ref_name }} --app-id ${{ secrets.AMPLIFY_APP_ID }} --output-dir lib
 
       - name: Setup Amplify Pipeline Deploy
         run: |
