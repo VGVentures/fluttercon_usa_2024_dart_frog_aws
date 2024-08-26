@@ -32,6 +32,11 @@ jobs:
         run: |
           npm install -g @aws-amplify/cli
 
+      - name: Install NPM Dependencies
+        run: |
+          cd api
+          npm install
+
       - name: Generate Amplify Outputs
         run: |
           cd api
