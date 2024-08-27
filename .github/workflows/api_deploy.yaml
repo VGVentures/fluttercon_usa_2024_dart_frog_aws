@@ -111,7 +111,7 @@ jobs:
         id: deploy-apprunner
         uses: awslabs/amazon-app-runner-deploy@main        
         with:
-          service: $${{ steps.generate-service-name.outputs.SERVICE_NAME }}
+          service: ${{ steps.generate-service-name.outputs.SERVICE_NAME }}
           image: ${{ steps.build-image.outputs.image }}          
           access-role-arn: ${{ secrets.ROLE_ARN }}
           runtime: NODEJS_12          
