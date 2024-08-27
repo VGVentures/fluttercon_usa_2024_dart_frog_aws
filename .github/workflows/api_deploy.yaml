@@ -81,11 +81,37 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"  
 
+      - name: Generate App Runner service name
+        id: generate-service-name
+        run: |
+          # Remove 'refs/heads/' prefix if present
+          BRANCH_NAME=${GITHUB_REF_NAME#refs/heads/}
+          
+          # Replace invalid characters with hyphens and convert to lowercase
+          SANITIZED_BRANCH=$(echo $BRANCH_NAME | tr '[:upper:]' '[:lower:]' | sed -e 's/[^a-z0-9-]/-/g' -e 's/--*/-/g' -e 's/^-//' -e 's/-$//')
+          
+          # Ensure the name starts with a letter or number
+          if [[ ! $SANITIZED_BRANCH =~ ^[a-z0-9] ]]; then
+            SANITIZED_BRANCH="b-$SANITIZED_BRANCH"
+          fi
+          
+          # Truncate to 40 characters (leaving room for prefix)
+          SANITIZED_BRANCH=${SANITIZED_BRANCH:0:40}
+          
+          # Create the full service name
+          SERVICE_NAME="fluttercon-usa-2024-api-${SANITIZED_BRANCH}"
+          
+          # Truncate the full name to 40 characters if necessary
+          SERVICE_NAME=${SERVICE_NAME:0:40}
+          
+          echo "SERVICE_NAME=$SERVICE_NAME" >> $GITHUB_OUTPUT
+          echo "Generated App Runner service name: $SERVICE_NAME"
+      
       - name: Deploy to App Runner
         id: deploy-apprunner
         uses: awslabs/amazon-app-runner-deploy@main        
         with:
-          service: fluttercon_usa_2024_api-${{ github.ref_name }}
+          service: $${{ steps.generate-service-name.outputs.SERVICE_NAME }}
           image: ${{ steps.build-image.outputs.image }}          
           access-role-arn: ${{ secrets.ROLE_ARN }}
           runtime: NODEJS_12          
