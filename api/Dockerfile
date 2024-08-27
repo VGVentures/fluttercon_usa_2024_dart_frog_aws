@@ -16,6 +16,9 @@ RUN cd packages/talks_repository/ && dart pub get
 RUN cd packages/user_repository/ && dart pub get
 RUN dart pub get
 
+# Install libgio-2.0
+RUN sudo apt-get update && sudo apt-get install libgio-2.0-dev
+
 # Copy app source code and AOT compile it.
 COPY . .
 
