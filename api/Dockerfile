@@ -10,9 +10,12 @@ RUN apt-get update && apt-get install -y \
     gnupg \
     libglib2.0-0 \
     libglib2.0-dev \
-    && curl -fsSL https://deb.nodesource.com/setup_14.x | bash - \
+    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs \
-    && rm -rf /var/lib/apt/lists/*
+    && npm install -g npm@latest \  
+    && rm -rf /var/lib/apt/lists/* \
+    && node --version \  
+    && npm --version
 
 # Resolve app dependencies.
 COPY pubspec.* ./
