@@ -34,7 +34,8 @@
     "api/package.json",
     "api/packages/fluttercon_data_source/lib/src/models/gen",
     "api/packages/fluttercon_data_source/test/helpers",
-    "api/packages/user_repository/test/helpers"
+    "api/packages/user_repository/test/helpers",
+    "api/Dockerfile"
   ],
   "words": [
     "Contador",
