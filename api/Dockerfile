@@ -6,30 +6,19 @@ WORKDIR /app
 
 # Install Node.js, npm, and system dependencies
 RUN apt-get update && apt-get install -y \
-    curl \
-    gnupg \
-    libglib2.0-0 \
-    libglib2.0-dev \
-    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y nodejs \
-    && npm install -g npm@latest \  
-    && rm -rf /var/lib/apt/lists/* \
-    && node --version \  
-    && npm --version
-
+    libgio-2.0-dev
+    
 # Resolve app dependencies.
 COPY pubspec.* ./
 COPY packages/fluttercon_data_source/pubspec.* ./packages/fluttercon_data_source/
 COPY packages/fluttercon_shared_models/pubspec.* ./packages/fluttercon_shared_models/
 COPY packages/talks_repository/pubspec.* ./packages/talks_repository/
 COPY packages/user_repository/pubspec.* ./packages/user_repository/
-COPY package*.json ./
 RUN cd packages/fluttercon_data_source/ && dart pub get
 RUN cd packages/fluttercon_shared_models/ && dart pub get
 RUN cd packages/talks_repository/ && dart pub get
 RUN cd packages/user_repository/ && dart pub get
 RUN dart pub get
-RUN npm install
 
 # Copy app source code and AOT compile it.
 COPY . .
