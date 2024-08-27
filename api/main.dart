@@ -19,6 +19,7 @@ Future<void> init(InternetAddress ip, int port) async {
           macOSOptions:
               // ignore: invalid_use_of_visible_for_testing_member
               MacOSSecureStorageOptions(useDataProtection: false),
+          linuxOptions: LinuxSecureStorageOptions(),
         ),
       ),
     );
