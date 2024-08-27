@@ -4,6 +4,12 @@ FROM --platform=amd64 dart:stable AS build
 
 WORKDIR /app
 
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    libgio-2.0-0 \
+    libglib2.0-dev \
+    && rm -rf /var/lib/apt/lists/*
+
 # Resolve app dependencies.
 COPY pubspec.* ./
 COPY packages/fluttercon_data_source/pubspec.* ./packages/fluttercon_data_source/
@@ -15,9 +21,6 @@ RUN cd packages/fluttercon_shared_models/ && dart pub get
 RUN cd packages/talks_repository/ && dart pub get
 RUN cd packages/user_repository/ && dart pub get
 RUN dart pub get
-
-# Install libgio-2.0
-RUN apt-get update && apt-get install libgio-2.0-dev
 
 # Copy app source code and AOT compile it.
 COPY . .
