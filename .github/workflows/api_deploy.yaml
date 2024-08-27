@@ -47,6 +47,7 @@ jobs:
 
       - name: Deploy Amplify Resources
         run: |
+          cd api
           export CI=1
           npm ci
           npx ampx pipeline-deploy --branch ${{ github.ref_name }} --app-id ${{ secrets.AMPLIFY_APP_ID }}
