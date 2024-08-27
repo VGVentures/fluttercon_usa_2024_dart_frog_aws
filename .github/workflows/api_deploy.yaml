@@ -124,16 +124,24 @@ jobs:
       - name: Get App Runner URL
         id: get-app-runner-url
         run: |
-            SERVICE_ARN=$(aws apprunner list-services --query "ServiceSummaryList[?ServiceName=='$SERVICE_NAME'].ServiceArn | [0]" --output text)
-            if [ -z "$SERVICE_ARN" ]; then
-              echo "Error: No service found with name $SERVICE_NAME"
-              exit 1
-            fi
-            echo "Service ARN: $SERVICE_ARN"
-            SERVICE_URL=$(aws apprunner describe-service --service-arn "$SERVICE_ARN" --query 'Service.ServiceUrl' --output text)
-            if [ -z "$SERVICE_URL" ]; then
-              echo "Error: Unable to retrieve Service URL"
-              exit 1
-            fi
-            echo "API_URL=https://$SERVICE_URL" >> $GITHUB_ENV
-            echo "Service URL: $SERVICE_URL"
+          SERVICE_ID="${{ steps.deploy-apprunner.outputs.service-id }}"
+          echo "Using Service ID: $SERVICE_ID"
+          
+          SERVICE_DETAILS=$(aws apprunner describe-service --service-id "$SERVICE_ID" --output json)
+          
+          if [ $? -ne 0 ]; then
+            echo "Error: Failed to describe service. Full output:"
+            echo "$SERVICE_DETAILS"
+            exit 1
+          fi
+          
+          SERVICE_URL=$(echo "$SERVICE_DETAILS" | jq -r '.Service.ServiceUrl')
+          
+          if [ -z "$SERVICE_URL" ] || [ "$SERVICE_URL" = "null" ]; then
+            echo "Error: Unable to retrieve Service URL. Full service details:"
+            echo "$SERVICE_DETAILS"
+            exit 1
+          fi
+          
+          echo "API_URL=https://$SERVICE_URL" >> $GITHUB_ENV
+          echo "Service URL: $SERVICE_URL"
