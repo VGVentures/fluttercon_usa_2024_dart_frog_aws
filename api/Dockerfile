@@ -6,8 +6,9 @@ WORKDIR /app
 
 # Install Node.js, npm, and system dependencies
 RUN apt-get update && apt-get install -y \
-    libgio-2.0-dev
-    
+    libglib2.0-0 \
+    libglib2.0-dev
+
 # Resolve app dependencies.
 COPY pubspec.* ./
 COPY packages/fluttercon_data_source/pubspec.* ./packages/fluttercon_data_source/
