@@ -121,42 +121,9 @@ jobs:
           port: 8080
           wait-for-service-stability-seconds: 600  
       
-      # - name: Deploy to App Runner
-      #   env:
-      #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      #     ECR_REPOSITORY: fluttercon_usa_2024/api-${{ github.ref_name }}
-      #     IMAGE_TAG: ${{ github.sha }}
-      #     SERVICE_NAME: fluttercon_usa_api-${{ github.ref_name }}
-      #   run: |
-      #     # Check if service exists and create or update accordingly
-      #     SERVICE_ARN=$(aws apprunner list-services --service-name-filter $SERVICE_NAME --query 'ServiceSummaryList[0].ServiceArn' --output text)
-      #     if [ -z "$SERVICE_ARN" ]; then
-      #       aws apprunner create-service --service-name $SERVICE_NAME \
-      #         --source-configuration '{
-      #           "ImageRepository": {
-      #             "ImageIdentifier": "'$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG'",
-      #             "ImageRepositoryType": "ECR",
-      #             "ImageConfiguration": {
-      #               "Port": "8080"
-      #             }
-      #           }
-      #         }'
-      #     else
-      #       aws apprunner update-service --service-arn $SERVICE_ARN \
-      #         --source-configuration '{
-      #           "ImageRepository": {
-      #             "ImageIdentifier": "'$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG'",
-      #             "ImageRepositoryType": "ECR",
-      #             "ImageConfiguration": {
-      #               "Port": "8080"
-      #             }
-      #           }
-      #         }'
-      #     fi
-      
       - name: Get App Runner URL
         id: get-app-runner-url
         run: |
-            SERVICE_ARN=$(aws apprunner list-services --service-name-filter $SERVICE_NAME --query 'ServiceSummaryList[0].ServiceArn' --output text)
+            SERVICE_ARN=$(aws apprunner list-services --query "ServiceSummaryList[?ServiceName=='$SERVICE_NAME'].ServiceArn" --output text)
             SERVICE_URL=$(aws apprunner describe-service --service-arn $SERVICE_ARN --query 'Service.ServiceUrl' --output text)
             echo "API_URL=https://$SERVICE_URL" >> $GITHUB_ENV
