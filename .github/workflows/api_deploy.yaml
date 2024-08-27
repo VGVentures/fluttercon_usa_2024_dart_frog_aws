@@ -16,7 +16,7 @@ on:
       - ".github/workflows/user_repository_verify_and_test.yaml"
     branches:
       - main
-      - feat/api-deploy #TEMP DEBUG
+  workflow_dispatch:
 
 jobs:  
   deploy:
