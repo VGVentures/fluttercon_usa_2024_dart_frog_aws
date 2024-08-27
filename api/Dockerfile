@@ -4,6 +4,16 @@ FROM --platform=amd64 dart:stable AS build
 
 WORKDIR /app
 
+# Install Node.js, npm, and system dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    gnupg \
+    libglib2.0-0 \
+    libglib2.0-dev \
+    && curl -fsSL https://deb.nodesource.com/setup_14.x | bash - \
+    && apt-get install -y nodejs \
+    && rm -rf /var/lib/apt/lists/*
+
 # Resolve app dependencies.
 COPY pubspec.* ./
 COPY packages/fluttercon_data_source/pubspec.* ./packages/fluttercon_data_source/
