@@ -4,11 +4,6 @@ FROM --platform=amd64 dart:stable AS build
 
 WORKDIR /app
 
-# Install Node.js, npm, and system dependencies
-RUN apt-get update && apt-get install -y \
-    libglib2.0-0 \
-    libglib2.0-dev
-
 # Resolve app dependencies.
 COPY pubspec.* ./
 COPY packages/fluttercon_data_source/pubspec.* ./packages/fluttercon_data_source/
@@ -34,11 +29,27 @@ RUN dart compile exe build/bin/server.dart -o build/bin/server
 
 # Build minimal serving image from AOT-compiled `/server` and required system
 # libraries and configuration files stored in `/runtime/` from the build stage.
-FROM scratch
+# Install necessary library dependencies to run. 
+# libglib2.0-0 and libsecret-1-0 are required for the dart:ffi bindings in
+# AmplifySecureStorage on Linux.
+FROM --platform=amd64 debian:buster-slim
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libglib2.0-0 \
+    libglib2.0-dev \
+    libsecret-1-0 \
+    libsecret-1-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+
 COPY --from=build /runtime/ /
 COPY --from=build /app/build/bin/server /app/bin/
-# Uncomment the following line if you are serving static files.
-# COPY --from=build /app/build/public /public/
+
+# Set the working directory
+WORKDIR /app
+
+# Ensure the library path is set correctly
+ENV LD_LIBRARY_PATH=/usr/lib/aarch64-linux-gnu:$LD_LIBRARY_PATH
 
 # Start the server.
 CMD ["/app/bin/server"]
