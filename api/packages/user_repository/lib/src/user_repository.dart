@@ -32,6 +32,13 @@ class UserRepository {
   /// Verify that current user matches session token.
   Future<User?> verifyUserFromToken(String token) async {
     final user = await getCurrentUser();
-    return user?.sessionToken == token ? user : null;
+
+    // Disabled for use with anonymous auth on the demo app.
+    // A real production app would add logic similar to this
+    // to verify that the session token passed from the client
+    // matches a valid token for a user persisted in a user pool.
+    // return user?.sessionToken == token ? user : null;
+
+    return user;
   }
 }
