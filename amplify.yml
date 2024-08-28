@@ -16,7 +16,7 @@ frontend:
     build:
       commands:
         - echo "Building Flutter web application with WASM support"
-        - flutter build web -t lib/main_production.dart --release --wasm --dart-define BASE_URL=$BASE_URL
+        - flutter build web -t lib/main_production.dart --release --dart-define BASE_URL=$BASE_URL
   artifacts:
     baseDirectory: build/web
     files:
