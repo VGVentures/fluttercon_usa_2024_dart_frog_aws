@@ -11,7 +11,7 @@ frontend:
         - echo "Installing Very Good CLI"
         - dart pub global activate very_good_cli
         - echo "Installing dependencies"
-        - cd fluttercon_usa_2024/
+        - cd fluttercon_usa_2024_dart_frog_aws/
         - dart pub global run very_good_cli:very_good packages get -r
     build:
       commands:
