@@ -140,8 +140,7 @@ jobs:
               exit 1
             fi
 
-            ESCAPED_URL=$(printf 'https://%s' "$SERVICE_URL" | sed 's/[\/&]/\\&/g')
-            echo "API_URL=$ESCAPED_URL" >> $GITHUB_ENV
+            echo "API_URL=https://$SERVICE_URL" >> $GITHUB_ENV
             echo "API URL: $API_URL"
       
       - name: Update Amplify Environment Variables
@@ -150,7 +149,7 @@ jobs:
           aws amplify update-branch \
             --app-id ${{ secrets.AMPLIFY_APP_ID }} \
             --branch ${{ github.ref_name }} \ 
-            --environment-variables "BASE_URL=$API_URL"
+            --environment-variables "{\"BASE_URL\": \"$API_URL\"}"
   
       - name: Start Amplify Build
         run: |
