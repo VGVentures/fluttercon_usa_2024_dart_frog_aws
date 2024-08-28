@@ -150,7 +150,7 @@ jobs:
           aws amplify update-branch \
             --app-id ${{ secrets.AMPLIFY_APP_ID }} \
             --branch ${{ github.ref_name }} \ 
-            --environment-variables BASE_URL="{$API_URL}"
+            --environment-variables "BASE_URL=$API_URL"
   
       - name: Start Amplify Build
         run: |
