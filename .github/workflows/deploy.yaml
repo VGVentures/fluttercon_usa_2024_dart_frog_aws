@@ -145,14 +145,14 @@ jobs:
       
       - name: Update Amplify Environment Variables
         run: |
-          aws amplify update-branch-environment-variables \
+          aws amplify update-branch \
             --app-id ${{ secrets.AMPLIFY_APP_ID }} \
-            --branch-name ${{ github.ref_name }} \
+            --branch ${{ github.ref_name }} \
             --environment-variables BASE_URL=${{ steps.get-app-runner-url.outputs.SERVICE_URL }}
   
       - name: Start Amplify Build
         run: |
           aws amplify start-job \
             --app-id ${{ secrets.AMPLIFY_APP_ID }}\
-            --branch-name ${{ github.ref_name }} \
+            --branch ${{ github.ref_name }} \
             --job-type RELEASE
