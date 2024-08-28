@@ -100,7 +100,7 @@ jobs:
           echo "SERVICE_NAME=$SERVICE_NAME" >> $GITHUB_OUTPUT
           echo "Generated App Runner service name: $SERVICE_NAME"
       
-      - name: Deploy to App Runnerß
+      - name: Deploy to App Runner
         id: deploy-apprunner
         uses: awslabs/amazon-app-runner-deploy@main        
         with:
@@ -140,12 +140,11 @@ jobs:
               exit 1
             fi
 
-            echo "API_URL=https://$SERVICE_URL" >> $GITHUB_OUTPUT
+            echo "API_URL=https://$SERVICE_URL" >> $GITHUB_ENV
             echo "API URL: $API_URL"
       
       - name: Update Amplify Environment Variables
         run: |
-          API_URL=${{steps.get-app-runner-url.outputs.API_URL}}
           echo "Setting BASE_URL to $API_URL"
           aws amplify update-branch \
             --app-id ${{ secrets.AMPLIFY_APP_ID }} \
