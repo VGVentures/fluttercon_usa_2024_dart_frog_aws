@@ -1,0 +1,26 @@
+version: 1.0
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - cd ../
+        - echo "Installing Flutter SDK"
+        - git clone https://github.com/flutter/flutter.git -b stable --depth 1
+        - export PATH="$PATH:$(pwd)/flutter/bin"
+        - flutter config --no-analytics
+        - echo "Installing Very Good CLI"
+        - pub global activate very_good_cli
+        - echo "Installing dependencies"
+        - cd fluttercon_usa_2024/
+        - dart pub global run very_good_cli:very_good packages get -r
+    build:
+      commands:
+        - echo "Building Flutter web application with WASM support"
+        - flutter build web -t main_production.dart --release --wasm --dart-define BASE_URL=$BASE_URL
+  artifacts:
+    baseDirectory: build/web
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - flutter/.pub-cache
