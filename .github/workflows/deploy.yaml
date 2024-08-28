@@ -146,14 +146,8 @@ jobs:
       - name: Update Amplify Environment Variables
         run: |
           echo "Setting BASE_URL to ${API_URL}"
-          aws amplify update-branch \
-            --app-id ${{ secrets.AMPLIFY_APP_ID }} \
-            --branch ${{ github.ref_name }} \ 
-            --environment-variables "{\"BASE_URL\": \"$API_URL\"}"
-  
+          aws amplify update-branch --app-id d26gw3imxd1pmt --branch feat/app-deploy --environment-variables BASE_URL=$API_URL
+
       - name: Start Amplify Build
         run: |
-          aws amplify start-job \
-            --app-id ${{ secrets.AMPLIFY_APP_ID }}\
-            --branch ${{ github.ref_name }} \
-            --job-type RELEASE
+          aws amplify start-job --app-id ${{ secrets.AMPLIFY_APP_ID }} --branch ${{ github.ref_name }} --job-type RELEASE
