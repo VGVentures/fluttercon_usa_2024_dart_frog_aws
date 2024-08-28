@@ -140,16 +140,19 @@ jobs:
               exit 1
             fi
 
-            echo "API_URL=https://$SERVICE_URL" >> $GITHUB_ENV
-            echo "Service URL: $SERVICE_URL"
-      
-      - name: Update Amplify Environment Variables
-        run: |
-          echo "Setting BASE_URL to https://${{ steps.get-app-runner-url.outputs.SERVICE_URL }}"
-          aws amplify update-branch \
+            API_URL="https://${SERVICE_URL}"
+            echo "API_URL: $API_URL"
+            aws amplify update-branch \
             --app-id ${{ secrets.AMPLIFY_APP_ID }} \
             --branch ${{ github.ref_name }} \ 
-            --environment-variables BASE_URL="https://${{ steps.get-app-runner-url.outputs.SERVICE_URL }}"
+            --environment-variables BASE_URL=$API_URL
+      
+      # - name: Update Amplify Environment Variables
+      #   run: |
+      #     aws amplify update-branch \
+      #       --app-id ${{ secrets.AMPLIFY_APP_ID }} \
+      #       --branch ${{ github.ref_name }} \ 
+      #       --environment-variables BASE_URL=$API_URL
   
       - name: Start Amplify Build
         run: |
