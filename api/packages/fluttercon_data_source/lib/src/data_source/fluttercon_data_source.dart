@@ -35,12 +35,10 @@ class FlutterconDataSource {
   /// Fetches a paginated list of talks.
   Future<PaginatedResult<Talk>> getTalks({bool favorites = false}) async {
     try {
-      final request = favorites
-          ? _apiClient.list(
-              Talk.classType,
-              where: Talk.ISFAVORITE.eq(true),
-            )
-          : _apiClient.list(Talk.classType);
+      final request = _apiClient.list(
+        Talk.classType,
+        where: favorites ? Talk.ISFAVORITE.eq(true) : null,
+      );
       return await _sendGraphQLRequest(
         request: request,
         operation: (request) => _apiClient.query(request: request),
