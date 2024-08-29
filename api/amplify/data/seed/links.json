@@ -1,0 +1,20 @@
+[
+    {
+        "type": "linkedin",
+        "url": "https://www.linkedin.com/in/stefanhk31/",
+        "description": "",
+        "speakerId": "1"
+    },
+    {
+        "type": "twitter",
+        "url": "https://x.com/tom_arra",
+        "description": "",
+        "speakerId": "2"
+    },
+    {
+        "type": "linkedin",
+        "url": "https://www.linkedin.com/in/tomarra/",
+        "description": "",
+        "speakerId": "2"
+    }
+]
