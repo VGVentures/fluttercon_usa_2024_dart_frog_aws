@@ -1,4 +1,4 @@
-name: Deploy Api
+name: Deploy App
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -6,14 +6,6 @@ concurrency:
 
 on:
   push:
-    paths:
-      - "api/**"
-      - ".github/workflows/api_deploy.yaml"
-      - ".github/workflows/api_verify_and_test.yaml"
-      - ".github/workflows/fluttercon_data_source_verify_and_test.yaml"
-      - ".github/workflows/fluttercon_shared_models_verify_and_test.yaml"
-      - ".github/workflows/talks_repository_verify_and_test.yaml"
-      - ".github/workflows/user_repository_verify_and_test.yaml"
     branches:
       - main
   workflow_dispatch:
@@ -121,7 +113,7 @@ jobs:
           port: 8080
           wait-for-service-stability-seconds: 600  
       
-      - name: Get App Runner URL
+      - name: Get Api URL
         id: get-app-runner-url
         run: |
             SERVICE_ID="${{ steps.deploy-apprunner.outputs.service-id }}"
@@ -148,4 +140,13 @@ jobs:
             fi
 
             echo "API_URL=https://$SERVICE_URL" >> $GITHUB_ENV
-            echo "Service URL: $SERVICE_URL"
+            echo "API URL: $API_URL"
+      
+      - name: Update Amplify Environment Variables
+        run: |
+          echo "Setting BASE_URL to ${API_URL}"
+          aws amplify update-branch --app-id ${{ secrets.AMPLIFY_APP_ID }} --branch feat/app-deploy --environment-variables BASE_URL=$API_URL
+
+      - name: Start Amplify Build
+        run: |
+          aws amplify start-job --app-id ${{ secrets.AMPLIFY_APP_ID }} --branch ${{ github.ref_name }} --job-type RELEASE

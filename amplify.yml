@@ -1,0 +1,26 @@
+version: 1.0
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - cd ../
+        - echo "Installing Flutter SDK"
+        - git clone https://github.com/flutter/flutter.git -b stable --depth 1
+        - export PATH="$PATH:$(pwd)/flutter/bin"
+        - flutter config --no-analytics
+        - echo "Installing Very Good CLI"
+        - dart pub global activate very_good_cli
+        - echo "Installing dependencies"
+        - cd fluttercon_usa_2024_dart_frog_aws/
+        - dart pub global run very_good_cli:very_good packages get -r
+    build:
+      commands:
+        - echo "Building Flutter web application"
+        - flutter build web -t lib/main_production.dart --release --dart-define BASE_URL=$BASE_URL
+  artifacts:
+    baseDirectory: build/web
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - flutter/.pub-cache
