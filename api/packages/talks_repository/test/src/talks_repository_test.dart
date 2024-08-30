@@ -29,13 +29,13 @@ void main() {
         when(() => dataSource.getTalks())
             .thenAnswer((_) async => TestHelpers.talks);
         final talks = TestHelpers.talks.items;
-        when(() => dataSource.getSpeakerTalks(talk: talks[0])).thenAnswer(
+        when(() => dataSource.getSpeakerTalks(talkId: talks[0])).thenAnswer(
           (_) async => TestHelpers.speakerTalks(talks[0]!),
         );
-        when(() => dataSource.getSpeakerTalks(talk: talks[1])).thenAnswer(
+        when(() => dataSource.getSpeakerTalks(talkId: talks[1])).thenAnswer(
           (_) async => TestHelpers.speakerTalks(talks[1]!),
         );
-        when(() => dataSource.getSpeakerTalks(talk: talks[2])).thenAnswer(
+        when(() => dataSource.getSpeakerTalks(talkId: talks[2])).thenAnswer(
           (_) async => TestHelpers.speakerTalks(talks[2]!),
         );
 

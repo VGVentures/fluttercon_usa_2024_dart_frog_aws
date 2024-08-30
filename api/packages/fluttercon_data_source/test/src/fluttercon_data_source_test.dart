@@ -250,19 +250,6 @@ void main() {
       });
 
       test(
-        'throws assertion error if both speaker and talk are provided',
-        () async {
-          expect(
-            () => dataSource.getSpeakerTalks(
-              speaker: TestHelpers.speaker,
-              talk: TestHelpers.talk,
-            ),
-            throwsA(isA<AssertionError>()),
-          );
-        },
-      );
-
-      test(
         'returns ${PaginatedResult<SpeakerTalk>} when successful',
         () async {
           when(
@@ -293,8 +280,17 @@ void main() {
               SpeakerTalk.classType,
               where: any(
                 named: 'where',
-                that: isA<QueryPredicateOperation>()
-                    .having((qpo) => qpo.field, 'Field', equals('speaker')),
+                that: isA<QueryPredicateGroup>().having(
+                  (qpg) => qpg.predicates,
+                  'Predicates',
+                  contains(
+                    isA<QueryPredicateOperation>().having(
+                      (qpo) => qpo.field,
+                      'Field',
+                      equals('speaker'),
+                    ),
+                  ),
+                ),
               ),
             ),
           ).thenAnswer(

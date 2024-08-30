@@ -1,4 +1,5 @@
 import 'package:amplify_api_dart/amplify_api_dart.dart';
+import 'package:amplify_core/amplify_core.dart';
 import 'package:fluttercon_data_source/src/data_source/amplify_api_client.dart';
 import 'package:fluttercon_data_source/src/exceptions/exceptions.dart';
 
@@ -58,16 +59,15 @@ class FlutterconDataSource {
     Speaker? speaker,
     Talk? talk,
   }) async {
-    assert(speaker == null || talk == null, 'Only one filter can be applied');
     try {
-      final queryPredicate = speaker != null
-          ? SpeakerTalk.SPEAKER.eq(speaker.id)
-          : talk != null
-              ? SpeakerTalk.TALK.eq(talk.id)
-              : null;
+      final queryPredicateGroup =
+          QueryPredicateGroup(QueryPredicateGroupType.or, [
+        SpeakerTalk.SPEAKER.eq(speaker?.id),
+        SpeakerTalk.TALK.eq(talk?.id),
+      ]);
       final request = _apiClient.list(
         SpeakerTalk.classType,
-        where: queryPredicate,
+        where: queryPredicateGroup,
       );
       return _sendGraphQLRequest(
         request: request,

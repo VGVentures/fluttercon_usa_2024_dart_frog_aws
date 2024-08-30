@@ -22,7 +22,7 @@ class TalksRepository {
     final talksResponse = await _dataSource.getTalks();
     for (final talk in talksResponse.items) {
       if (talk == null) continue;
-      final speakerTalks = await _dataSource.getSpeakerTalks(talk: talk);
+      final speakerTalks = await _dataSource.getSpeakerTalks(talkId: talk);
       final talkPreview = TalkPreview(
         id: talk.id,
         title: talk.title ?? '',
