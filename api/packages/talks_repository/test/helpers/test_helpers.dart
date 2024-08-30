@@ -2,22 +2,29 @@ import 'package:fluttercon_data_source/fluttercon_data_source.dart';
 import 'package:fluttercon_shared_models/fluttercon_shared_models.dart';
 
 class TestHelpers {
+  static final talk1StartTime = TemporalDateTime(DateTime(2024, 1, 3));
+  static final talk2StartTime = TemporalDateTime(DateTime(2024, 1, 2));
+  static final talk3StartTime = TemporalDateTime(DateTime(2024));
+
   static final talks = PaginatedResult(
     [
       Talk(
         id: '1',
         title: 'Test Talk 1',
         room: 'Room 1',
+        startTime: talk1StartTime,
       ),
       Talk(
         id: '2',
         title: 'Test Talk 2',
         room: 'Room 2',
+        startTime: talk2StartTime,
       ),
       Talk(
         id: '3',
         title: 'Test Talk 3',
         room: 'Room 3',
+        startTime: talk3StartTime,
       ),
     ],
     null,
@@ -65,27 +72,37 @@ class TestHelpers {
   static final talkTimeSlots = PaginatedData(
     items: [
       TalkTimeSlot(
-        startTime: DateTime(2024),
+        startTime: talk3StartTime.getDateTimeInUtc(),
+        talks: [
+          TalkPreview(
+            id: '3',
+            title: 'Test Talk 3',
+            room: 'Room 3',
+            startTime: talk3StartTime.getDateTimeInUtc(),
+            speakerNames: const ['Speaker 1', 'Speaker 2', 'Speaker 3'],
+          ),
+        ],
+      ),
+      TalkTimeSlot(
+        startTime: talk2StartTime.getDateTimeInUtc(),
+        talks: [
+          TalkPreview(
+            id: '2',
+            title: 'Test Talk 2',
+            room: 'Room 2',
+            startTime: talk2StartTime.getDateTimeInUtc(),
+            speakerNames: const ['Speaker 1', 'Speaker 2', 'Speaker 3'],
+          ),
+        ],
+      ),
+      TalkTimeSlot(
+        startTime: talk1StartTime.getDateTimeInUtc(),
         talks: [
           TalkPreview(
             id: '1',
             title: 'Test Talk 1',
             room: 'Room 1',
-            startTime: DateTime(2024),
-            speakerNames: const ['Speaker 1', 'Speaker 2', 'Speaker 3'],
-          ),
-          TalkPreview(
-            id: '2',
-            title: 'Test Talk 2',
-            room: 'Room 2',
-            startTime: DateTime(2024),
-            speakerNames: const ['Speaker 1', 'Speaker 2', 'Speaker 3'],
-          ),
-          TalkPreview(
-            id: '3',
-            title: 'Test Talk 3',
-            room: 'Room 3',
-            startTime: DateTime(2024),
+            startTime: talk1StartTime.getDateTimeInUtc(),
             speakerNames: const ['Speaker 1', 'Speaker 2', 'Speaker 3'],
           ),
         ],

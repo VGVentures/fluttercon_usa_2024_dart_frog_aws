@@ -24,7 +24,8 @@ void main() {
     });
 
     group('getTalks', () {
-      test('returns ${PaginatedData<TalkTimeSlot>} when successful', () async {
+      test('returns sorted ${PaginatedData<TalkTimeSlot>} when successful',
+          () async {
         when(() => dataSource.getTalks())
             .thenAnswer((_) async => TestHelpers.talks);
         final talks = TestHelpers.talks.items;
