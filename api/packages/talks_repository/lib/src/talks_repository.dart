@@ -44,8 +44,11 @@ class TalksRepository {
       timeSlots.add(timeSlot);
     }
 
+    final sortedTimeSlots = [...timeSlots]
+      ..sort((a, b) => a.startTime.compareTo(b.startTime));
+
     return PaginatedData(
-      items: timeSlots,
+      items: sortedTimeSlots,
       limit: talksResponse.limit,
       nextToken: talksResponse.nextToken,
     );
