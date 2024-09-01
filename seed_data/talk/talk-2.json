@@ -1,0 +1,29 @@
+{
+  "id": {
+    "S": "2"
+  },
+  "createdAt": {
+    "S": "2023-01-01T00:00:00Z"
+  },
+  "description": {
+    "S": "A look back on 10 years of Flutter. What we were trying to do, what we did, and where we’re going! Did you know Flutter started as a web browser? Or that the first 3 versions of Flutter were in JavaScript? Or that Flutter took 4 years to reach 1.0!? This talk will walk back through some of the eras of Flutter and how I see our coming years unfolding."
+  },
+  "endTime": {
+    "S": "2024-09-19T14:00:00Z"
+  },
+  "isFavorite": {
+    "BOOL": false
+  },
+  "room": {
+    "S": "Imperial Room"
+  },
+  "startTime": {
+    "S": "2024-09-29T13:15:00Z"
+  },
+  "title": {
+    "S": "Flutter at 10 years"
+  },
+  "updatedAt": {
+    "S": "2023-01-01T00:00:00Z"
+  }
+}

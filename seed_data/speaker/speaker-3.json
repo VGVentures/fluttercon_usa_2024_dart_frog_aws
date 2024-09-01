@@ -1,0 +1,23 @@
+{
+  "id": {
+    "S": "3"
+  },
+  "bio": {
+    "S": "Eric started the Flutter project 8 years ago and led the Flutter and Dart teams at Google for years. Recently he left Google to start a new company, Shorebird. Shorebird builds products for businesses using Flutter and Dart around the globe. shorebird.dev"
+  },
+  "createdAt": {
+    "S": "2023-01-01T00:00:00Z"
+  },
+  "imageUrl": {
+    "S": "https://flutterconusa.dev/wp-content/uploads/sites/8/2024/08/2c00-400o400o1-PtVuh3qyU5cpRutnSf75yU-19.jpg"
+  },
+  "name": {
+    "S": "Eric Seidel"
+  },
+  "title": {
+    "S": "Founder & CEO of Shorebird, Co-Founder of Flutter, former Director of Flutter & Dart at Google"
+  },
+  "updatedAt": {
+    "S": "2023-01-01T00:00:00Z"
+  }
+}

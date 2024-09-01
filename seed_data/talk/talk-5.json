@@ -1,0 +1,29 @@
+{
+  "id": {
+    "S": "5"
+  },
+  "createdAt": {
+    "S": "2023-01-01T00:00:00Z"
+  },
+  "description": {
+    "S": "Tide is a financial services platform trusted by 500,000+ sole traders, freelancers, and limited companies throughout the UK. We’ve been developing our mobile applications using native technologies for several years, but in pursuit of a solution with better productivity, maintainability, and scalability, we chose to rebuild our products with Flutter. With our codebase not older than a couple of years, we keep it fresh and modern for a productive and joyful developer experience. \n\n Join this session where Anna, Senior Staff Engineer and a leading Flutter developer at Tide, will share all technical details about our Flutter project: what state management do we use, how do we implement navigation and API communication, what type of tests do we write, and so on. Additionally, you’ll hear about tools and approaches that support our development process: what our CI solution looks like, how we monitor problems in production, how we maintain our multi-million lines codebase, and even more."
+  },
+  "endTime": {
+    "S": "2024-09-19T14:55:00Z"
+  },
+  "isFavorite": {
+    "BOOL": false
+  },
+  "room": {
+    "S": "Regency Room"
+  },
+  "startTime": {
+    "S": "2024-09-19T14:15:00Z"
+  },
+  "title": {
+    "S": "Mobile tech stack at Tide"
+  },
+  "updatedAt": {
+    "S": "2023-01-01T00:00:00Z"
+  }
+}

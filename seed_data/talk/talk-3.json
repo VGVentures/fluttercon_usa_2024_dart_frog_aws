@@ -1,0 +1,29 @@
+{
+  "id": {
+    "S": "3"
+  },
+  "createdAt": {
+    "S": "2023-01-01T00:00:00Z"
+  },
+  "description": {
+    "S": "Tests are a critical tool for effective app delivery. Learn what it means to test Flutter code, how to start writing tests for a new app, how to evolve tests over time, and how to make an existing app testable."
+  },
+  "endTime": {
+    "S": "2024-09-19T14:55:00Z"
+  },
+  "isFavorite": {
+    "BOOL": false
+  },
+  "room": {
+    "S": "Imperial Room"
+  },
+  "startTime": {
+    "S": "2024-09-19T14:15:00Z"
+  },
+  "title": {
+    "S": "The art of Flutter testing"
+  },
+  "updatedAt": {
+    "S": "2023-01-01T00:00:00Z"
+  }
+}
