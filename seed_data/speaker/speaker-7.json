@@ -1,0 +1,23 @@
+{
+  "id": {
+    "S": "7"
+  },
+  "bio": {
+    "S": "Todd Volkert (@VolkertTodd) leads engineering for Flutter, working from Google’s office in Mountain View. He joined Google in 2010 after twelve years leading engineering teams at companies such as VMware and FOXSports. In his spare time, he enjoys photography, attending his kids’ sporting and music events, playing as an amateur carpenter, and tutoring students in STEM subjects."
+  },
+  "createdAt": {
+    "S": "2023-01-01T00:00:00Z"
+  },
+  "imageUrl": {
+    "S": "https://flutterconusa.dev/wp-content/uploads/sites/8/2024/08/8d0e-400o400o1-aRRvKR9K9PBx5w3k96nCCR-14.jpg"
+  },
+  "name": {
+    "S": "Todd Volkert"
+  },
+  "title": {
+    "S": "Director of Engineering at Google"
+  },
+  "updatedAt": {
+    "S": "2023-01-01T00:00:00Z"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "id": {
+    "S": "5"
+  },
+  "bio": {
+    "S": "Vijay leads Dart Engineering at Google. He has been a member of the Dart team since its founding, was the original tech lead for “Dartium”, and kick-started Dart’s transition to Dart 2 and beyond."
+  },
+  "createdAt": {
+    "S": "2023-01-01T00:00:00Z"
+  },
+  "imageUrl": {
+    "S": "https://flutterconusa.dev/wp-content/uploads/sites/8/2024/08/cc45-400o400o1-XQ2RbyiNAPAZHppzwNTDJQ-17.jpg"
+  },
+  "name": {
+    "S": "Vijay Menon"
+  },
+  "title": {
+    "S": "Dart Director of Engineering"
+  },
+  "updatedAt": {
+    "S": "2023-01-01T00:00:00Z"
+  }
+}

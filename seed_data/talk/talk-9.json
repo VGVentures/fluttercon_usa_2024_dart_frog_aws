@@ -1,0 +1,29 @@
+{
+  "id": {
+    "S": "9"
+  },
+  "createdAt": {
+    "S": "2023-01-01T00:00:00Z"
+  },
+  "description": {
+    "S": "In this workshop we’ll walk through all the steps needed to get Shorebird working on a Flutter app of your choice. Either follow along with a provided Flutter app or bring your own app. Along the way we’ll look at how to manage apps, releases, patches, and more using the Shorebird CLI and web console. We will also cover how to use package:shorebird_code_push to customize the user experience.\n\nBy the end of the workshop, you should have Shorebird’s code push solution integrated into a Flutter app and have a solid understanding of how to deliver over the air updates to your users."
+  },
+  "endTime": {
+    "S": "2024-09-19T16:15:00Z"
+  },
+  "isFavorite": {
+    "BOOL": false
+  },
+  "room": {
+    "S": "Chapel 1: Workshops & Ecosystem Summit"
+  },
+  "startTime": {
+    "S": "2024-09-19T15:10:00Z"
+  },
+  "title": {
+    "S": "Join the Flock: Add Shorebird to your Flutter Apps"
+  },
+  "updatedAt": {
+    "S": "2023-01-01T00:00:00Z"
+  }
+}

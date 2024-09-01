@@ -1,0 +1,29 @@
+{
+  "id": {
+    "S": "8"
+  },
+  "createdAt": {
+    "S": "2023-01-01T00:00:00Z"
+  },
+  "description": {
+    "S": "In this session, we'll walk you through what FlutterFlow is and how it can benefit Flutter developers. We'll also talk through the product announcements made at FlutterFlow's developer conference - including new features and the overall product direction and strategy."
+  },
+  "endTime": {
+    "S": "2024-09-19T16:15:00Z"
+  },
+  "isFavorite": {
+    "BOOL": false
+  },
+  "room": {
+    "S": "Regency Room"
+  },
+  "startTime": {
+    "S": "2024-09-19T15:10:00Z"
+  },
+  "title": {
+    "S": "The future of visual development with FlutterFlow"
+  },
+  "updatedAt": {
+    "S": "2023-01-01T00:00:00Z"
+  }
+}

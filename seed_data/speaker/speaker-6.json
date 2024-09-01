@@ -1,0 +1,23 @@
+{
+  "id": {
+    "S": "6"
+  },
+  "bio": {
+    "S": "In addition to being a Buckeye alum, published poet, and registered ginger, Andrew leads the developer relations team for Dart and Flutter at Google."
+  },
+  "createdAt": {
+    "S": "2023-01-01T00:00:00Z"
+  },
+  "imageUrl": {
+    "S": "https://flutterconusa.dev/wp-content/uploads/sites/8/2024/08/40cf-400o400o1-c2833363-2fca-4209-984b-5bdf28e7b075-14.jpg"
+  },
+  "name": {
+    "S": "Andrew Brogdon"
+  },
+  "title": {
+    "S": "Developer Programs Engineer @ Google"
+  },
+  "updatedAt": {
+    "S": "2023-01-01T00:00:00Z"
+  }
+}
