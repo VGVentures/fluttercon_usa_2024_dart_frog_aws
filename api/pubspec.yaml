@@ -18,6 +18,8 @@ dependencies:
   fluttercon_shared_models:
     path: packages/fluttercon_shared_models
   shelf_cors_headers: ^0.1.5
+  speakers_repository:
+    path: packages/speakers_repository
   talks_repository:
     path: packages/talks_repository
   user_repository:
