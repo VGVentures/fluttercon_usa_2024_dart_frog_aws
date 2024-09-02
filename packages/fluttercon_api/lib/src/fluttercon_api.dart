@@ -62,6 +62,19 @@ class FlutterconApi {
     return _currentUser!;
   }
 
+  /// GET /speakers
+  /// Fetches a paginated list of speakers.
+  Future<PaginatedData<SpeakerPreview>> getSpeakers() async => _sendRequest(
+        uri: Uri.parse('$_baseUrl/speakers'),
+        method: HttpMethod.get,
+        fromJson: (json) => PaginatedData.fromJson(
+          json,
+          (item) => SpeakerPreview.fromJson(
+            (item ?? {}) as Map<String, dynamic>,
+          ),
+        ),
+      );
+
   /// GET /talks
   /// Fetches a paginated list of talks.
   Future<PaginatedData<TalkTimeSlot>> getTalks() async => _sendRequest(
