@@ -180,6 +180,78 @@ void main() {
       );
     });
 
+    group('getSpeakers', () {
+      final url = Uri.parse('$baseUrl/speakers');
+
+      test(
+        'returns ${PaginatedData<TalkTimeSlot>} on successful response',
+        () async {
+          whenHttpClientSend(url: url, response: TestHelpers.speakersResponse);
+
+          final talks = await flutterconApi.getSpeakers();
+
+          expect(talks, isA<PaginatedData<SpeakerPreview>>());
+        },
+      );
+
+      test(
+        'throws $FlutterconApiMalformedResponseException '
+        'when body is malformed',
+        () async {
+          whenHttpClientSend(url: url, response: '');
+
+          expect(
+            () async => flutterconApi.getSpeakers(),
+            throwsA(isA<FlutterconApiMalformedResponseException>()),
+          );
+        },
+      );
+
+      test(
+        'throws $FlutterconApiClientException '
+        'when response is not successful',
+        () async {
+          whenHttpClientSend(
+            url: url,
+            // ignore: inference_failure_on_collection_literal
+            response: {},
+            httpStatus: HttpStatus.notFound,
+          );
+
+          expect(
+            () async => flutterconApi.getSpeakers(),
+            throwsA(
+              isA<FlutterconApiClientException>().having(
+                (e) => e.statusCode,
+                'status code',
+                equals(
+                  HttpStatus.notFound,
+                ),
+              ),
+            ),
+          );
+        },
+      );
+
+      test(
+        'throws $FlutterconApiClientException '
+        'when an unexpected error occurs',
+        () async {
+          whenHttpClientSend<TalkTimeSlot>(
+            url: url,
+            exception: Exception('oops'),
+          );
+
+          expect(
+            () async => flutterconApi.getSpeakers(),
+            throwsA(
+              isA<FlutterconApiClientException>(),
+            ),
+          );
+        },
+      );
+    });
+
     group('getTalks', () {
       final url = Uri.parse('$baseUrl/talks');
 

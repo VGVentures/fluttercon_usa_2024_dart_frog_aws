@@ -41,5 +41,28 @@ class TestData {
     ],
   );
 
+  static const speakerData = PaginatedData(
+    items: [
+      SpeakerPreview(
+        id: '1',
+        name: 'Speaker 1',
+        title: 'Title 1',
+        imageUrl: 'Image 1',
+      ),
+      SpeakerPreview(
+        id: '2',
+        name: 'Speaker 2',
+        title: 'Title 2',
+        imageUrl: 'Image 2',
+      ),
+      SpeakerPreview(
+        id: '3',
+        name: 'Speaker 3',
+        title: 'Title 3',
+        imageUrl: 'Image 3',
+      ),
+    ],
+  );
+
   static final error = Exception('oops');
 }

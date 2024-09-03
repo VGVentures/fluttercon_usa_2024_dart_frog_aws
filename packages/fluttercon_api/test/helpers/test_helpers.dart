@@ -17,4 +17,15 @@ class TestHelpers {
       },
     ],
   };
+
+  static final speakersResponse = {
+    'items': [
+      {
+        'id': 'id',
+        'name': 'name',
+        'title': 'title',
+        'imageUrl': 'imageUrl',
+      },
+    ],
+  };
 }

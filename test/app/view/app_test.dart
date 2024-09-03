@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttercon_api/fluttercon_api.dart';
 import 'package:fluttercon_usa_2024/app/app.dart';
+import 'package:fluttercon_usa_2024/speakers/view/speakers_page.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../helpers/test_data.dart';
@@ -35,7 +36,7 @@ void main() {
       await tester.tap(find.byIcon(Icons.people_outlined));
       await tester.pumpAndSettle();
 
-      expect(find.text('Speakers coming soon!'), findsOneWidget);
+      expect(find.byType(SpeakersPage), findsOneWidget);
     });
   });
 }
