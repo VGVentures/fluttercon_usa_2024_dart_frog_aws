@@ -1,0 +1,23 @@
+{
+  "id": {
+    "S": "10"
+  },
+  "bio": {
+    "S": "Matt is a Flutter developer, consultant, and educator. He worked on the Flutter team from 2018-2020. Today, Matt is dedicated to helping the world adopt Flutter."
+  },
+  "createdAt": {
+    "S": "2023-01-01T00:00:00Z"
+  },
+  "imageUrl": {
+    "S": "https://flutterconusa.dev/wp-content/uploads/sites/8/2024/09/d0ce-400o400o1-G12zvAK6R655QAmBkVT4ba.png"
+  },
+  "name": {
+    "S": "Matt Carroll"
+  },
+  "title": {
+    "S": "Chief of the Flutter Bounty Hunters"
+  },
+  "updatedAt": {
+    "S": "2023-01-01T00:00:00Z"
+  }
+}

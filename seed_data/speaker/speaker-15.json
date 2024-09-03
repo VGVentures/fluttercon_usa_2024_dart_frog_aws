@@ -1,0 +1,23 @@
+{
+  "id": {
+    "S": "15"
+  },
+  "bio": {
+    "S": "Felix Angelov is a Founding Engineer at Shorebird. He previously worked at Very Good Ventures as the Head of Architecture and also worked at BMW where he pioneered the transition to Flutter. In addition to working with clients, he is also a dedicated open source creator and maintainer. Felix created the bloc library, which is one of the most popular state management libraries and has been named a Flutter Favorite by Google."
+  },
+  "createdAt": {
+    "S": "2023-01-01T00:00:00Z"
+  },
+  "imageUrl": {
+    "S": "https://flutterconusa.dev/wp-content/uploads/sites/8/2024/09/c5a2-400o400o1-WCiuW4C55mRTJRtQbMDHJd.jpg"
+  },
+  "name": {
+    "S": "Felix Angelov"
+  },
+  "title": {
+    "S": "Founding Engineer at Shorebird"
+  },
+  "updatedAt": {
+    "S": "2023-01-01T00:00:00Z"
+  }
+}

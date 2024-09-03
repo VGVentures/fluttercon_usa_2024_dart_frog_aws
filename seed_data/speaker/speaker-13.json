@@ -1,0 +1,23 @@
+{
+  "id": {
+    "S": "13"
+  },
+  "bio": {
+    "S": "I’m a software engineer at Mastercard, specializing in mobile app development using Flutter and Dart and developing secure and scalable finance applications that millions of Danish citizens use, ensuring compliance with industry standards. \n\n Experience from working both in a startup and corporate environment. \n\n Aside from a job driven by solving real-world problems, I enjoy working on my ideas that solve problems using technology. Checkout my complete portfolio at https://martinholoubek.dev"
+  },
+  "createdAt": {
+    "S": "2023-01-01T00:00:00Z"
+  },
+  "imageUrl": {
+    "S": "https://flutterconusa.dev/wp-content/uploads/sites/8/2024/09/3d1a-400o400o1-RC2uHiQz6XHu6BFuSxUVff.jpg"
+  },
+  "name": {
+    "S": "Martin Holoubek"
+  },
+  "title": {
+    "S": "Software Engineer in Mastercard"
+  },
+  "updatedAt": {
+    "S": "2023-01-01T00:00:00Z"
+  }
+}
