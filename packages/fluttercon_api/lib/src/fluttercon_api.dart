@@ -69,9 +69,10 @@ class FlutterconApi {
         method: HttpMethod.get,
         fromJson: (json) => PaginatedData.fromJson(
           json,
-          (item) => SpeakerPreview.fromJson(
-            (item ?? {}) as Map<String, dynamic>,
-          ),
+          // ignoring line length to fix coverage gap
+          // ignore: lines_longer_than_80_chars
+          (item) =>
+              SpeakerPreview.fromJson((item ?? {}) as Map<String, dynamic>),
         ),
       );
 

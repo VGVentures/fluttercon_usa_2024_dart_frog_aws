@@ -14,6 +14,7 @@ on:
       - "api/**"
       - "api/packages/fluttercon_data_source/**"
       - "api/packages/fluttercon_shared_models/**"
+      - "api/packages/speakers_repository/**"
       - "api/packages/talks_repository/**"
       - "api/packages/user_repository/**"
   push:
@@ -25,6 +26,7 @@ on:
       - "api/**"
       - "api/packages/fluttercon_data_source/**"
       - "api/packages/fluttercon_shared_models/**"
+      - "api/packages/speakers_repository/**"
       - "api/packages/talks_repository/**"
       - "api/packages/user_repository/**"
 
