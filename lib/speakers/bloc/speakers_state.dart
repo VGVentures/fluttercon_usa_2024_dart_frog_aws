@@ -2,9 +2,6 @@ part of 'speakers_bloc.dart';
 
 sealed class SpeakersState extends Equatable {
   const SpeakersState();
-
-  @override
-  List<Object> get props => [];
 }
 
 final class SpeakersInitial extends SpeakersState {
