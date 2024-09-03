@@ -5,18 +5,8 @@ FROM --platform=amd64 dart:stable AS build
 WORKDIR /app
 
 # Resolve app dependencies.
-COPY pubspec.* ./
-COPY packages/fluttercon_data_source/pubspec.* ./packages/fluttercon_data_source/
-COPY packages/fluttercon_shared_models/pubspec.* ./packages/fluttercon_shared_models/
-COPY packages/speakers_repository/pubspec.* ./packages/speakers_repository/
-COPY packages/talks_repository/pubspec.* ./packages/talks_repository/
-COPY packages/user_repository/pubspec.* ./packages/user_repository/
-RUN cd packages/fluttercon_data_source/ && dart pub get
-RUN cd packages/fluttercon_shared_models/ && dart pub get
-RUN cd packages/speakers_repository/ && dart pub get
-RUN cd packages/talks_repository/ && dart pub get
-RUN cd packages/user_repository/ && dart pub get
-RUN dart pub get
+RUN dart pub global activate very_good_cli
+RUN dart pub global run very_good_cli:very_good packages get -r
 
 # Copy app source code and AOT compile it.
 COPY . .
