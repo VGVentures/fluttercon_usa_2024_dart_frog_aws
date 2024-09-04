@@ -11,6 +11,7 @@ import 'package:hive/hive.dart';
 
 Future<void> init(InternetAddress ip, int port) async {
   Hive.init(Directory.current.path);
+  await Hive.openBox('fluttercon_cache');
   final api = AmplifyAPIDart(
     options: APIPluginOptions(modelProvider: ModelProvider.instance),
   );
