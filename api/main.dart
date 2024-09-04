@@ -9,9 +9,11 @@ import 'package:dart_frog/dart_frog.dart';
 import 'package:fluttercon_data_source/src/models/gen/ModelProvider.dart';
 import 'package:hive/hive.dart';
 
+import 'routes/_middleware.dart';
+
 Future<void> init(InternetAddress ip, int port) async {
   Hive.init(Directory.current.path);
-  await Hive.openBox('fluttercon_cache');
+  await Hive.openBox<String>(cacheBox);
   final api = AmplifyAPIDart(
     options: APIPluginOptions(modelProvider: ModelProvider.instance),
   );
