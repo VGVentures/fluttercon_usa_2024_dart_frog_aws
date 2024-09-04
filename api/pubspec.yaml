@@ -20,7 +20,6 @@ dependencies:
   fluttercon_shared_models:
     path: packages/fluttercon_shared_models
   hive: ^2.2.3
-  path_provider: ^2.1.4
   shelf_cors_headers: ^0.1.5
   speakers_repository:
     path: packages/speakers_repository

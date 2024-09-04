@@ -8,11 +8,9 @@ import 'package:api/amplify_outputs.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:fluttercon_data_source/src/models/gen/ModelProvider.dart';
 import 'package:hive/hive.dart';
-import 'package:path_provider/path_provider.dart';
 
 Future<void> init(InternetAddress ip, int port) async {
-  final directory = await getApplicationDocumentsDirectory();
-  Hive.init(directory.path);
+  Hive.init(Directory.current.path);
   final api = AmplifyAPIDart(
     options: APIPluginOptions(modelProvider: ModelProvider.instance),
   );

@@ -13,7 +13,7 @@ Future<Response> onRequest(RequestContext context) async {
 }
 
 Future<Response> _get(RequestContext context) async {
-  final talksRepo = await context.read<Future<TalksRepository>>();
+  final talksRepo = context.read<TalksRepository>();
   try {
     final data = await talksRepo.getTalks();
     final json = data.toJson(

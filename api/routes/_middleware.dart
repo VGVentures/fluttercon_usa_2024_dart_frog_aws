@@ -23,15 +23,15 @@ Handler middleware(Handler handler) {
         provider<Future<TalksRepository>>(
           (context) async => TalksRepository(
             dataSource: context.read<FlutterconDataSource>(),
-            cache: await context.read<Future<FlutterconCache>>(),
+            cache: context.read<FlutterconCache>(),
           ),
         ),
       )
       .use(
-        provider<Future<FlutterconCache>>(
-          (_) async {
+        provider<FlutterconCache>(
+          (_) {
             final box = Hive.box('fluttercon_cache');
-            await Hive.openBox('fluttercon_cache');
+            Hive.openBox('fluttercon_cache');
             return FlutterconHiveCache(
               box,
             );
