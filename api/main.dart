@@ -13,7 +13,7 @@ import 'routes/_middleware.dart';
 
 Future<void> init(InternetAddress ip, int port) async {
   Hive.init(Directory.current.path);
-  await Hive.openBox<String>(cacheBox);
+  await Hive.openBox<String>(cacheBoxKey);
   final api = AmplifyAPIDart(
     options: APIPluginOptions(modelProvider: ModelProvider.instance),
   );

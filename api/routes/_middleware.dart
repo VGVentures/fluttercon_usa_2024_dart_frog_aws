@@ -9,7 +9,8 @@ import 'package:speakers_repository/speakers_repository.dart';
 import 'package:talks_repository/talks_repository.dart';
 import 'package:user_repository/user_repository.dart';
 
-const cacheBox = 'fluttercon_cache';
+const cacheBoxKey = 'fluttercon_cache';
+final box = Hive.box<String>(cacheBoxKey);
 
 Handler middleware(Handler handler) {
   return handler
@@ -31,10 +32,7 @@ Handler middleware(Handler handler) {
       )
       .use(
         provider<FlutterconCache>(
-          (_) {
-            final box = Hive.box<String>(cacheBox);
-            return FlutterconHiveCache(box);
-          },
+          (_) => FlutterconHiveCache(box: box),
         ),
       )
       .use(
