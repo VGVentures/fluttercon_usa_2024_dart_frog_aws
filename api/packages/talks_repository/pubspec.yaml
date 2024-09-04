@@ -14,6 +14,8 @@ dev_dependencies:
   very_good_analysis: ^6.0.0
   
 dependencies:
+  fluttercon_cache:
+    path: ../fluttercon_cache
   fluttercon_data_source:
     path: ../fluttercon_data_source
   fluttercon_shared_models:

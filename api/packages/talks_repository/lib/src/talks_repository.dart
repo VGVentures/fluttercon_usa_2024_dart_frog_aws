@@ -1,5 +1,9 @@
+import 'package:fluttercon_cache/fluttercon_cache.dart';
 import 'package:fluttercon_data_source/fluttercon_data_source.dart';
 import 'package:fluttercon_shared_models/fluttercon_shared_models.dart';
+
+/// The cache key for the talks cache.
+const talksCacheKey = 'talks';
 
 /// {@template talks_repository}
 /// A repository to cache and prepare talk data retrieved from the api.
@@ -8,14 +12,24 @@ class TalksRepository {
   /// {@macro talks_repository}
   const TalksRepository({
     required FlutterconDataSource dataSource,
-  }) : _dataSource = dataSource;
+    required FlutterconCache cache,
+  })  : _dataSource = dataSource,
+        _cache = cache;
 
   final FlutterconDataSource _dataSource;
+  final FlutterconCache _cache;
 
   /// Fetches a paginated list of talks from the data source.
   /// Returns [TalkTimeSlot] objects with speaker information
   /// for each one.
   Future<PaginatedData<TalkTimeSlot>> getTalks() async {
+    final cachedTalks =
+        await _cache.get(talksCacheKey) as PaginatedData<TalkTimeSlot>?;
+
+    if (cachedTalks != null) {
+      return cachedTalks;
+    }
+
     final timeSlots = <TalkTimeSlot>[];
     final talks = <TalkPreview>[];
 
@@ -47,10 +61,14 @@ class TalksRepository {
     final sortedTimeSlots = [...timeSlots]
       ..sort((a, b) => a.startTime.compareTo(b.startTime));
 
-    return PaginatedData(
+    final result = PaginatedData(
       items: sortedTimeSlots,
       limit: talksResponse.limit,
       nextToken: talksResponse.nextToken,
     );
+
+    await _cache.set(talksCacheKey, result);
+
+    return result;
   }
 }
