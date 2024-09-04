@@ -1,4 +1,6 @@
 // ignore_for_file: prefer_const_constructors
+import 'dart:convert';
+
 import 'package:fluttercon_cache/fluttercon_cache.dart';
 import 'package:fluttercon_data_source/fluttercon_data_source.dart';
 import 'package:fluttercon_shared_models/fluttercon_shared_models.dart';
@@ -22,10 +24,9 @@ void main() {
       dataSource = _MockFlutterconDataSource();
       cache = _MockFlutterconCache();
       talksRepository = TalksRepository(dataSource: dataSource, cache: cache);
-      // when(() => cache.set(talksCacheKey, any<PaginatedData<TalkTimeSlot>>()))
-      //     .thenAnswer(
-      //   (_) async => {},
-      // );
+      when(() => cache.set(talksCacheKey, any<String>())).thenAnswer(
+        (_) async => {},
+      );
     });
 
     setUpAll(() {
@@ -43,17 +44,18 @@ void main() {
     group('getTalks', () {
       test('returns cached ${PaginatedData<TalkTimeSlot>} when available',
           () async {
-        // when(() => cache.get(talksCacheKey)).thenAnswer(
-        //   (_) async => TestHelpers.talkTimeSlots,
-        // );
+        when(() => cache.get(talksCacheKey)).thenAnswer(
+          (_) async => jsonEncode(TestHelpers.talkTimeSlotsJson),
+        );
 
         final result = await talksRepository.getTalks();
         verifyNever(() => dataSource.getTalks());
         expect(result, equals(TestHelpers.talkTimeSlots));
       });
 
-      test('returns ${PaginatedData<TalkTimeSlot>} from api when not cached',
-          () async {
+      test(
+          'returns ${PaginatedData<TalkTimeSlot>} from api when not cached '
+          'and adds to the cache', () async {
         when(() => cache.get(talksCacheKey)).thenAnswer(
           (_) async => null,
         );
@@ -74,7 +76,12 @@ void main() {
         verify(
           () => dataSource.getTalks(),
         ).called(1);
-        //verify(() => cache.set(talksCacheKey, result)).called(1);
+        verify(
+          () => cache.set(
+            talksCacheKey,
+            any<String>(),
+          ),
+        ).called(1);
         expect(result, equals(TestHelpers.talkTimeSlots));
       });
 

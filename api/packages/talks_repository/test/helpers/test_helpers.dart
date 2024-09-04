@@ -109,4 +109,45 @@ class TestHelpers {
       ),
     ],
   );
+
+  static final talkTimeSlotsJson = {
+    'items': [
+      {
+        'startTime': '2024-01-01T05:00:00.000Z',
+        'talks': [
+          {
+            'id': '3',
+            'title': 'Test Talk 3',
+            'room': 'Room 3',
+            'startTime': '2024-01-01T05:00:00.000Z',
+            'speakerNames': ['Speaker 1', 'Speaker 2', 'Speaker 3'],
+          },
+        ],
+      },
+      {
+        'startTime': '2024-01-02T05:00:00.000Z',
+        'talks': [
+          {
+            'id': '2',
+            'title': 'Test Talk 2',
+            'room': 'Room 2',
+            'startTime': '2024-01-02T05:00:00.000Z',
+            'speakerNames': ['Speaker 1', 'Speaker 2', 'Speaker 3'],
+          },
+        ],
+      },
+      {
+        'startTime': '2024-01-03T05:00:00.000Z',
+        'talks': [
+          {
+            'id': '1',
+            'title': 'Test Talk 1',
+            'room': 'Room 1',
+            'startTime': '2024-01-03T05:00:00.000Z',
+            'speakerNames': ['Speaker 1', 'Speaker 2', 'Speaker 3'],
+          },
+        ],
+      },
+    ],
+  };
 }
