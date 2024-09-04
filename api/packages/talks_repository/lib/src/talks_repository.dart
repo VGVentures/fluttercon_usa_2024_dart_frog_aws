@@ -25,16 +25,13 @@ class TalksRepository {
   /// Returns [TalkTimeSlot] objects with speaker information
   /// for each one.
   Future<PaginatedData<TalkTimeSlot>> getTalks() async {
-    TalkTimeSlot paginatedTalkTimeSlotFromJson(Object? val) =>
-        TalkTimeSlot.fromJson((val ?? {}) as Map<String, dynamic>);
-
     final cachedTalks = await _cache.get(talksCacheKey);
 
     if (cachedTalks != null) {
       final json = jsonDecode(cachedTalks) as Map<String, dynamic>;
       final result = PaginatedData.fromJson(
         json,
-        paginatedTalkTimeSlotFromJson,
+        (val) => TalkTimeSlot.fromJson((val ?? {}) as Map<String, dynamic>),
       );
 
       return result;
@@ -79,7 +76,11 @@ class TalksRepository {
 
     await _cache.set(
       talksCacheKey,
-      jsonEncode(result.toJson(paginatedTalkTimeSlotFromJson)),
+      jsonEncode(
+        result.toJson(
+          (val) => val.toJson(),
+        ),
+      ),
     );
     return result;
   }

@@ -3,11 +3,12 @@ import 'package:dart_frog/dart_frog.dart';
 import 'package:dart_frog_auth/dart_frog_auth.dart';
 import 'package:fluttercon_cache/fluttercon_cache.dart';
 import 'package:fluttercon_data_source/fluttercon_data_source.dart';
-import 'package:hive/hive.dart';
 import 'package:shelf_cors_headers/shelf_cors_headers.dart';
 import 'package:speakers_repository/speakers_repository.dart';
 import 'package:talks_repository/talks_repository.dart';
 import 'package:user_repository/user_repository.dart';
+
+final _cache = FlutterconInMemoryCache();
 
 Handler middleware(Handler handler) {
   return handler
@@ -20,8 +21,8 @@ Handler middleware(Handler handler) {
         ),
       )
       .use(
-        provider<Future<TalksRepository>>(
-          (context) async => TalksRepository(
+        provider<TalksRepository>(
+          (context) => TalksRepository(
             dataSource: context.read<FlutterconDataSource>(),
             cache: context.read<FlutterconCache>(),
           ),
@@ -29,13 +30,7 @@ Handler middleware(Handler handler) {
       )
       .use(
         provider<FlutterconCache>(
-          (_) {
-            final box = Hive.box('fluttercon_cache');
-            Hive.openBox('fluttercon_cache');
-            return FlutterconHiveCache(
-              box,
-            );
-          },
+          (_) => _cache,
         ),
       )
       .use(
