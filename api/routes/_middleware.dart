@@ -19,6 +19,7 @@ Handler middleware(Handler handler) {
         provider<SpeakersRepository>(
           (context) => SpeakersRepository(
             dataSource: context.read<FlutterconDataSource>(),
+            cache: context.read<FlutterconCache>(),
           ),
         ),
       )

@@ -21,7 +21,11 @@ class TalksRepository {
   final FlutterconDataSource _dataSource;
   final FlutterconCache _cache;
 
-  /// Fetches a paginated list of talks from the data source.
+  /// Fetches a paginated list of talks.
+  /// Fetches from cache if available, and from api
+  /// if the cache is empty.
+  ///
+  /// If fetching from api, the talks are then cached.
   /// Returns [TalkTimeSlot] objects with speaker information
   /// for each one.
   Future<PaginatedData<TalkTimeSlot>> getTalks() async {
