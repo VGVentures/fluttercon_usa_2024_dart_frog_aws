@@ -4,15 +4,15 @@ import 'package:fluttercon_cache/fluttercon_cache.dart';
 /// A simple in-memory implementation of a cache.
 /// {@endtemplate}
 class FlutterconInMemoryCache extends FlutterconCache {
-  final _cache = <String, dynamic>{};
+  final _cache = <String, String>{};
 
   @override
-  Future<dynamic> get(String key) async {
+  Future<String?> get(String key) async {
     return _cache[key];
   }
 
   @override
-  Future<void> set(String key, dynamic value) async {
+  Future<void> set(String key, String value) async {
     _cache[key] = value;
   }
 

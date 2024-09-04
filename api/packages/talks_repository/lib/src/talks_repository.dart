@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:fluttercon_cache/fluttercon_cache.dart';
 import 'package:fluttercon_data_source/fluttercon_data_source.dart';
 import 'package:fluttercon_shared_models/fluttercon_shared_models.dart';
@@ -23,11 +25,19 @@ class TalksRepository {
   /// Returns [TalkTimeSlot] objects with speaker information
   /// for each one.
   Future<PaginatedData<TalkTimeSlot>> getTalks() async {
-    final cachedTalks =
-        await _cache.get(talksCacheKey) as PaginatedData<TalkTimeSlot>?;
+    TalkTimeSlot paginatedTalkTimeSlotFromJson(Object? val) =>
+        TalkTimeSlot.fromJson((val ?? {}) as Map<String, dynamic>);
+
+    final cachedTalks = await _cache.get(talksCacheKey);
 
     if (cachedTalks != null) {
-      return cachedTalks;
+      final json = jsonDecode(cachedTalks) as Map<String, dynamic>;
+      final result = PaginatedData.fromJson(
+        json,
+        paginatedTalkTimeSlotFromJson,
+      );
+
+      return result;
     }
 
     final timeSlots = <TalkTimeSlot>[];
@@ -67,8 +77,10 @@ class TalksRepository {
       nextToken: talksResponse.nextToken,
     );
 
-    await _cache.set(talksCacheKey, result);
-
+    await _cache.set(
+      talksCacheKey,
+      jsonEncode(result.toJson(paginatedTalkTimeSlotFromJson)),
+    );
     return result;
   }
 }

@@ -35,6 +35,7 @@ Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
 }
 
 FutureOr<Widget> buildApp(String baseUrl) async {
+  WidgetsFlutterBinding.ensureInitialized();
   if (baseUrl.isEmpty) {
     throw ArgumentError('baseUrl must not be empty.');
   }
