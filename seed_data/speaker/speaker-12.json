@@ -1,0 +1,23 @@
+{
+  "id": {
+    "S": "12"
+  },
+  "bio": {
+    "S": "Anna Leushchenko is a mobile development expert, passionate about quality software, from Ukraine. She is a Women Techmakers Ambassador and Google Developer Expert in Dart and Flutter. Anna talks and blogs about cross-platform development, contributes to OSS, and mentors talented women in tech."
+  },
+  "createdAt": {
+    "S": "2023-01-01T00:00:00Z"
+  },
+  "imageUrl": {
+    "S": "https://flutterconusa.dev/wp-content/uploads/sites/8/2024/09/d666-400o400o1-VDmHjwf4FsYzi45wtUcxEz.png"
+  },
+  "name": {
+    "S": "Anna Leushchenko"
+  },
+  "title": {
+    "S": "Google Developer Expert in Dart and Flutter | Author, speaker at tech events, mentor, OSS contributor | Passionate mobile apps creator"
+  },
+  "updatedAt": {
+    "S": "2023-01-01T00:00:00Z"
+  }
+}

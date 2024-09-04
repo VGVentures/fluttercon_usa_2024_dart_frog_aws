@@ -1,0 +1,29 @@
+{
+  "id": {
+    "S": "6"
+  },
+  "createdAt": {
+    "S": "2023-01-01T00:00:00Z"
+  },
+  "description": {
+    "S": "Join the Flutter team for a discussion on where Flutter is headed and ask questions of the leadership team."
+  },
+  "endTime": {
+    "S": "2024-09-19T16:15:00Z"
+  },
+  "isFavorite": {
+    "BOOL": false
+  },
+  "room": {
+    "S": "Imperial Room"
+  },
+  "startTime": {
+    "S": "2024-09-19T15:10:00Z"
+  },
+  "title": {
+    "S": "Flutter Team Leadership Panel"
+  },
+  "updatedAt": {
+    "S": "2023-01-01T00:00:00Z"
+  }
+}

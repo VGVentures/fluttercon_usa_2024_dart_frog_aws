@@ -1,0 +1,23 @@
+{
+  "id": {
+    "S": "14"
+  },
+  "bio": {
+    "S": "Leigha is currently the Head of Product & Developer Relations at FlutterFlow – where she focuses on product strategy and technical content. She was previously the product lead for the Flutter framework and Apple platforms at Google."
+  },
+  "createdAt": {
+    "S": "2023-01-01T00:00:00Z"
+  },
+  "imageUrl": {
+    "S": "https://flutterconusa.dev/wp-content/uploads/sites/8/2024/09/25ad-400o400o1-NpQyzJVxMPHDfBJRK2NBTx.jpg"
+  },
+  "name": {
+    "S": "Leigha Reid"
+  },
+  "title": {
+    "S": "Head of Product & DevRel at FlutterFlow"
+  },
+  "updatedAt": {
+    "S": "2023-01-01T00:00:00Z"
+  }
+}

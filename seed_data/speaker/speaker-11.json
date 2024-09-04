@@ -1,0 +1,23 @@
+{
+  "id": {
+    "S": "11"
+  },
+  "bio": {
+    "S": "Author of the Flame Engine, I have been enamoured with Dart & Flutter for several years. I love all forms of software development, and I’m a big proponent of Open Source. Currently working with Kotlin backend @ Faire."
+  },
+  "createdAt": {
+    "S": "2023-01-01T00:00:00Z"
+  },
+  "imageUrl": {
+    "S": "https://flutterconusa.dev/wp-content/uploads/sites/8/2024/09/4d55-400o400o1-DJkjwW7xyVoJ5nLKa4hF28.png"
+  },
+  "name": {
+    "S": "Luan Nico"
+  },
+  "title": {
+    "S": "Open Source Maintainer @ Blue Fire"
+  },
+  "updatedAt": {
+    "S": "2023-01-01T00:00:00Z"
+  }
+}

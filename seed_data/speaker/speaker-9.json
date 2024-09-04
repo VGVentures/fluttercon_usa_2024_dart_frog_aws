@@ -1,0 +1,23 @@
+{
+  "id": {
+    "S": "9"
+  },
+  "bio": {
+    "S": "Google Product Director for Frameworks and Languages(Fluter, Dart, Go) Previously built and led YouTube Teens, Google One, Niantic Labs, YouTube Live, Google Books, Google Maps APIs."
+  },
+  "createdAt": {
+    "S": "2023-01-01T00:00:00Z"
+  },
+  "imageUrl": {
+    "S": "https://flutterconusa.dev/wp-content/uploads/sites/8/2024/08/1f2d-400o400o1-Ko8kbSeHZTPuZ73LbhLXXp-13.jpg"
+  },
+  "name": {
+    "S": "Brandon Badger"
+  },
+  "title": {
+    "S": "Google Product Director for Frameworks and Languages (Fluter, Dart, Go)"
+  },
+  "updatedAt": {
+    "S": "2023-01-01T00:00:00Z"
+  }
+}

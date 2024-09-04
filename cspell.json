@@ -1,10 +1,7 @@
 {
   "version": "0.2",
   "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json",
-  "dictionaries": [
-    "vgv_allowed",
-    "vgv_forbidden"
-  ],
+  "dictionaries": ["vgv_allowed", "vgv_forbidden"],
   "dictionaryDefinitions": [
     {
       "name": "vgv_allowed",
@@ -38,14 +35,31 @@
     "api/Dockerfile"
   ],
   "words": [
+    "Angelov",
+    "Brogdon",
     "Contador",
+    "Dartium",
     "datetime",
+    "Egorov",
     "fluttercon",
     "Fluttercon",
+    "Holoubek",
     "ISFAVORITE",
+    "Leigha",
+    "Leushchenko",
     "localizable",
+    "Luan",
+    "Menon",
     "mostrado",
+    "Niantic",
+    "Nico",
     "página",
-    "Texto"
+    "Seidel",
+    "Slava",
+    "Techmakers",
+    "Texto",
+    "vectorizing",
+    "Vijay",
+    "Volkert"
   ]
 }

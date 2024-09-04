@@ -1,0 +1,23 @@
+{
+  "id": {
+    "S": "8"
+  },
+  "bio": {
+    "S": "Leaf Petersen is a software developer at Google, leading the team responsible for evolving the Dart programming language. His background is in optimizing compilers and type systems. As an undergraduate at Williams College, a chance encounter with a class on programming languages led him into the seamy underbelly of object-oriented type systems, from which a downward spiral into graduate school at Carnegie Mellon University studying functional languages and type theory was the tragic result. After graduation, he spent nine years at Intel working on a vectorizing compiler for Haskell and an early predecessor of Verse. In 2014, he joined Google to work on the Dart programming language and has been causing trouble there ever since. In his spare time he enjoys cooking, playing squash, and bashing his way up and down some of the taller and more remote parts of Washington state."
+  },
+  "createdAt": {
+    "S": "2023-01-01T00:00:00Z"
+  },
+  "imageUrl": {
+    "S": "https://flutterconusa.dev/wp-content/uploads/sites/8/2024/08/7767-400o400o1-MXWQu16HUdRup6dgrVzrWM-14.png"
+  },
+  "name": {
+    "S": "Leaf Petersen"
+  },
+  "title": {
+    "S": "Dart Language TL"
+  },
+  "updatedAt": {
+    "S": "2023-01-01T00:00:00Z"
+  }
+}

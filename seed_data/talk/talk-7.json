@@ -1,0 +1,29 @@
+{
+  "id": {
+    "S": "7"
+  },
+  "createdAt": {
+    "S": "2023-01-01T00:00:00Z"
+  },
+  "description": {
+    "S": "In this 20-minute lightning talk, I will share practical, actionable advice on securing a Flutter app to meet enterprise-level standards. Drawing from our experience developing a finance app for 3 million people at Mastercard, this session will consider essential security practices you can implement right away. Unlike theoretical discussions, this talk will focus on real-world examples and code snippets, ensuring you walk away with clear steps to enhance your app’s security. \n\n After this talk, you will know there is a more secure way to store data on the device than using the flutter_secure_storage package, how to secure communication with servers, and many other practices."
+  },
+  "endTime": {
+    "S": "2024-09-19T16:15:00Z"
+  },
+  "isFavorite": {
+    "BOOL": false
+  },
+  "room": {
+    "S": "Empire Room"
+  },
+  "startTime": {
+    "S": "2024-09-19T15:10:00Z"
+  },
+  "title": {
+    "S": "Securing Your Flutter App to Enterprise Standards"
+  },
+  "updatedAt": {
+    "S": "2023-01-01T00:00:00Z"
+  }
+}

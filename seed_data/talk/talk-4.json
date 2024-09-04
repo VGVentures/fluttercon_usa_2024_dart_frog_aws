@@ -1,0 +1,29 @@
+{
+  "id": {
+    "S": "4"
+  },
+  "createdAt": {
+    "S": "2023-01-01T00:00:00Z"
+  },
+  "description": {
+    "S": "The Flutter team has finally graced us with full GPU access capabilities as a beta access. We have integrated this into the Flame Engine to allow you to build simple 3D games! \n\n While still in its infancy, this talk will introduce you to the world of 3D computing, how it is wired under the hood and implemented in Flame, and how to use our higher level APIs to create your very own game. The talk will go over the basics and theory and showcase the process of building a playable demo step by step. \n\n This talk is a spiritual successor of my previous talk 'Flame and (pseudo) 3d' on Fluttercon Berlin last year, in which I talked about alternative ways of supporting 3D with Flame, and built a software-based 3D rendering engine within Flame. Now with first-class GPU support, we can leverage the full power of the device to render much more intricate meshes and ideas."
+  },
+  "endTime": {
+    "S": "2024-09-19T14:55:00Z"
+  },
+  "isFavorite": {
+    "BOOL": false
+  },
+  "room": {
+    "S": "Empire Room"
+  },
+  "startTime": {
+    "S": "2024-09-19T14:15:00Z"
+  },
+  "title": {
+    "S": "3D Games With Flame"
+  },
+  "updatedAt": {
+    "S": "2023-01-01T00:00:00Z"
+  }
+}
