@@ -12,6 +12,7 @@ on:
     paths:
       - ".github/workflows/api_verify_and_test.yaml"
       - "api/**"
+      - "api/packages/fluttercon_cache/**"
       - "api/packages/fluttercon_data_source/**"
       - "api/packages/fluttercon_shared_models/**"
       - "api/packages/speakers_repository/**"
@@ -24,6 +25,7 @@ on:
     paths:
       - ".github/workflows/**"
       - "api/**"
+      - "api/packages/fluttercon_cache/**"
       - "api/packages/fluttercon_data_source/**"
       - "api/packages/fluttercon_shared_models/**"
       - "api/packages/speakers_repository/**"

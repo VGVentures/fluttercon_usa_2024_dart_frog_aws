@@ -1,4 +1,4 @@
-name: Speakers Repository
+name: Fluttercon Cache
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -10,27 +10,23 @@ on:
       - master
       - main
     paths:
-      - ".github/workflows/speakers_repository_verify_and_test.yaml"
-      - "api/packages/speakers_repository/**"
+      - ".github/workflows/fluttercon_cache_verify_and_test.yaml"
       - "api/packages/fluttercon_cache/**"
-      - "api/packages/fluttercon_data_source/**"
-      - "api/packages/fluttercon_shared_models/**"
+
   push:
     branches:
       - master
       - main
     paths:
       - ".github/workflows/**"
-      - "api/packages/speakers_repository/**"
       - "api/packages/fluttercon_cache/**"
-      - "api/packages/fluttercon_data_source/**"
-      - "api/packages/fluttercon_shared_models/**"
+
 
 jobs:
   verify_and_test:
     name: Verify and Test
     uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/dart_package.yml@main
     with:
-      working_directory: api/packages/speakers_repository
+      working_directory: api/packages/fluttercon_cache
       dart_sdk: stable
       min_coverage: 100

@@ -7,8 +7,13 @@ import 'package:amplify_secure_storage_dart/amplify_secure_storage_dart.dart';
 import 'package:api/amplify_outputs.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:fluttercon_data_source/src/models/gen/ModelProvider.dart';
+import 'package:hive/hive.dart';
+
+import 'routes/_middleware.dart';
 
 Future<void> init(InternetAddress ip, int port) async {
+  Hive.init(Directory.current.path);
+  await Hive.openBox<String>(cacheBoxKey);
   final api = AmplifyAPIDart(
     options: APIPluginOptions(modelProvider: ModelProvider.instance),
   );

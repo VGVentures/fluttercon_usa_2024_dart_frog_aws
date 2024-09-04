@@ -52,4 +52,27 @@ class TestHelpers {
       ),
     ],
   );
+
+  static const speakerPreviewsJson = {
+    'items': [
+      {
+        'id': '2',
+        'name': 'Jane Doe',
+        'title': 'Test Title 2',
+        'imageUrl': 'Test Image Url 2',
+      },
+      {
+        'id': '1',
+        'name': 'John Doe',
+        'title': 'Test Title 1',
+        'imageUrl': 'Test Image Url 1',
+      },
+      {
+        'id': '3',
+        'name': 'John Smith',
+        'title': 'Test Title 3',
+        'imageUrl': 'Test Image Url 3',
+      },
+    ],
+  };
 }

@@ -12,6 +12,7 @@ on:
     paths:
       - ".github/workflows/talks_repository_verify_and_test.yaml"
       - "api/packages/talks_repository/**"
+      - "api/packages/fluttercon_cache/**"
       - "api/packages/fluttercon_data_source/**"
       - "api/packages/fluttercon_shared_models/**"
   push:
@@ -21,6 +22,7 @@ on:
     paths:
       - ".github/workflows/**"
       - "api/packages/talks_repository/**"
+      - "api/packages/fluttercon_cache/**"
       - "api/packages/fluttercon_data_source/**"
       - "api/packages/fluttercon_shared_models/**"
 
