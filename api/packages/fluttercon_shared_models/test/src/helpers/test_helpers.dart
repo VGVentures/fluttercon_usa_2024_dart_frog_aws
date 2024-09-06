@@ -103,4 +103,12 @@ class TestHelpers {
     'startTime': '2024-01-01T00:00:00.000',
     'talks': [talkPreviewJson],
   };
+
+  static const createFavoriteRequest =
+      CreateFavoriteRequest(userId: 'userId', talkId: '1');
+
+  static const createFavoriteRequestJson = {
+    'userId': 'userId',
+    'talkId': '1',
+  };
 }

@@ -1,3 +1,4 @@
+export 'create_favorite_request.dart';
 export 'paginated_data.dart';
 export 'speaker_detail.dart';
 export 'speaker_link.dart';
