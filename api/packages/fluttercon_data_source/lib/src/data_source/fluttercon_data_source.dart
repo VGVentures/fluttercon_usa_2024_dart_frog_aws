@@ -69,6 +69,20 @@ class FlutterconDataSource {
     }
   }
 
+  /// Fetches a [Talk] entity by [id].
+  Future<Talk> getTalk({required String id}) async {
+    try {
+      final request =
+          _apiClient.get(Talk.classType, TalkModelIdentifier(id: id));
+      return await _sendGraphQLRequest(
+        request: request,
+        operation: (request) => _apiClient.query(request: request),
+      );
+    } on Exception catch (e) {
+      throw AmplifyApiException(exception: e);
+    }
+  }
+
   /// Fetches a paginated list of [FavoritesTalk] entities
   /// for a [userId].
   /// A [FavoritesTalk] contains an ID for a user and
