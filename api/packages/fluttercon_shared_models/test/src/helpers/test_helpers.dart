@@ -111,4 +111,12 @@ class TestHelpers {
     'userId': 'userId',
     'talkId': '1',
   };
+
+  static const createFavoriteResponse =
+      CreateFavoriteResponse(userId: 'userId', talkId: '1');
+
+  static const createFavoriteResponseJson = {
+    'userId': 'userId',
+    'talkId': '1',
+  };
 }
