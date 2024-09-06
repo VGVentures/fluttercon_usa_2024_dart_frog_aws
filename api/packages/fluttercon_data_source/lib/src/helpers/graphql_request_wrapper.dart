@@ -14,4 +14,12 @@ class GraphQLRequestWrapper {
     APIAuthorizationType? authorizationMode,
     Map<String, String>? headers,
   }) list = ModelQueries.list;
+
+  /// Wrapper around the static [ModelMutations.create] helper.
+  GraphQLRequest<T> Function<T extends Model>(
+    T model, {
+    String? apiName,
+    APIAuthorizationType? authorizationMode,
+    Map<String, String>? headers,
+  }) create = ModelMutations.create;
 }

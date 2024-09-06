@@ -19,6 +19,27 @@ class FlutterconDataSource {
 
   final AmplifyAPIClient _apiClient;
 
+  /// Creates a new [FavoritesTalk] entity.
+  Future<FavoritesTalk> createFavoritesTalk({
+    required String userId,
+    required String talkId,
+  }) async {
+    try {
+      final request = _apiClient.create(
+        FavoritesTalk(
+          favorites: Favorites(userId: userId),
+          talk: Talk(id: talkId),
+        ),
+      );
+      return await _sendGraphQLRequest(
+        request: request,
+        operation: (request) => _apiClient.mutate(request: request),
+      );
+    } on Exception catch (e) {
+      throw AmplifyApiException(exception: e);
+    }
+  }
+
   /// Fetches a paginated list of speakers.
   Future<PaginatedResult<Speaker>> getSpeakers() async {
     try {
@@ -38,6 +59,27 @@ class FlutterconDataSource {
       final request = _apiClient.list(
         Talk.classType,
         where: favorites ? Talk.ISFAVORITE.eq(true) : null,
+      );
+      return await _sendGraphQLRequest(
+        request: request,
+        operation: (request) => _apiClient.query(request: request),
+      );
+    } on Exception catch (e) {
+      throw AmplifyApiException(exception: e);
+    }
+  }
+
+  /// Fetches a paginated list of [FavoritesTalk] entities
+  /// for a [userId].
+  /// A [FavoritesTalk] contains an ID for a user and
+  /// an ID for a corresponding talk.
+  Future<PaginatedResult<FavoritesTalk>> getFavoritesTalks({
+    required String userId,
+  }) async {
+    try {
+      final request = _apiClient.list(
+        FavoritesTalk.classType,
+        where: FavoritesTalk.FAVORITES.eq(userId),
       );
       return await _sendGraphQLRequest(
         request: request,
