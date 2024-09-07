@@ -30,6 +30,26 @@ void main() {
       expect(client, isNotNull);
     });
 
+    group('get', () {
+      test('returns a GraphQLRequest with the given type', () {
+        GraphQLRequest<T> getFunc<T extends Model>(
+          ModelType<T> modelType,
+          ModelIdentifier<T> modelIdentifier, {
+          String? apiName,
+          APIAuthorizationType? authorizationMode,
+          Map<String, String>? headers,
+        }) {
+          return GraphQLRequest<T>(document: '');
+        }
+
+        when(() => requestWrapper.get).thenReturn(getFunc);
+        expect(
+          client.get(Speaker.classType, const SpeakerModelIdentifier(id: '1')),
+          isA<GraphQLRequest<Speaker>>(),
+        );
+      });
+    });
+
     group('list', () {
       test('returns a GraphQLRequest with the given type', () {
         GraphQLRequest<PaginatedResult<T>> listFunc<T extends Model>(
@@ -51,6 +71,25 @@ void main() {
       });
     });
 
+    group('create', () {
+      test('returns a GraphQLRequest with the given type', () {
+        GraphQLRequest<T> createFunc<T extends Model>(
+          T model, {
+          String? apiName,
+          APIAuthorizationType? authorizationMode,
+          Map<String, String>? headers,
+        }) {
+          return GraphQLRequest<T>(document: '');
+        }
+
+        when(() => requestWrapper.create).thenReturn(createFunc);
+        expect(
+          client.create(Speaker(id: '1')),
+          isA<GraphQLRequest<Speaker>>(),
+        );
+      });
+    });
+
     group('query', () {
       test('calls api query', () {
         final request = GraphQLRequest<PaginatedResult<Speaker>>(document: '');
@@ -62,6 +101,18 @@ void main() {
 
         client.query(request: request);
         verify(() => api.query(request: request)).called(1);
+      });
+    });
+
+    group('mutate', () {
+      test('calls api mutate', () {
+        final request = GraphQLRequest<Speaker>(document: '');
+        when(() => api.mutate(request: request)).thenReturn(
+          TestHelpers.graphQLOperation(TestHelpers.speaker),
+        );
+
+        client.mutate(request: request);
+        verify(() => api.mutate(request: request)).called(1);
       });
     });
   });
