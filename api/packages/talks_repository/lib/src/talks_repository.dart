@@ -85,14 +85,12 @@ class TalksRepository {
     final favoritesTalks =
         await _dataSource.getFavoritesTalks(favoritesId: favorites.id);
 
-    final talksResponse = await _dataSource.getTalks(
-      ids: favoritesTalks.items
-          .map((ft) => ft?.talk?.id ?? '')
-          .where((id) => id.isNotEmpty)
-          .toList(),
-    );
+    final talks = favoritesTalks.items
+        .map((ft) => ft?.talk)
+        .where((talk) => talk != null)
+        .toList();
 
-    final timeSlots = await _buildTalkTimeSlots(talksResponse.items);
+    final timeSlots = await _buildTalkTimeSlots(talks);
 
     return PaginatedData(
       items: timeSlots,
