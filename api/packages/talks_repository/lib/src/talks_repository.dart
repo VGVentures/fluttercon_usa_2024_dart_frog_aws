@@ -43,7 +43,12 @@ class TalksRepository {
 
     final talksResponse = await _dataSource.getTalks();
 
-    final timeSlots = await _buildTalkTimeSlots(talksResponse.items);
+    final talks = talksResponse.items
+        .where((talk) => talk != null)
+        .map((talk) => talk!)
+        .toList();
+
+    final timeSlots = await _buildTalkTimeSlots(talks);
 
     final result = PaginatedData(
       items: timeSlots,
@@ -86,8 +91,8 @@ class TalksRepository {
         await _dataSource.getFavoritesTalks(favoritesId: favorites.id);
 
     final talks = favoritesTalks.items
-        .map((ft) => ft?.talk)
-        .where((talk) => talk != null)
+        .where((ft) => ft?.talk != null)
+        .map((ft) => ft!.talk!)
         .toList();
 
     final timeSlots = await _buildTalkTimeSlots(talks);
@@ -99,15 +104,13 @@ class TalksRepository {
     );
   }
 
-  Future<List<TalkTimeSlot>> _buildTalkTimeSlots(List<Talk?> talks) async {
+  Future<List<TalkTimeSlot>> _buildTalkTimeSlots(List<Talk> talks) async {
     final talkPreviews = <TalkPreview>[];
     final timeSlots = <TalkTimeSlot>[];
     for (final talk in talks) {
-      final id = talk?.id;
-      if (id == null) continue;
       final speakerTalks = await _dataSource.getSpeakerTalks(talk: talk);
       final talkPreview = TalkPreview(
-        id: talk!.id,
+        id: talk.id,
         title: talk.title ?? '',
         room: talk.room ?? '',
         startTime: talk.startTime?.getDateTimeInUtc() ?? DateTime(2024),
