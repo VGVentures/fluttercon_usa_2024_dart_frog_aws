@@ -15,6 +15,23 @@ class AmplifyAPIClient {
   final APICategory _api;
   final GraphQLRequestWrapper _requestWrapper;
 
+  /// Create a GraphQL [get] request.
+  GraphQLRequest<T> get<T extends Model>(
+    ModelType<T> modelType,
+    ModelIdentifier<T> modelIdentifier, {
+    String? apiName,
+    APIAuthorizationType? authorizationMode,
+    Map<String, String>? headers,
+  }) {
+    return _requestWrapper.get<T>(
+      modelType,
+      modelIdentifier,
+      apiName: apiName,
+      authorizationMode: authorizationMode,
+      headers: headers,
+    );
+  }
+
   /// Create a GraphQL [list] request.
   GraphQLRequest<PaginatedResult<T>> list<T extends Model>(
     ModelType<T> modelType, {

@@ -41,39 +41,12 @@ class TalksRepository {
       return result;
     }
 
-    final timeSlots = <TalkTimeSlot>[];
-    final talks = <TalkPreview>[];
-
     final talksResponse = await _dataSource.getTalks();
-    for (final talk in talksResponse.items) {
-      if (talk == null) continue;
-      final speakerTalks = await _dataSource.getSpeakerTalks(talk: talk);
-      final talkPreview = TalkPreview(
-        id: talk.id,
-        title: talk.title ?? '',
-        room: talk.room ?? '',
-        startTime: talk.startTime?.getDateTimeInUtc() ?? DateTime(2024),
-        speakerNames:
-            speakerTalks.items.map((st) => st?.speaker?.name ?? '').toList(),
-      );
-      talks.add(talkPreview);
-    }
-    final times = talks.map((t) => t.startTime).toSet();
 
-    for (final time in times) {
-      final talksForTime = talks.where((t) => t.startTime == time).toList();
-      final timeSlot = TalkTimeSlot(
-        startTime: time,
-        talks: talksForTime,
-      );
-      timeSlots.add(timeSlot);
-    }
-
-    final sortedTimeSlots = [...timeSlots]
-      ..sort((a, b) => a.startTime.compareTo(b.startTime));
+    final timeSlots = await _buildTalkTimeSlots(talksResponse.items);
 
     final result = PaginatedData(
-      items: sortedTimeSlots,
+      items: timeSlots,
       limit: talksResponse.limit,
       nextToken: talksResponse.nextToken,
     );
@@ -96,31 +69,61 @@ class TalksRepository {
   Future<PaginatedData<TalkTimeSlot>> getFavorites({
     required String userId,
   }) async {
-    final timeSlots = <TalkTimeSlot>[];
-    final talks = <TalkPreview>[];
+    final favoritesResponse = await _dataSource.getFavorites(userId: userId);
 
-    final favoritesTalks = await _dataSource.getFavoritesTalks(userId: userId);
-    //TODO(@verygoodstefan): consolidate this logic with getTalks
-    for (final favorite in favoritesTalks.items) {
-      final id = favorite?.talk?.id;
+    if (favoritesResponse.items.isEmpty ||
+        favoritesResponse.items.first == null) {
+      return PaginatedData(
+        items: const [],
+        limit: favoritesResponse.limit,
+        nextToken: favoritesResponse.nextToken,
+      );
+    }
+
+    final favorites = favoritesResponse.items.first!;
+
+    final favoritesTalks =
+        await _dataSource.getFavoritesTalks(favoritesId: favorites.id);
+
+    final talksResponse = await _dataSource.getTalks(
+      ids: favoritesTalks.items
+          .map((ft) => ft?.talk?.id ?? '')
+          .where((id) => id.isNotEmpty)
+          .toList(),
+    );
+
+    final timeSlots = await _buildTalkTimeSlots(talksResponse.items);
+
+    return PaginatedData(
+      items: timeSlots,
+      limit: favoritesTalks.limit,
+      nextToken: favoritesTalks.nextToken,
+    );
+  }
+
+  Future<List<TalkTimeSlot>> _buildTalkTimeSlots(List<Talk?> talks) async {
+    final talkPreviews = <TalkPreview>[];
+    final timeSlots = <TalkTimeSlot>[];
+    for (final talk in talks) {
+      final id = talk?.id;
       if (id == null) continue;
-      final talk = await _dataSource.getTalk(id: id);
       final speakerTalks = await _dataSource.getSpeakerTalks(talk: talk);
       final talkPreview = TalkPreview(
-        id: talk.id,
+        id: talk!.id,
         title: talk.title ?? '',
         room: talk.room ?? '',
         startTime: talk.startTime?.getDateTimeInUtc() ?? DateTime(2024),
         speakerNames:
             speakerTalks.items.map((st) => st?.speaker?.name ?? '').toList(),
       );
-      talks.add(talkPreview);
+      talkPreviews.add(talkPreview);
     }
 
-    final times = talks.map((t) => t.startTime).toSet();
+    final times = talkPreviews.map((t) => t.startTime).toSet();
 
     for (final time in times) {
-      final talksForTime = talks.where((t) => t.startTime == time).toList();
+      final talksForTime =
+          talkPreviews.where((t) => t.startTime == time).toList();
       final timeSlot = TalkTimeSlot(
         startTime: time,
         talks: talksForTime,
@@ -131,10 +134,6 @@ class TalksRepository {
     final sortedTimeSlots = [...timeSlots]
       ..sort((a, b) => a.startTime.compareTo(b.startTime));
 
-    return PaginatedData(
-      items: sortedTimeSlots,
-      limit: favoritesTalks.limit,
-      nextToken: favoritesTalks.nextToken,
-    );
+    return sortedTimeSlots;
   }
 }

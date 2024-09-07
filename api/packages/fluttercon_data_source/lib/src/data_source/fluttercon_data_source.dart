@@ -1,4 +1,5 @@
 import 'package:amplify_api_dart/amplify_api_dart.dart';
+import 'package:amplify_core/amplify_core.dart';
 import 'package:fluttercon_data_source/src/data_source/amplify_api_client.dart';
 import 'package:fluttercon_data_source/src/exceptions/exceptions.dart';
 
@@ -40,6 +41,24 @@ class FlutterconDataSource {
     }
   }
 
+  /// Fetches a paginated list of [Favorites] entities.
+  /// Can optionally provide a [userId] to filter.
+  Future<PaginatedResult<Favorites>> getFavorites({String? userId}) async {
+    try {
+      final request = _apiClient.list(
+        Favorites.classType,
+        where: userId != null ? Favorites.USERID.eq(userId) : null,
+      );
+
+      return await _sendGraphQLRequest(
+        request: request,
+        operation: (request) => _apiClient.query(request: request),
+      );
+    } on Exception catch (e) {
+      throw AmplifyApiException(exception: e);
+    }
+  }
+
   /// Fetches a paginated list of speakers.
   Future<PaginatedResult<Speaker>> getSpeakers() async {
     try {
@@ -54,11 +73,15 @@ class FlutterconDataSource {
   }
 
   /// Fetches a paginated list of talks.
-  Future<PaginatedResult<Talk>> getTalks({bool favorites = false}) async {
+  Future<PaginatedResult<Talk>> getTalks({List<String> ids = const []}) async {
     try {
       final request = _apiClient.list(
         Talk.classType,
-        where: favorites ? Talk.ISFAVORITE.eq(true) : null,
+        where: ids.isNotEmpty
+            ? QueryPredicateGroup(QueryPredicateGroupType.or, [
+                for (final id in ids) Talk.ID.eq(id),
+              ])
+            : null,
       );
       return await _sendGraphQLRequest(
         request: request,
@@ -84,16 +107,16 @@ class FlutterconDataSource {
   }
 
   /// Fetches a paginated list of [FavoritesTalk] entities
-  /// for a [userId].
-  /// A [FavoritesTalk] contains an ID for a user and
+  /// for a [favoritesId].
+  /// A [FavoritesTalk] contains an ID for a favorites entity and
   /// an ID for a corresponding talk.
   Future<PaginatedResult<FavoritesTalk>> getFavoritesTalks({
-    required String userId,
+    required String favoritesId,
   }) async {
     try {
       final request = _apiClient.list(
         FavoritesTalk.classType,
-        where: FavoritesTalk.FAVORITES.eq(userId),
+        where: FavoritesTalk.FAVORITES.eq(favoritesId),
       );
       return await _sendGraphQLRequest(
         request: request,
