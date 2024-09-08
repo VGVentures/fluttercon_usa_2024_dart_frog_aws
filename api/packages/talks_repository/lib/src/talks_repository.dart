@@ -111,8 +111,7 @@ class TalksRepository {
   Future<PaginatedData<TalkTimeSlot>> getFavorites({
     required String userId,
   }) async {
-    final favoritesResponse = await _dataSource.getFavorites(
-        userId: 'us-east-1:dd77c4bb-8133-c2e2-1f82-1a8659d2d02b');
+    final favoritesResponse = await _dataSource.getFavorites(userId: userId);
 
     if (favoritesResponse.items.isEmpty ||
         favoritesResponse.items.first == null) {
