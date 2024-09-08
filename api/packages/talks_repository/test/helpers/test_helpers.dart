@@ -10,6 +10,17 @@ class TestHelpers {
   static final talk2StartTime = talk2StartTimeTemporal.getDateTimeInUtc();
   static final talk3StartTime = talk3StartTimeTemporal.getDateTimeInUtc();
 
+  static const userId = 'userId';
+
+  static final favorites = PaginatedResult(
+    [Favorites(userId: userId)],
+    null,
+    null,
+    null,
+    Favorites.classType,
+    null,
+  );
+
   static final talks = PaginatedResult(
     [
       Talk(
@@ -35,6 +46,28 @@ class TestHelpers {
     null,
     null,
     Talk.classType,
+    null,
+  );
+
+  static final favoritesTalks = PaginatedResult(
+    [
+      FavoritesTalk(
+        id: '1',
+        talk: talks.items[0],
+      ),
+      FavoritesTalk(
+        id: '2',
+        talk: talks.items[1],
+      ),
+      FavoritesTalk(
+        id: '3',
+        talk: talks.items[2],
+      ),
+    ],
+    null,
+    null,
+    null,
+    FavoritesTalk.classType,
     null,
   );
 

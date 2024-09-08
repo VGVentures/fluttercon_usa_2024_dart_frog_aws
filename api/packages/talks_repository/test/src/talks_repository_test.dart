@@ -41,6 +41,93 @@ void main() {
       expect(talksRepository, isNotNull);
     });
 
+    group('getFavorites', () {
+      const userId = 'userId';
+      test('returns ${PaginatedData<Favorites>} when successful', () async {
+        when(() => dataSource.getFavorites(userId: userId)).thenAnswer(
+          (_) async => TestHelpers.favorites,
+        );
+        when(
+          () => dataSource.getFavoritesTalks(
+            favoritesId: any(named: 'favoritesId'),
+          ),
+        ).thenAnswer(
+          (_) async => TestHelpers.favoritesTalks,
+        );
+        final talks = TestHelpers.talks.items;
+        when(() => dataSource.getSpeakerTalks(talk: talks[0])).thenAnswer(
+          (_) async => TestHelpers.speakerTalks(talks[0]!),
+        );
+        when(() => dataSource.getSpeakerTalks(talk: talks[1])).thenAnswer(
+          (_) async => TestHelpers.speakerTalks(talks[1]!),
+        );
+        when(() => dataSource.getSpeakerTalks(talk: talks[2])).thenAnswer(
+          (_) async => TestHelpers.speakerTalks(talks[2]!),
+        );
+
+        final result = await talksRepository.getFavorites(userId: userId);
+        expect(result, equals(TestHelpers.talkTimeSlots));
+      });
+
+      test('does not return $TalkTimeSlot when favorites data is null',
+          () async {
+        when(() => dataSource.getFavorites(userId: userId)).thenAnswer(
+          (_) async => PaginatedResult(
+            [null],
+            null,
+            null,
+            null,
+            Favorites.classType,
+            null,
+          ),
+        );
+
+        final result = await talksRepository.getFavorites(userId: userId);
+        expect(result.items, isEmpty);
+      });
+
+      test('does not return $TalkTimeSlot when favorites data is empty',
+          () async {
+        when(() => dataSource.getFavorites(userId: userId)).thenAnswer(
+          (_) async => PaginatedResult(
+            [],
+            null,
+            null,
+            null,
+            Favorites.classType,
+            null,
+          ),
+        );
+
+        final result = await talksRepository.getFavorites(userId: userId);
+        expect(result.items, isEmpty);
+      });
+
+      test('does not return $TalkTimeSlot when talk data is null', () async {
+        when(() => dataSource.getFavorites(userId: userId)).thenAnswer(
+          (_) async => TestHelpers.favorites,
+        );
+
+        when(
+          () => dataSource.getFavoritesTalks(
+            favoritesId: any(named: 'favoritesId'),
+          ),
+        ).thenAnswer(
+          (_) async => PaginatedResult(
+            [null],
+            null,
+            null,
+            null,
+            FavoritesTalk.classType,
+            null,
+          ),
+        );
+
+        final result = await talksRepository.getFavorites(userId: userId);
+        expect(result.items, isEmpty);
+      });
+    });
+
     group('getTalks', () {
       test('returns cached ${PaginatedData<TalkTimeSlot>} when available',
           () async {
