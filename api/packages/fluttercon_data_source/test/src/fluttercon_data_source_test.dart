@@ -674,14 +674,30 @@ void main() {
     });
 
     group('getFavoritesTalks', () {
+      Matcher? isAFavoritesTalkQuery({bool hasTalk = false}) {
+        final havingFavoritesAndTalks = isA<QueryPredicateOperation>()
+            .having((qpo) => qpo.field, 'Field', equals('favorites'))
+            .having((qpo) => qpo.field, 'Field', equals('talk'));
+
+        final havingFavorites = isA<QueryPredicateOperation>()
+            .having((qpo) => qpo.field, 'Field', equals('favorites'));
+
+        return isA<QueryPredicateGroup>().having(
+          (qpg) => qpg.predicates,
+          'Predicates',
+          contains(
+            hasTalk ? havingFavoritesAndTalks : havingFavorites,
+          ),
+        );
+      }
+
       setUp(() {
         when(
           () => apiClient.list(
             FavoritesTalk.classType,
             where: any(
               named: 'where',
-              that: isA<QueryPredicateOperation>()
-                  .having((qpo) => qpo.field, 'Field', equals('favorites')),
+              that: isAFavoritesTalkQuery(),
             ),
           ),
         ).thenAnswer(
@@ -693,6 +709,40 @@ void main() {
 
       test('returns ${PaginatedResult<FavoritesTalk>} when successful',
           () async {
+        when(
+          () => apiClient.query<PaginatedResult<FavoritesTalk>>(
+            request: any(
+              named: 'request',
+              that: isA<GraphQLRequest<PaginatedResult<FavoritesTalk>>>(),
+            ),
+          ),
+        ).thenReturn(
+          TestHelpers.graphQLOperation(
+            TestHelpers.paginatedResult(
+              TestHelpers.favoritesTalk,
+              FavoritesTalk.classType,
+            ),
+          ),
+        );
+
+        final result = await dataSource.getFavoritesTalks(favoritesId: 'id');
+        expect(result, isA<PaginatedResult<FavoritesTalk>>());
+      });
+
+      test(
+          'returns ${PaginatedResult<FavoritesTalk>} filtered by talk '
+          'when successful', () async {
+        when(
+          () => apiClient.list(
+            FavoritesTalk.classType,
+            where: any(
+              named: 'where',
+              that: isAFavoritesTalkQuery(hasTalk: true),
+            ),
+          ),
+        ).thenAnswer(
+          (_) => GraphQLRequest<PaginatedResult<FavoritesTalk>>(document: ''),
+        );
         when(
           () => apiClient.query<PaginatedResult<FavoritesTalk>>(
             request: any(
@@ -766,8 +816,7 @@ void main() {
               FavoritesTalk.classType,
               where: any(
                 named: 'where',
-                that: isA<QueryPredicateOperation>()
-                    .having((qpo) => qpo.field, 'Field', equals('favorites')),
+                that: isAFavoritesTalkQuery(),
               ),
             ),
           ).thenThrow(
