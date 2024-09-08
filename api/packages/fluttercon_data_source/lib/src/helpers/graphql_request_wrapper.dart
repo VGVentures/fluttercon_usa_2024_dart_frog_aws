@@ -32,11 +32,12 @@ class GraphQLRequestWrapper {
     Map<String, String>? headers,
   }) create = ModelMutations.create;
 
-  /// Wrapper around the static [ModelMutations.delete] helper.
+  /// Wrapper around the static [ModelMutations.deleteById] helper.
   GraphQLRequest<T> Function<T extends Model>(
-    T model, {
+    ModelType<T> modelType,
+    ModelIdentifier<T> modelIdentifier, {
     String? apiName,
     APIAuthorizationType? authorizationMode,
     Map<String, String>? headers,
-  }) delete = ModelMutations.delete;
+  }) deleteById = ModelMutations.deleteById;
 }

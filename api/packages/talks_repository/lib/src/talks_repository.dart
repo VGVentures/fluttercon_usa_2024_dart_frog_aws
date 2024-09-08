@@ -49,9 +49,21 @@ class TalksRepository {
   }) async {
     final favorites = await _getFavoritesByUser(request.userId);
 
-    final deleteResponse = await _dataSource.deleteFavoritesTalk(
+    final favoritesTalkResponse = await _dataSource.getFavoritesTalks(
       favoritesId: favorites.id,
       talkId: request.talkId,
+    );
+
+    if (favoritesTalkResponse.items.isEmpty ||
+        favoritesTalkResponse.items.first == null) {
+      return DeleteFavoriteResponse(
+        userId: request.userId,
+        talkId: request.talkId,
+      );
+    }
+
+    final deleteResponse = await _dataSource.deleteFavoritesTalk(
+      id: favoritesTalkResponse.items.first!.id,
     );
 
     return DeleteFavoriteResponse(

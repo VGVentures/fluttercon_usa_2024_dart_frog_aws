@@ -54,20 +54,33 @@ class FlutterconDataSource {
   }
 
   /// Deletes a [FavoritesTalk] entity.
-  Future<FavoritesTalk> deleteFavoritesTalk({
-    required String favoritesId,
-    required String talkId,
-  }) async {
+  Future<FavoritesTalk> deleteFavoritesTalk({required String id}) async {
     try {
-      final request = _apiClient.delete(
-        FavoritesTalk(
-          favorites: Favorites(id: favoritesId),
-          talk: Talk(id: talkId),
-        ),
+      final request = _apiClient.deleteById(
+        FavoritesTalk.classType,
+        FavoritesTalkModelIdentifier(id: id),
       );
       return await _sendGraphQLRequest(
         request: request,
         operation: (request) => _apiClient.mutate(request: request),
+      );
+    } on Exception catch (e) {
+      throw AmplifyApiException(exception: e);
+    }
+  }
+
+  /// Gets a [Favorites] entity by [id].
+  Future<FavoritesTalk> getFavoritesTalk({required String id}) async {
+    try {
+      final request = _apiClient.get(
+        FavoritesTalk.classType,
+        FavoritesTalkModelIdentifier(
+          id: id,
+        ),
+      );
+      return await _sendGraphQLRequest(
+        request: request,
+        operation: (request) => _apiClient.query(request: request),
       );
     } on Exception catch (e) {
       throw AmplifyApiException(exception: e);
@@ -145,11 +158,15 @@ class FlutterconDataSource {
   /// an ID for a corresponding talk.
   Future<PaginatedResult<FavoritesTalk>> getFavoritesTalks({
     required String favoritesId,
+    String? talkId,
   }) async {
     try {
       final request = _apiClient.list(
         FavoritesTalk.classType,
-        where: FavoritesTalk.FAVORITES.eq(favoritesId),
+        where: QueryPredicateGroup(QueryPredicateGroupType.and, [
+          FavoritesTalk.FAVORITES.eq(favoritesId),
+          if (talkId != null) FavoritesTalk.TALK.eq(talkId),
+        ]),
       );
       return await _sendGraphQLRequest(
         request: request,
