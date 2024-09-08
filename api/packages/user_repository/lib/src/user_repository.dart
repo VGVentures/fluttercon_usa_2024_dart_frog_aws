@@ -20,8 +20,11 @@ class UserRepository {
         return null;
       }
 
+      final identityPoolId = currentSession.identityIdResult.value;
+      final userId = identityPoolId.split(':').last;
+
       return User(
-        id: currentSession.identityIdResult.value,
+        id: userId,
         sessionToken: token,
       );
     } on Exception {

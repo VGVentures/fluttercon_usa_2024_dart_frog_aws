@@ -45,7 +45,7 @@ void main() {
       test('returns $CreateFavoriteResponse when successful', () async {
         when(
           () => dataSource.createFavoritesTalk(
-            userId: TestHelpers.createFavoriteRequest.userId,
+            favoritesId: TestHelpers.createFavoriteRequest.userId,
             talkId: TestHelpers.createFavoriteRequest.talkId,
           ),
         ).thenAnswer(

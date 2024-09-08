@@ -46,17 +46,8 @@ class Favorites extends amplify_core.Model {
       );
   }
   
-  String get userId {
-    try {
-      return _userId!;
-    } catch(e) {
-      throw amplify_core.AmplifyCodeGenModelException(
-          amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
-          recoverySuggestion:
-            amplify_core.AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
-          underlyingException: e.toString()
-          );
-    }
+  String? get userId {
+    return _userId;
   }
   
   List<FavoritesTalk>? get talks {
@@ -71,9 +62,9 @@ class Favorites extends amplify_core.Model {
     return _updatedAt;
   }
   
-  const Favorites._internal({required this.id, required userId, talks, createdAt, updatedAt}): _userId = userId, _talks = talks, _createdAt = createdAt, _updatedAt = updatedAt;
+  const Favorites._internal({required this.id, userId, talks, createdAt, updatedAt}): _userId = userId, _talks = talks, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory Favorites({String? id, required String userId, List<FavoritesTalk>? talks}) {
+  factory Favorites({String? id, String? userId, List<FavoritesTalk>? talks}) {
     return Favorites._internal(
       id: id == null ? amplify_core.UUID.getUUID() : id,
       userId: userId,
@@ -118,7 +109,7 @@ class Favorites extends amplify_core.Model {
   }
   
   Favorites copyWithModelFieldValues({
-    ModelFieldValue<String>? userId,
+    ModelFieldValue<String?>? userId,
     ModelFieldValue<List<FavoritesTalk>?>? talks
   }) {
     return Favorites._internal(
@@ -185,7 +176,7 @@ class Favorites extends amplify_core.Model {
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.field(
       key: Favorites.USERID,
-      isRequired: true,
+      isRequired: false,
       ofType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.string)
     ));
     

@@ -76,7 +76,7 @@ void main() {
         );
 
         final result = await dataSource.createFavoritesTalk(
-          userId: 'userId',
+          favoritesId: 'userId',
           talkId: 'talkId',
         );
         expect(result, isA<FavoritesTalk>());
@@ -99,7 +99,7 @@ void main() {
 
         expect(
           () => dataSource.createFavoritesTalk(
-            userId: 'userId',
+            favoritesId: 'userId',
             talkId: 'talkId',
           ),
           throwsA(isA<AmplifyApiException>()),
@@ -122,7 +122,7 @@ void main() {
 
           expect(
             () => dataSource.createFavoritesTalk(
-              userId: 'userId',
+              favoritesId: 'userId',
               talkId: 'talkId',
             ),
             throwsA(isA<AmplifyApiException>()),
@@ -144,7 +144,7 @@ void main() {
 
           expect(
             () => dataSource.createFavoritesTalk(
-              userId: 'userId',
+              favoritesId: 'userId',
               talkId: 'talkId',
             ),
             throwsA(isA<AmplifyApiException>()),

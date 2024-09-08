@@ -37,7 +37,7 @@ export 'Talk.dart';
 
 class ModelProvider implements amplify_core.ModelProviderInterface {
   @override
-  String version = "15d8944982ea93f57b0234105f7c548f";
+  String version = "0fa6de5368d8544b6272f24d68148164";
   @override
   List<amplify_core.ModelSchema> modelSchemas = [Favorites.schema, FavoritesTalk.schema, Link.schema, Speaker.schema, SpeakerTalk.schema, Talk.schema];
   @override

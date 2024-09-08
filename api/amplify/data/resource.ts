@@ -44,7 +44,7 @@ const schema = a.schema({
   }),
   Favorites: a
   .model({
-    userId: a.id().required(),
+    userId: a.string(),
     talks: a.hasMany('FavoritesTalk', 'favoritesId'),
   }),
 }).authorization((allow) => [allow.guest()]);

@@ -7,6 +7,9 @@ import 'package:fluttercon_shared_models/fluttercon_shared_models.dart';
 /// The cache key for the talks cache.
 const talksCacheKey = 'talks';
 
+/// The cache key for the user Id of a favorites cache.
+String favoritesUserCacheKey(String userId) => 'favorites_$userId';
+
 /// {@template talks_repository}
 /// A repository to cache and prepare talk data retrieved from the api.
 /// {@endtemplate}
@@ -26,14 +29,32 @@ class TalksRepository {
   Future<CreateFavoriteResponse> createFavorite({
     required CreateFavoriteRequest request,
   }) async {
-    final result = await _dataSource.createFavoritesTalk(
-      userId: request.userId,
+    late final Favorites favorites;
+
+    final cachedFavorites =
+        await _cache.get(favoritesUserCacheKey(request.userId));
+
+    if (cachedFavorites != null) {
+      final json = jsonDecode(cachedFavorites) as Map<String, dynamic>;
+      favorites = Favorites.fromJson(json);
+    } else {
+      favorites = await _dataSource.createFavorites(
+        userId: request.userId,
+      );
+      await _cache.set(
+        favoritesUserCacheKey(request.userId),
+        jsonEncode(favorites.toJson()),
+      );
+    }
+
+    final createResponse = await _dataSource.createFavoritesTalk(
+      favoritesId: favorites.id,
       talkId: request.talkId,
     );
 
     return CreateFavoriteResponse(
-      userId: result.favorites?.userId ?? '',
-      talkId: result.talk?.id ?? '',
+      userId: createResponse.favorites?.userId ?? '',
+      talkId: createResponse.talk?.id ?? '',
     );
   }
 
@@ -90,7 +111,8 @@ class TalksRepository {
   Future<PaginatedData<TalkTimeSlot>> getFavorites({
     required String userId,
   }) async {
-    final favoritesResponse = await _dataSource.getFavorites(userId: userId);
+    final favoritesResponse = await _dataSource.getFavorites(
+        userId: 'us-east-1:dd77c4bb-8133-c2e2-1f82-1a8659d2d02b');
 
     if (favoritesResponse.items.isEmpty ||
         favoritesResponse.items.first == null) {

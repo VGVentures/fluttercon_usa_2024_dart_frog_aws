@@ -51,6 +51,13 @@
         "--target",
         "lib/main_production.dart"
       ]
+    },
+    {
+      "name": "API: attach to process",
+      "type": "dart",
+      "request": "attach",
+      "vmServiceUri": "${command:dart.promptForVmService}",
+      "program": "${workspaceFolder}/api/main.dart"
     }
   ]
 }

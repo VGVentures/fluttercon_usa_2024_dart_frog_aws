@@ -19,15 +19,28 @@ class FlutterconDataSource {
 
   final AmplifyAPIClient _apiClient;
 
+  /// Creates a new [Favorites] entity.
+  Future<Favorites> createFavorites({required String userId}) async {
+    try {
+      final request = _apiClient.create(Favorites(userId: userId));
+      return await _sendGraphQLRequest(
+        request: request,
+        operation: (request) => _apiClient.mutate(request: request),
+      );
+    } on Exception catch (e) {
+      throw AmplifyApiException(exception: e);
+    }
+  }
+
   /// Creates a new [FavoritesTalk] entity.
   Future<FavoritesTalk> createFavoritesTalk({
-    required String userId,
+    required String favoritesId,
     required String talkId,
   }) async {
     try {
       final request = _apiClient.create(
         FavoritesTalk(
-          favorites: Favorites(userId: userId),
+          favorites: Favorites(id: favoritesId),
           talk: Talk(id: talkId),
         ),
       );
