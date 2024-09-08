@@ -20,9 +20,13 @@ void main() {
           talk: Talk(id: 'talkId'),
         ),
       );
+      registerFallbackValue(FavoritesTalk.classType);
+      registerFallbackValue(FavoritesTalkModelIdentifier(id: 'id'));
       registerFallbackValue(
         GraphQLRequest<FavoritesTalk>(document: ''),
       );
+      registerFallbackValue(GraphQLRequest<Talk>(document: ''));
+
       registerFallbackValue(
         GraphQLRequest<PaginatedResult<Favorites>>(document: ''),
       );
@@ -38,7 +42,6 @@ void main() {
       registerFallbackValue(
         GraphQLRequest<PaginatedResult<Talk>>(document: ''),
       );
-      registerFallbackValue(GraphQLRequest<Talk>(document: ''));
       registerFallbackValue(
         TalkModelIdentifier(id: 'id'),
       );
@@ -147,6 +150,96 @@ void main() {
               favoritesId: 'userId',
               talkId: 'talkId',
             ),
+            throwsA(isA<AmplifyApiException>()),
+          );
+        },
+      );
+    });
+
+    group('deleteFavoritesTalk', () {
+      setUp(() {
+        when(
+          () => apiClient.deleteById<FavoritesTalk>(
+            FavoritesTalk.classType,
+            any(),
+          ),
+        ).thenAnswer(
+          (_) => GraphQLRequest<FavoritesTalk>(
+            document: '',
+          ),
+        );
+      });
+
+      test('returns $FavoritesTalk when successful', () async {
+        when(
+          () => apiClient.mutate<FavoritesTalk>(
+            request: any(
+              named: 'request',
+              that: isA<GraphQLRequest<FavoritesTalk>>(),
+            ),
+          ),
+        ).thenReturn(
+          TestHelpers.graphQLOperation(TestHelpers.favoritesTalk),
+        );
+
+        final result = await dataSource.deleteFavoritesTalk(id: 'id');
+        expect(result, isA<FavoritesTalk>());
+      });
+
+      test('throws $AmplifyApiException when response has errors', () async {
+        when(
+          () => apiClient.mutate<FavoritesTalk>(
+            request: any(
+              named: 'request',
+              that: isA<GraphQLRequest<FavoritesTalk>>(),
+            ),
+          ),
+        ).thenReturn(
+          TestHelpers.graphQLOperation(
+            TestHelpers.favoritesTalk,
+            errors: [GraphQLResponseError(message: 'Error')],
+          ),
+        );
+
+        expect(
+          () => dataSource.deleteFavoritesTalk(id: 'id'),
+          throwsA(isA<AmplifyApiException>()),
+        );
+      });
+
+      test(
+        'throws $AmplifyApiException when response data is null',
+        () async {
+          when(
+            () => apiClient.mutate<FavoritesTalk>(
+              request: any(
+                named: 'request',
+                that: isA<GraphQLRequest<FavoritesTalk>>(),
+              ),
+            ),
+          ).thenReturn(
+            TestHelpers.graphQLOperation(null),
+          );
+
+          expect(
+            () => dataSource.deleteFavoritesTalk(id: 'id'),
+            throwsA(isA<AmplifyApiException>()),
+          );
+        },
+      );
+
+      test(
+        'throws $AmplifyApiException when an exception is thrown',
+        () async {
+          when(
+            () => apiClient.deleteById<FavoritesTalk>(
+              FavoritesTalk.classType,
+              any(),
+            ),
+          ).thenThrow(Exception('Error'));
+
+          expect(
+            () => dataSource.deleteFavoritesTalk(id: 'id'),
             throwsA(isA<AmplifyApiException>()),
           );
         },
