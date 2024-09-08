@@ -21,6 +21,22 @@ class TalksRepository {
   final FlutterconDataSource _dataSource;
   final FlutterconCache _cache;
 
+  /// Create a favorite talk entity
+  /// from a [CreateFavoriteRequest].
+  Future<CreateFavoriteResponse> createFavorite({
+    required CreateFavoriteRequest request,
+  }) async {
+    final result = await _dataSource.createFavoritesTalk(
+      userId: request.userId,
+      talkId: request.talkId,
+    );
+
+    return CreateFavoriteResponse(
+      userId: result.favorites?.userId ?? '',
+      talkId: result.talk?.id ?? '',
+    );
+  }
+
   /// Fetches a paginated list of talks.
   /// Fetches from cache if available, and from api
   /// if the cache is empty.

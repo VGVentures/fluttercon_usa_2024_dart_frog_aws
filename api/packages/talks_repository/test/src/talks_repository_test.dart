@@ -41,6 +41,24 @@ void main() {
       expect(talksRepository, isNotNull);
     });
 
+    group('createFavorite', () {
+      test('returns $CreateFavoriteResponse when successful', () async {
+        when(
+          () => dataSource.createFavoritesTalk(
+            userId: TestHelpers.createFavoriteRequest.userId,
+            talkId: TestHelpers.createFavoriteRequest.talkId,
+          ),
+        ).thenAnswer(
+          (_) async => TestHelpers.favoritesTalks.items.first!,
+        );
+
+        final result = await talksRepository.createFavorite(
+          request: TestHelpers.createFavoriteRequest,
+        );
+        expect(result, equals(TestHelpers.createFavoriteResponse));
+      });
+    });
+
     group('getFavorites', () {
       const userId = 'userId';
       test('returns ${PaginatedData<Favorites>} when successful', () async {

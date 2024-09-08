@@ -49,18 +49,31 @@ class TestHelpers {
     null,
   );
 
+  static final createFavoriteRequest = CreateFavoriteRequest(
+    userId: userId,
+    talkId: talks.items[0]!.id,
+  );
+
+  static final createFavoriteResponse = CreateFavoriteResponse(
+    userId: userId,
+    talkId: talks.items[0]!.id,
+  );
+
   static final favoritesTalks = PaginatedResult(
     [
       FavoritesTalk(
         id: '1',
+        favorites: favorites.items[0],
         talk: talks.items[0],
       ),
       FavoritesTalk(
         id: '2',
+        favorites: favorites.items[0],
         talk: talks.items[1],
       ),
       FavoritesTalk(
         id: '3',
+        favorites: favorites.items[0],
         talk: talks.items[2],
       ),
     ],
