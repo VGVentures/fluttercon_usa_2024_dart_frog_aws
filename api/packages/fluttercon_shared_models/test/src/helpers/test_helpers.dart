@@ -119,4 +119,20 @@ class TestHelpers {
     'userId': 'userId',
     'talkId': '1',
   };
+
+  static const deleteFavoriteRequest =
+      DeleteFavoriteRequest(userId: 'userId', talkId: '1');
+
+  static const deleteFavoriteRequestJson = {
+    'userId': 'userId',
+    'talkId': '1',
+  };
+
+  static const deleteFavoriteResponse =
+      DeleteFavoriteResponse(userId: 'userId', talkId: '1');
+
+  static const deleteFavoriteResponseJson = {
+    'userId': 'userId',
+    'talkId': '1',
+  };
 }

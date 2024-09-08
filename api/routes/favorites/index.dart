@@ -10,6 +10,7 @@ import 'package:talks_repository/talks_repository.dart';
 Future<Response> onRequest(RequestContext context) async {
   return switch (context.request.method) {
     HttpMethod.post => await _post(context),
+    HttpMethod.delete => await _delete(context),
     _ => Response(statusCode: HttpStatus.methodNotAllowed),
   };
 }
@@ -26,6 +27,27 @@ Future<Response> _post(RequestContext context) async {
       request: requestBody,
     );
     final json = createResponse.toJson();
+    return Response(body: jsonEncode(json));
+  } on AmplifyApiException catch (e) {
+    return Response(
+      statusCode: HttpStatus.internalServerError,
+      body: jsonEncode(e.exception.toString()),
+    );
+  }
+}
+
+Future<Response> _delete(RequestContext context) async {
+  final talksRepo = context.read<TalksRepository>();
+  try {
+    late final DeleteFavoriteRequest requestBody;
+    requestBody = DeleteFavoriteRequest.fromJson(
+      await context.request.decodeRequestBody(),
+    );
+
+    final deleteResponse = await talksRepo.deleteFavorite(
+      request: requestBody,
+    );
+    final json = deleteResponse.toJson();
     return Response(body: jsonEncode(json));
   } on AmplifyApiException catch (e) {
     return Response(

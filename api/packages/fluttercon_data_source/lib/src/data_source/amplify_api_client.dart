@@ -66,6 +66,21 @@ class AmplifyAPIClient {
     );
   }
 
+  /// Create a GraphQL [delete] request.
+  GraphQLRequest<T> delete<T extends Model>(
+    T model, {
+    String? apiName,
+    APIAuthorizationType? authorizationMode,
+    Map<String, String>? headers,
+  }) {
+    return _requestWrapper.delete<T>(
+      model,
+      apiName: apiName,
+      authorizationMode: authorizationMode,
+      headers: headers,
+    );
+  }
+
   /// Send a GraphQL [query] with a given [request].
   GraphQLOperation<T> query<T>({required GraphQLRequest<T> request}) =>
       _api.query(request: request);

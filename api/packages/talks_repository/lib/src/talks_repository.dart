@@ -29,23 +29,7 @@ class TalksRepository {
   Future<CreateFavoriteResponse> createFavorite({
     required CreateFavoriteRequest request,
   }) async {
-    late final Favorites favorites;
-
-    final cachedFavorites =
-        await _cache.get(favoritesUserCacheKey(request.userId));
-
-    if (cachedFavorites != null) {
-      final json = jsonDecode(cachedFavorites) as Map<String, dynamic>;
-      favorites = Favorites.fromJson(json);
-    } else {
-      favorites = await _dataSource.createFavorites(
-        userId: request.userId,
-      );
-      await _cache.set(
-        favoritesUserCacheKey(request.userId),
-        jsonEncode(favorites.toJson()),
-      );
-    }
+    final favorites = await _getFavoritesByUser(request.userId);
 
     final createResponse = await _dataSource.createFavoritesTalk(
       favoritesId: favorites.id,
@@ -55,6 +39,24 @@ class TalksRepository {
     return CreateFavoriteResponse(
       userId: createResponse.favorites?.userId ?? '',
       talkId: createResponse.talk?.id ?? '',
+    );
+  }
+
+  /// Delete a favorite talk entity
+  /// from a [DeleteFavoriteRequest].
+  Future<DeleteFavoriteResponse> deleteFavorite({
+    required DeleteFavoriteRequest request,
+  }) async {
+    final favorites = await _getFavoritesByUser(request.userId);
+
+    final deleteResponse = await _dataSource.deleteFavoritesTalk(
+      favoritesId: favorites.id,
+      talkId: request.talkId,
+    );
+
+    return DeleteFavoriteResponse(
+      userId: deleteResponse.favorites?.userId ?? '',
+      talkId: deleteResponse.talk?.id ?? '',
     );
   }
 
@@ -173,5 +175,26 @@ class TalksRepository {
       ..sort((a, b) => a.startTime.compareTo(b.startTime));
 
     return sortedTimeSlots;
+  }
+
+  Future<Favorites> _getFavoritesByUser(String userId) async {
+    late final Favorites favorites;
+
+    final cachedFavorites = await _cache.get(favoritesUserCacheKey(userId));
+
+    if (cachedFavorites != null) {
+      final json = jsonDecode(cachedFavorites) as Map<String, dynamic>;
+      favorites = Favorites.fromJson(json);
+    } else {
+      favorites = await _dataSource.createFavorites(
+        userId: userId,
+      );
+      await _cache.set(
+        favoritesUserCacheKey(userId),
+        jsonEncode(favorites.toJson()),
+      );
+    }
+
+    return favorites;
   }
 }

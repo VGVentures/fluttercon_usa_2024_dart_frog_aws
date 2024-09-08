@@ -53,6 +53,27 @@ class FlutterconDataSource {
     }
   }
 
+  /// Deletes a [FavoritesTalk] entity.
+  Future<FavoritesTalk> deleteFavoritesTalk({
+    required String favoritesId,
+    required String talkId,
+  }) async {
+    try {
+      final request = _apiClient.delete(
+        FavoritesTalk(
+          favorites: Favorites(id: favoritesId),
+          talk: Talk(id: talkId),
+        ),
+      );
+      return await _sendGraphQLRequest(
+        request: request,
+        operation: (request) => _apiClient.mutate(request: request),
+      );
+    } on Exception catch (e) {
+      throw AmplifyApiException(exception: e);
+    }
+  }
+
   /// Fetches a paginated list of [Favorites] entities.
   /// Can optionally provide a [userId] to filter.
   Future<PaginatedResult<Favorites>> getFavorites({String? userId}) async {
