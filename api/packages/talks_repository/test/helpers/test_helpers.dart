@@ -10,6 +10,25 @@ class TestHelpers {
   static final talk2StartTime = talk2StartTimeTemporal.getDateTimeInUtc();
   static final talk3StartTime = talk3StartTimeTemporal.getDateTimeInUtc();
 
+  static const favoritesId = 'favoritesId';
+  static const userId = 'userId';
+
+  static final favorites = PaginatedResult(
+    [Favorites(id: favoritesId, userId: userId)],
+    null,
+    null,
+    null,
+    Favorites.classType,
+    null,
+  );
+
+  static final favoritesJson = {
+    'id': favoritesId,
+    'items': [
+      {'userId': userId},
+    ],
+  };
+
   static final talks = PaginatedResult(
     [
       Talk(
@@ -35,6 +54,66 @@ class TestHelpers {
     null,
     null,
     Talk.classType,
+    null,
+  );
+
+  static final createFavoriteRequest = CreateFavoriteRequest(
+    userId: userId,
+    talkId: talks.items[0]!.id,
+  );
+
+  static final createFavoriteResponse = CreateFavoriteResponse(
+    userId: userId,
+    talkId: talks.items[0]!.id,
+  );
+
+  static final deleteFavoriteRequest = DeleteFavoriteRequest(
+    userId: userId,
+    talkId: talks.items[0]!.id,
+  );
+
+  static final deleteFavoriteResponse = DeleteFavoriteResponse(
+    userId: userId,
+    talkId: talks.items[0]!.id,
+  );
+
+  static final favoritesTalks = PaginatedResult(
+    [
+      FavoritesTalk(
+        id: '1',
+        favorites: favorites.items[0],
+        talk: talks.items[0],
+      ),
+      FavoritesTalk(
+        id: '2',
+        favorites: favorites.items[0],
+        talk: talks.items[1],
+      ),
+      FavoritesTalk(
+        id: '3',
+        favorites: favorites.items[0],
+        talk: talks.items[2],
+      ),
+    ],
+    null,
+    null,
+    null,
+    FavoritesTalk.classType,
+    null,
+  );
+
+  static final favoritesTalkSingle = PaginatedResult(
+    [
+      FavoritesTalk(
+        id: '1',
+        favorites: favorites.items[0],
+        talk: talks.items[0],
+      ),
+    ],
+    null,
+    null,
+    null,
+    FavoritesTalk.classType,
     null,
   );
 

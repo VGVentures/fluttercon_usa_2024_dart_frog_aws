@@ -17,6 +17,7 @@ const schema = a.schema({
       endTime: a.datetime(),
       isFavorite: a.boolean(),
       speakers: a.hasMany('SpeakerTalk', 'talkId'),
+      favorites: a.hasMany('FavoritesTalk', 'talkId'),
     }),
   Speaker: a
     .model({
@@ -33,6 +34,18 @@ const schema = a.schema({
     description: a.string(),
     speakerId: a.id(),
     speaker: a.belongsTo('Speaker', 'speakerId'),
+  }),
+  FavoritesTalk: a
+  .model({
+    favoritesId: a.id().required(),
+    talkId: a.id().required(),
+    favorites: a.belongsTo('Favorites', 'favoritesId'),
+    talk: a.belongsTo('Talk', 'talkId'),
+  }),
+  Favorites: a
+  .model({
+    userId: a.string(),
+    talks: a.hasMany('FavoritesTalk', 'favoritesId'),
   }),
 }).authorization((allow) => [allow.guest()]);
 

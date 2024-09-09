@@ -1,4 +1,4 @@
-import 'package:amplify_api_dart/amplify_api_dart.dart';
+import 'package:amplify_core/amplify_core.dart';
 import 'package:fluttercon_data_source/src/data_source/amplify_api_client.dart';
 import 'package:fluttercon_data_source/src/exceptions/exceptions.dart';
 
@@ -19,6 +19,92 @@ class FlutterconDataSource {
 
   final AmplifyAPIClient _apiClient;
 
+  /// Creates a new [Favorites] entity.
+  Future<Favorites> createFavorites({required String userId}) async {
+    try {
+      final request = _apiClient.create(Favorites(userId: userId));
+      return await _sendGraphQLRequest(
+        request: request,
+        operation: (request) => _apiClient.mutate(request: request),
+      );
+    } on Exception catch (e) {
+      throw AmplifyApiException(exception: e);
+    }
+  }
+
+  /// Creates a new [FavoritesTalk] entity.
+  Future<FavoritesTalk> createFavoritesTalk({
+    required String favoritesId,
+    required String talkId,
+  }) async {
+    try {
+      final request = _apiClient.create(
+        FavoritesTalk(
+          favorites: Favorites(id: favoritesId),
+          talk: Talk(id: talkId),
+        ),
+      );
+      return await _sendGraphQLRequest(
+        request: request,
+        operation: (request) => _apiClient.mutate(request: request),
+      );
+    } on Exception catch (e) {
+      throw AmplifyApiException(exception: e);
+    }
+  }
+
+  /// Deletes a [FavoritesTalk] entity.
+  Future<FavoritesTalk> deleteFavoritesTalk({required String id}) async {
+    try {
+      final request = _apiClient.deleteById(
+        FavoritesTalk.classType,
+        FavoritesTalkModelIdentifier(id: id),
+      );
+      return await _sendGraphQLRequest(
+        request: request,
+        operation: (request) => _apiClient.mutate(request: request),
+      );
+    } on Exception catch (e) {
+      throw AmplifyApiException(exception: e);
+    }
+  }
+
+  /// Gets a [Favorites] entity by [id].
+  Future<FavoritesTalk> getFavoritesTalk({required String id}) async {
+    try {
+      final request = _apiClient.get(
+        FavoritesTalk.classType,
+        FavoritesTalkModelIdentifier(
+          id: id,
+        ),
+      );
+      return await _sendGraphQLRequest(
+        request: request,
+        operation: (request) => _apiClient.query(request: request),
+      );
+    } on Exception catch (e) {
+      throw AmplifyApiException(exception: e);
+    }
+  }
+
+  /// Fetches a paginated list of [Favorites] entities.
+  /// Can optionally provide a [userId] to filter.
+  Future<PaginatedResult<Favorites>> getFavorites({String? userId}) async {
+    try {
+      final request = _apiClient.list(
+        Favorites.classType,
+        where: userId != null ? Favorites.USERID.eq(userId) : null,
+      );
+
+      return await _sendGraphQLRequest(
+        request: request,
+        operation: (request) => _apiClient.query(request: request),
+      );
+    } on Exception catch (e) {
+      throw AmplifyApiException(exception: e);
+    }
+  }
+
   /// Fetches a paginated list of speakers.
   Future<PaginatedResult<Speaker>> getSpeakers() async {
     try {
@@ -33,11 +119,49 @@ class FlutterconDataSource {
   }
 
   /// Fetches a paginated list of talks.
-  Future<PaginatedResult<Talk>> getTalks({bool favorites = false}) async {
+  Future<PaginatedResult<Talk>> getTalks() async {
     try {
       final request = _apiClient.list(
         Talk.classType,
-        where: favorites ? Talk.ISFAVORITE.eq(true) : null,
+      );
+      return await _sendGraphQLRequest(
+        request: request,
+        operation: (request) => _apiClient.query(request: request),
+      );
+    } on Exception catch (e) {
+      throw AmplifyApiException(exception: e);
+    }
+  }
+
+  /// Fetches a [Talk] entity by [id].
+  Future<Talk> getTalk({required String id}) async {
+    try {
+      final request =
+          _apiClient.get(Talk.classType, TalkModelIdentifier(id: id));
+      return await _sendGraphQLRequest(
+        request: request,
+        operation: (request) => _apiClient.query(request: request),
+      );
+    } on Exception catch (e) {
+      throw AmplifyApiException(exception: e);
+    }
+  }
+
+  /// Fetches a paginated list of [FavoritesTalk] entities
+  /// for a [favoritesId].
+  /// A [FavoritesTalk] contains an ID for a favorites entity and
+  /// an ID for a corresponding talk.
+  Future<PaginatedResult<FavoritesTalk>> getFavoritesTalks({
+    required String favoritesId,
+    String? talkId,
+  }) async {
+    try {
+      final request = _apiClient.list(
+        FavoritesTalk.classType,
+        where: QueryPredicateGroup(QueryPredicateGroupType.and, [
+          FavoritesTalk.FAVORITES.eq(favoritesId),
+          if (talkId != null) FavoritesTalk.TALK.eq(talkId),
+        ]),
       );
       return await _sendGraphQLRequest(
         request: request,

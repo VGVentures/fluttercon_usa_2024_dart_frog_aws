@@ -1,3 +1,7 @@
+export 'create_favorite_request.dart';
+export 'create_favorite_response.dart';
+export 'delete_favorite_request.dart';
+export 'delete_favorite_response.dart';
 export 'paginated_data.dart';
 export 'speaker_detail.dart';
 export 'speaker_link.dart';

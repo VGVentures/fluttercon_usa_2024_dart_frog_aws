@@ -15,16 +15,20 @@ class TestHelpers {
     isFavorite: false,
   );
 
-  static final favoriteTalk = Talk(
-    id: '2',
-    title: 'Talk title',
-    description: 'Talk description',
-    isFavorite: true,
+  static final favorites = Favorites(
+    id: '1',
+    userId: '1',
   );
 
   static final speakerTalk = SpeakerTalk(
     id: '1',
     speaker: speaker,
+    talk: talk,
+  );
+
+  static final favoritesTalk = FavoritesTalk(
+    id: '1',
+    favorites: favorites,
     talk: talk,
   );
 

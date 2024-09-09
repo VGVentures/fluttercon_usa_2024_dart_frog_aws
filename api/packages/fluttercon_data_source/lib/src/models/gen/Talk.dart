@@ -35,6 +35,7 @@ class Talk extends amplify_core.Model {
   final amplify_core.TemporalDateTime? _endTime;
   final bool? _isFavorite;
   final List<SpeakerTalk>? _speakers;
+  final List<FavoritesTalk>? _favorites;
   final amplify_core.TemporalDateTime? _createdAt;
   final amplify_core.TemporalDateTime? _updatedAt;
 
@@ -79,6 +80,10 @@ class Talk extends amplify_core.Model {
     return _speakers;
   }
   
+  List<FavoritesTalk>? get favorites {
+    return _favorites;
+  }
+  
   amplify_core.TemporalDateTime? get createdAt {
     return _createdAt;
   }
@@ -87,9 +92,9 @@ class Talk extends amplify_core.Model {
     return _updatedAt;
   }
   
-  const Talk._internal({required this.id, title, description, room, startTime, endTime, isFavorite, speakers, createdAt, updatedAt}): _title = title, _description = description, _room = room, _startTime = startTime, _endTime = endTime, _isFavorite = isFavorite, _speakers = speakers, _createdAt = createdAt, _updatedAt = updatedAt;
+  const Talk._internal({required this.id, title, description, room, startTime, endTime, isFavorite, speakers, favorites, createdAt, updatedAt}): _title = title, _description = description, _room = room, _startTime = startTime, _endTime = endTime, _isFavorite = isFavorite, _speakers = speakers, _favorites = favorites, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory Talk({String? id, String? title, String? description, String? room, amplify_core.TemporalDateTime? startTime, amplify_core.TemporalDateTime? endTime, bool? isFavorite, List<SpeakerTalk>? speakers}) {
+  factory Talk({String? id, String? title, String? description, String? room, amplify_core.TemporalDateTime? startTime, amplify_core.TemporalDateTime? endTime, bool? isFavorite, List<SpeakerTalk>? speakers, List<FavoritesTalk>? favorites}) {
     return Talk._internal(
       id: id == null ? amplify_core.UUID.getUUID() : id,
       title: title,
@@ -98,7 +103,8 @@ class Talk extends amplify_core.Model {
       startTime: startTime,
       endTime: endTime,
       isFavorite: isFavorite,
-      speakers: speakers != null ? List<SpeakerTalk>.unmodifiable(speakers) : speakers);
+      speakers: speakers != null ? List<SpeakerTalk>.unmodifiable(speakers) : speakers,
+      favorites: favorites != null ? List<FavoritesTalk>.unmodifiable(favorites) : favorites);
   }
   
   bool equals(Object other) {
@@ -116,7 +122,8 @@ class Talk extends amplify_core.Model {
       _startTime == other._startTime &&
       _endTime == other._endTime &&
       _isFavorite == other._isFavorite &&
-      DeepCollectionEquality().equals(_speakers, other._speakers);
+      DeepCollectionEquality().equals(_speakers, other._speakers) &&
+      DeepCollectionEquality().equals(_favorites, other._favorites);
   }
   
   @override
@@ -141,7 +148,7 @@ class Talk extends amplify_core.Model {
     return buffer.toString();
   }
   
-  Talk copyWith({String? title, String? description, String? room, amplify_core.TemporalDateTime? startTime, amplify_core.TemporalDateTime? endTime, bool? isFavorite, List<SpeakerTalk>? speakers}) {
+  Talk copyWith({String? title, String? description, String? room, amplify_core.TemporalDateTime? startTime, amplify_core.TemporalDateTime? endTime, bool? isFavorite, List<SpeakerTalk>? speakers, List<FavoritesTalk>? favorites}) {
     return Talk._internal(
       id: id,
       title: title ?? this.title,
@@ -150,7 +157,8 @@ class Talk extends amplify_core.Model {
       startTime: startTime ?? this.startTime,
       endTime: endTime ?? this.endTime,
       isFavorite: isFavorite ?? this.isFavorite,
-      speakers: speakers ?? this.speakers);
+      speakers: speakers ?? this.speakers,
+      favorites: favorites ?? this.favorites);
   }
   
   Talk copyWithModelFieldValues({
@@ -160,7 +168,8 @@ class Talk extends amplify_core.Model {
     ModelFieldValue<amplify_core.TemporalDateTime?>? startTime,
     ModelFieldValue<amplify_core.TemporalDateTime?>? endTime,
     ModelFieldValue<bool?>? isFavorite,
-    ModelFieldValue<List<SpeakerTalk>?>? speakers
+    ModelFieldValue<List<SpeakerTalk>?>? speakers,
+    ModelFieldValue<List<FavoritesTalk>?>? favorites
   }) {
     return Talk._internal(
       id: id,
@@ -170,7 +179,8 @@ class Talk extends amplify_core.Model {
       startTime: startTime == null ? this.startTime : startTime.value,
       endTime: endTime == null ? this.endTime : endTime.value,
       isFavorite: isFavorite == null ? this.isFavorite : isFavorite.value,
-      speakers: speakers == null ? this.speakers : speakers.value
+      speakers: speakers == null ? this.speakers : speakers.value,
+      favorites: favorites == null ? this.favorites : favorites.value
     );
   }
   
@@ -195,11 +205,24 @@ class Talk extends amplify_core.Model {
               .map((e) => SpeakerTalk.fromJson(new Map<String, dynamic>.from(e?['serializedData'])))
               .toList()
           : null),
+      _favorites = json['favorites']  is Map
+        ? (json['favorites']['items'] is List
+          ? (json['favorites']['items'] as List)
+              .where((e) => e != null)
+              .map((e) => FavoritesTalk.fromJson(new Map<String, dynamic>.from(e)))
+              .toList()
+          : null)
+        : (json['favorites'] is List
+          ? (json['favorites'] as List)
+              .where((e) => e?['serializedData'] != null)
+              .map((e) => FavoritesTalk.fromJson(new Map<String, dynamic>.from(e?['serializedData'])))
+              .toList()
+          : null),
       _createdAt = json['createdAt'] != null ? amplify_core.TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? amplify_core.TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'title': _title, 'description': _description, 'room': _room, 'startTime': _startTime?.format(), 'endTime': _endTime?.format(), 'isFavorite': _isFavorite, 'speakers': _speakers?.map((SpeakerTalk? e) => e?.toJson()).toList(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'title': _title, 'description': _description, 'room': _room, 'startTime': _startTime?.format(), 'endTime': _endTime?.format(), 'isFavorite': _isFavorite, 'speakers': _speakers?.map((SpeakerTalk? e) => e?.toJson()).toList(), 'favorites': _favorites?.map((FavoritesTalk? e) => e?.toJson()).toList(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
   
   Map<String, Object?> toMap() => {
@@ -211,6 +234,7 @@ class Talk extends amplify_core.Model {
     'endTime': _endTime,
     'isFavorite': _isFavorite,
     'speakers': _speakers,
+    'favorites': _favorites,
     'createdAt': _createdAt,
     'updatedAt': _updatedAt
   };
@@ -226,6 +250,9 @@ class Talk extends amplify_core.Model {
   static final SPEAKERS = amplify_core.QueryField(
     fieldName: "speakers",
     fieldType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.model, ofModelName: 'SpeakerTalk'));
+  static final FAVORITES = amplify_core.QueryField(
+    fieldName: "favorites",
+    fieldType: amplify_core.ModelFieldType(amplify_core.ModelFieldTypeEnum.model, ofModelName: 'FavoritesTalk'));
   static var schema = amplify_core.Model.defineSchema(define: (amplify_core.ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "Talk";
     modelSchemaDefinition.pluralName = "Talks";
@@ -285,6 +312,13 @@ class Talk extends amplify_core.Model {
       isRequired: false,
       ofModelName: 'SpeakerTalk',
       associatedKey: SpeakerTalk.TALK
+    ));
+    
+    modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.hasMany(
+      key: Talk.FAVORITES,
+      isRequired: false,
+      ofModelName: 'FavoritesTalk',
+      associatedKey: FavoritesTalk.TALK
     ));
     
     modelSchemaDefinition.addField(amplify_core.ModelFieldDefinition.nonQueryField(

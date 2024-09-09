@@ -103,4 +103,36 @@ class TestHelpers {
     'startTime': '2024-01-01T00:00:00.000',
     'talks': [talkPreviewJson],
   };
+
+  static const createFavoriteRequest =
+      CreateFavoriteRequest(userId: 'userId', talkId: '1');
+
+  static const createFavoriteRequestJson = {
+    'userId': 'userId',
+    'talkId': '1',
+  };
+
+  static const createFavoriteResponse =
+      CreateFavoriteResponse(userId: 'userId', talkId: '1');
+
+  static const createFavoriteResponseJson = {
+    'userId': 'userId',
+    'talkId': '1',
+  };
+
+  static const deleteFavoriteRequest =
+      DeleteFavoriteRequest(userId: 'userId', talkId: '1');
+
+  static const deleteFavoriteRequestJson = {
+    'userId': 'userId',
+    'talkId': '1',
+  };
+
+  static const deleteFavoriteResponse =
+      DeleteFavoriteResponse(userId: 'userId', talkId: '1');
+
+  static const deleteFavoriteResponseJson = {
+    'userId': 'userId',
+    'talkId': '1',
+  };
 }
