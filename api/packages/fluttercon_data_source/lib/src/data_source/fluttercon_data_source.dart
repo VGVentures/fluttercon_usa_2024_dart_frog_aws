@@ -119,15 +119,10 @@ class FlutterconDataSource {
   }
 
   /// Fetches a paginated list of talks.
-  Future<PaginatedResult<Talk>> getTalks({List<String> ids = const []}) async {
+  Future<PaginatedResult<Talk>> getTalks() async {
     try {
       final request = _apiClient.list(
         Talk.classType,
-        where: ids.isNotEmpty
-            ? QueryPredicateGroup(QueryPredicateGroupType.or, [
-                for (final id in ids) Talk.ID.eq(id),
-              ])
-            : null,
       );
       return await _sendGraphQLRequest(
         request: request,

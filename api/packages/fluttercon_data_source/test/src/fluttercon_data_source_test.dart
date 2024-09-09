@@ -491,49 +491,6 @@ void main() {
         expect(result, isA<PaginatedResult<Talk>>());
       });
 
-      test(
-          'returns filtered ${PaginatedResult<Talk>} when successful '
-          'and [ids] is not empty', () async {
-        when(
-          () => apiClient.list(
-            Talk.classType,
-            where: any(
-              named: 'where',
-              that: isA<QueryPredicateGroup>(),
-            ),
-          ),
-        ).thenAnswer(
-          (_) => GraphQLRequest<PaginatedResult<Talk>>(
-            document: '',
-          ),
-        );
-        when(
-          () => apiClient.query<PaginatedResult<Talk>>(
-            request: any(
-              named: 'request',
-              that: isA<GraphQLRequest<PaginatedResult<Talk>>>(),
-            ),
-          ),
-        ).thenReturn(
-          TestHelpers.graphQLOperation(
-            TestHelpers.paginatedResult(
-              TestHelpers.talk,
-              Talk.classType,
-            ),
-          ),
-        );
-
-        final result = await dataSource.getTalks(ids: ['id']);
-        expect(
-          result,
-          isA<PaginatedResult<Talk>>().having(
-            (result) => result.items,
-            'talks',
-            contains(TestHelpers.talk),
-          ),
-        );
-      });
-
       test('throws $AmplifyApiException when response has errors', () async {
         when(
           () => apiClient.query<PaginatedResult<Talk>>(
