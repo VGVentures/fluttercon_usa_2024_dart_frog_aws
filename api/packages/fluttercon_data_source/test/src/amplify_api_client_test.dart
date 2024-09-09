@@ -90,6 +90,29 @@ void main() {
       });
     });
 
+    group('deleteById', () {
+      test('returns a GraphQLRequest with a given type', () {
+        GraphQLRequest<T> deleteByIdFunc<T extends Model>(
+          ModelType<T> modelType,
+          ModelIdentifier<T> modelIdentifier, {
+          String? apiName,
+          APIAuthorizationType? authorizationMode,
+          Map<String, String>? headers,
+        }) {
+          return GraphQLRequest<T>(document: '');
+        }
+
+        when(() => requestWrapper.deleteById).thenReturn(deleteByIdFunc);
+        expect(
+          client.deleteById(
+            Speaker.classType,
+            const SpeakerModelIdentifier(id: '1'),
+          ),
+          isA<GraphQLRequest<Speaker>>(),
+        );
+      });
+    });
+
     group('query', () {
       test('calls api query', () {
         final request = GraphQLRequest<PaginatedResult<Speaker>>(document: '');

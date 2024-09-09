@@ -14,6 +14,7 @@ void main() {
     late FlutterconDataSource dataSource;
 
     setUpAll(() {
+      registerFallbackValue(Favorites(userId: 'userId'));
       registerFallbackValue(
         FavoritesTalk(
           favorites: Favorites(userId: 'userId'),
@@ -22,6 +23,9 @@ void main() {
       );
       registerFallbackValue(FavoritesTalk.classType);
       registerFallbackValue(FavoritesTalkModelIdentifier(id: 'id'));
+      registerFallbackValue(
+        GraphQLRequest<Favorites>(document: ''),
+      );
       registerFallbackValue(
         GraphQLRequest<FavoritesTalk>(document: ''),
       );
@@ -54,6 +58,95 @@ void main() {
 
     test('can be instantiated', () async {
       expect(dataSource, isNotNull);
+    });
+
+    group('createFavorites', () {
+      setUp(() {
+        when(
+          () => apiClient.create<Favorites>(any()),
+        ).thenAnswer(
+          (_) => GraphQLRequest<Favorites>(
+            document: '',
+          ),
+        );
+      });
+
+      test('returns $Favorites when successful', () async {
+        when(
+          () => apiClient.mutate<Favorites>(
+            request: any(
+              named: 'request',
+              that: isA<GraphQLRequest<Favorites>>(),
+            ),
+          ),
+        ).thenReturn(
+          TestHelpers.graphQLOperation(TestHelpers.favorites),
+        );
+
+        final result = await dataSource.createFavorites(userId: 'userId');
+        expect(result, isA<Favorites>());
+      });
+
+      test('throws $AmplifyApiException when response has errors', () async {
+        when(
+          () => apiClient.mutate<Favorites>(
+            request: any(
+              named: 'request',
+              that: isA<GraphQLRequest<Favorites>>(),
+            ),
+          ),
+        ).thenReturn(
+          TestHelpers.graphQLOperation(
+            TestHelpers.favorites,
+            errors: [GraphQLResponseError(message: 'Error')],
+          ),
+        );
+
+        expect(
+          () => dataSource.createFavorites(userId: 'userId'),
+          throwsA(isA<AmplifyApiException>()),
+        );
+      });
+
+      test(
+        'throws $AmplifyApiException when response data is null',
+        () async {
+          when(
+            () => apiClient.mutate<Favorites>(
+              request: any(
+                named: 'request',
+                that: isA<GraphQLRequest<Favorites>>(),
+              ),
+            ),
+          ).thenReturn(
+            TestHelpers.graphQLOperation(null),
+          );
+
+          expect(
+            () => dataSource.createFavorites(userId: 'userId'),
+            throwsA(isA<AmplifyApiException>()),
+          );
+        },
+      );
+
+      test(
+        'throws $AmplifyApiException when an exception is thrown',
+        () async {
+          when(
+            () => apiClient.mutate<Favorites>(
+              request: any(
+                named: 'request',
+                that: isA<GraphQLRequest<Favorites>>(),
+              ),
+            ),
+          ).thenThrow(Exception('Error'));
+
+          expect(
+            () => dataSource.createFavorites(userId: 'userId'),
+            throwsA(isA<AmplifyApiException>()),
+          );
+        },
+      );
     });
 
     group('createFavoritesTalk', () {
@@ -716,7 +809,10 @@ void main() {
           ),
         );
 
-        final result = await dataSource.getFavoritesTalks(favoritesId: 'id');
+        final result = await dataSource.getFavoritesTalks(
+          favoritesId: 'id',
+          talkId: 'talkId',
+        );
         expect(result, isA<PaginatedResult<FavoritesTalk>>());
       });
 
@@ -782,6 +878,89 @@ void main() {
 
           expect(
             () => dataSource.getFavoritesTalks(favoritesId: 'id'),
+            throwsA(isA<AmplifyApiException>()),
+          );
+        },
+      );
+    });
+
+    group('getFavoritesTalk', () {
+      setUp(() {
+        when(() => apiClient.get<FavoritesTalk>(FavoritesTalk.classType, any()))
+            .thenAnswer(
+          (_) => GraphQLRequest<FavoritesTalk>(
+            document: '',
+          ),
+        );
+      });
+
+      test('returns $FavoritesTalk when successful', () async {
+        when(
+          () => apiClient.query<FavoritesTalk>(
+            request: any(
+              named: 'request',
+              that: isA<GraphQLRequest<FavoritesTalk>>(),
+            ),
+          ),
+        ).thenReturn(
+          TestHelpers.graphQLOperation(TestHelpers.favoritesTalk),
+        );
+
+        final result = await dataSource.getFavoritesTalk(id: 'id');
+        expect(result, isA<FavoritesTalk>());
+      });
+
+      test('throws $AmplifyApiException when response has errors', () async {
+        when(
+          () => apiClient.query<FavoritesTalk>(
+            request: any(
+              named: 'request',
+              that: isA<GraphQLRequest<FavoritesTalk>>(),
+            ),
+          ),
+        ).thenReturn(
+          TestHelpers.graphQLOperation(
+            TestHelpers.favoritesTalk,
+            errors: [GraphQLResponseError(message: 'Error')],
+          ),
+        );
+
+        expect(
+          () => dataSource.getFavoritesTalk(id: 'id'),
+          throwsA(isA<AmplifyApiException>()),
+        );
+      });
+
+      test(
+        'throws $AmplifyApiException when response data is null',
+        () async {
+          when(
+            () => apiClient.query<FavoritesTalk>(
+              request: any(
+                named: 'request',
+                that: isA<GraphQLRequest<FavoritesTalk>>(),
+              ),
+            ),
+          ).thenReturn(
+            TestHelpers.graphQLOperation(null),
+          );
+
+          expect(
+            () => dataSource.getFavoritesTalk(id: 'id'),
+            throwsA(isA<AmplifyApiException>()),
+          );
+        },
+      );
+
+      test(
+        'throws $AmplifyApiException when an exception is thrown',
+        () async {
+          when(
+            () => apiClient.get<FavoritesTalk>(FavoritesTalk.classType, any()),
+          ).thenThrow(Exception('Error'));
+
+          expect(
+            () => dataSource.getFavoritesTalk(id: 'id'),
             throwsA(isA<AmplifyApiException>()),
           );
         },
