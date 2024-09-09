@@ -179,6 +179,66 @@ void main() {
         );
         expect(result, equals(TestHelpers.deleteFavoriteResponse));
       });
+
+      test(
+          'returns $DeleteFavoriteRequest without calling api '
+          'when favoritesTalk data is null', () async {
+        when(
+          () => dataSource.getFavoritesTalks(
+            favoritesId: TestHelpers.favoritesId,
+            talkId: TestHelpers.talks.items.first!.id,
+          ),
+        ).thenAnswer(
+          (_) async => PaginatedResult(
+            [null],
+            null,
+            null,
+            null,
+            FavoritesTalk.classType,
+            null,
+          ),
+        );
+
+        final result = await talksRepository.deleteFavorite(
+          request: TestHelpers.deleteFavoriteRequest,
+        );
+        expect(result, equals(TestHelpers.deleteFavoriteResponse));
+        verifyNever(
+          () => dataSource.deleteFavoritesTalk(
+            id: favoritesTalk.id,
+          ),
+        );
+      });
+
+      test(
+          'returns $DeleteFavoriteRequest without calling api '
+          'when favoritesTalk data is empty', () async {
+        when(
+          () => dataSource.getFavoritesTalks(
+            favoritesId: TestHelpers.favoritesId,
+            talkId: TestHelpers.talks.items.first!.id,
+          ),
+        ).thenAnswer(
+          (_) async => PaginatedResult(
+            [],
+            null,
+            null,
+            null,
+            FavoritesTalk.classType,
+            null,
+          ),
+        );
+
+        final result = await talksRepository.deleteFavorite(
+          request: TestHelpers.deleteFavoriteRequest,
+        );
+        expect(result, equals(TestHelpers.deleteFavoriteResponse));
+        verifyNever(
+          () => dataSource.deleteFavoritesTalk(
+            id: favoritesTalk.id,
+          ),
+        );
+      });
     });
 
     group('getFavorites', () {
