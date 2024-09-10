@@ -87,13 +87,58 @@ class FlutterconApi {
         ),
       );
 
+  /// POST /favorites/
+  /// Adds a talk to the current user's favorites.
+  Future<CreateFavoriteResponse> addFavorite({
+    required CreateFavoriteRequest request,
+  }) async {
+    return _sendRequest(
+      uri: Uri.parse('$_baseUrl/favorites'),
+      method: HttpMethod.post,
+      fromJson: CreateFavoriteResponse.fromJson,
+      body: request,
+    );
+  }
+
+  /// DELETE /favorites/:userId/:talkId
+  /// Removes a talk from the current user's favorites.
+  Future<DeleteFavoriteResponse> removeFavorite({
+    required DeleteFavoriteRequest request,
+  }) async {
+    return _sendRequest(
+      uri: Uri.parse('$_baseUrl/favorites'),
+      method: HttpMethod.delete,
+      fromJson: DeleteFavoriteResponse.fromJson,
+      body: request,
+    );
+  }
+
+  /// GET /favorites/:userId
+  /// Fetches a paginated list of talks for a given [userId].
+  Future<PaginatedData<TalkTimeSlot>> getFavorites({
+    required String userId,
+  }) async =>
+      _sendRequest(
+        uri: Uri.parse('$_baseUrl/favorites/$userId'),
+        method: HttpMethod.get,
+        fromJson: (json) => PaginatedData.fromJson(
+          json,
+          (item) => TalkTimeSlot.fromJson((item ?? {}) as Map<String, dynamic>),
+        ),
+      );
+
   Future<T> _sendRequest<T>({
     required Uri uri,
     required HttpMethod method,
     required FromJson<T> fromJson,
+    Object? body,
   }) async {
     try {
       final request = Request(method.name.toUpperCase(), uri);
+
+      if (body != null) {
+        request.bodyBytes = utf8.encode(jsonEncode(body));
+      }
 
       final responseStream = await _client.send(request);
       final response = await Response.fromStream(responseStream);
