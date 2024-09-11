@@ -1,3 +1,5 @@
+import 'package:fluttercon_shared_models/fluttercon_shared_models.dart';
+
 class TestHelpers {
   static const userResponse = {'id': 'id', 'sessionToken': 'sessionToken'};
 
@@ -27,5 +29,28 @@ class TestHelpers {
         'imageUrl': 'imageUrl',
       },
     ],
+  };
+
+  static const userId = 'userId';
+  static const talkId = 'talkId';
+
+  static const createFavoriteRequest = CreateFavoriteRequest(
+    userId: userId,
+    talkId: talkId,
+  );
+
+  static final createFavoriteResponse = {
+    'userId': userId,
+    'talkId': talkId,
+  };
+
+  static const deleteFavoriteRequest = DeleteFavoriteRequest(
+    userId: userId,
+    talkId: talkId,
+  );
+
+  static final deleteFavoriteResponse = {
+    'userId': userId,
+    'talkId': talkId,
   };
 }
