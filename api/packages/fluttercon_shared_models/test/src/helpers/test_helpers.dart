@@ -84,6 +84,7 @@ class TestHelpers {
     room: 'room',
     speakerNames: const [],
     startTime: DateTime(2024),
+    isFavorite: false,
   );
 
   static final talkPreviewJson = {

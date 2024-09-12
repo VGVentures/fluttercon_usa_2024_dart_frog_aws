@@ -13,6 +13,7 @@ void main() {
           room: 'room',
           speakerNames: const [],
           startTime: DateTime(2024),
+          isFavorite: false,
         ),
         equals(
           TalkPreview(
@@ -21,6 +22,7 @@ void main() {
             room: 'room',
             speakerNames: const [],
             startTime: DateTime(2024),
+            isFavorite: false,
           ),
         ),
       );

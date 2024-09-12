@@ -15,6 +15,7 @@ class TalkPreview extends Equatable {
     required this.room,
     required this.startTime,
     required this.speakerNames,
+    required this.isFavorite,
   });
 
   /// Converts a JSON object into a [TalkPreview] instance.
@@ -39,6 +40,9 @@ class TalkPreview extends Equatable {
   /// The name(s) of the speaker(s) presenting the talk.
   final List<String> speakerNames;
 
+  /// Whether the talk is one of the current user's favorites.
+  final bool isFavorite;
+
   @override
   List<Object?> get props => [
         id,
@@ -46,5 +50,6 @@ class TalkPreview extends Equatable {
         room,
         startTime,
         speakerNames,
+        isFavorite,
       ];
 }
