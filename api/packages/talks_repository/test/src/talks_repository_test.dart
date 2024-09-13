@@ -28,11 +28,11 @@ void main() {
       when(() => cache.set(talksCacheKey, any<String>())).thenAnswer(
         (_) async => {},
       );
-      when(() => cache.set(favoritesUserCacheKey(TestHelpers.userId), any()))
+      when(() => cache.set(favoritesCacheKey(TestHelpers.userId), any()))
           .thenAnswer(
         (_) async => {},
       );
-      favUserCacheKey = favoritesUserCacheKey(TestHelpers.userId);
+      favUserCacheKey = favoritesCacheKey(TestHelpers.userId);
     });
 
     setUpAll(() {
