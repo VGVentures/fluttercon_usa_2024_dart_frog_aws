@@ -31,7 +31,7 @@ class TalksRepository {
   }) async {
     final favorites = await _tryGetFromCache(
       key: favoritesCacheKey(request.userId),
-      fromJson: Favorites.fromJson,
+      fromJson: _favoritesFromJson,
       orElse: () async => _getFavoritesByUser(request.userId),
     );
 
@@ -60,7 +60,11 @@ class TalksRepository {
   Future<DeleteFavoriteResponse> deleteFavorite({
     required DeleteFavoriteRequest request,
   }) async {
-    final favorites = await _getFavoritesByUser(request.userId);
+    final favorites = await _tryGetFromCache(
+      key: favoritesCacheKey(request.userId),
+      fromJson: _favoritesFromJson,
+      orElse: () async => _getFavoritesByUser(request.userId),
+    );
 
     final favoritesTalkResponse = await _dataSource.getFavoritesTalks(
       favoritesId: favorites.id,
