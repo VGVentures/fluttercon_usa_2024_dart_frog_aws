@@ -13,22 +13,6 @@ class TestHelpers {
   static const favoritesId = 'favoritesId';
   static const userId = 'userId';
 
-  static final favorites = PaginatedResult(
-    [Favorites(id: favoritesId, userId: userId)],
-    null,
-    null,
-    null,
-    Favorites.classType,
-    null,
-  );
-
-  static final favoritesJson = {
-    'id': favoritesId,
-    'items': [
-      {'userId': userId},
-    ],
-  };
-
   static final talks = PaginatedResult(
     [
       Talk(
@@ -56,6 +40,36 @@ class TestHelpers {
     Talk.classType,
     null,
   );
+
+  static final favorites = PaginatedResult(
+    [
+      Favorites(
+        id: favoritesId,
+        userId: userId,
+        talks: [
+          FavoritesTalk(
+            id: '1',
+            talk: talks.items[0],
+          ),
+        ],
+      ),
+    ],
+    null,
+    null,
+    null,
+    Favorites.classType,
+    null,
+  );
+
+  static final favoritesJson = {
+    'id': favoritesId,
+    'items': [
+      {
+        'userId': userId,
+        'talks': [talks.items[0]!.toJson()],
+      },
+    ],
+  };
 
   static final createFavoriteRequest = CreateFavoriteRequest(
     userId: userId,
