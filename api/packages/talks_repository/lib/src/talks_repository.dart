@@ -245,7 +245,6 @@ class TalksRepository {
     required Future<T> Function() orElse,
   }) async {
     final cached = await _cache.get(key);
-    print('cached: $cached');
     if (cached != null) {
       return fromJson(jsonDecode(cached) as Map<String, dynamic>);
     }

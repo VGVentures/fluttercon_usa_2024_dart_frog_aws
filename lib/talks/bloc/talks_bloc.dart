@@ -69,7 +69,10 @@ class TalksBloc extends Bloc<TalksEvent, TalksState> {
         );
         emit(
           (state as TalksLoaded).copyWith(
-            favoriteIds: (state as TalksLoaded).favoriteIds..add(event.talkId),
+            favoriteIds: [
+              ...((state as TalksLoaded).favoriteIds),
+              event.talkId,
+            ],
           ),
         );
       }
