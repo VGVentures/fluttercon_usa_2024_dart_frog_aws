@@ -66,35 +66,36 @@ class TalksSchedule extends StatelessWidget {
               flex: 2,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: timeSlot.talks.map(
-                  (talk) {
-                    return BlocSelector<TalksBloc, TalksState, bool>(
-                      selector: (state) {
-                        final favoriteIds = (state as TalksLoaded).favoriteIds;
-                        return favoriteIds.contains(talk.id);
-                      },
-                      builder: (context, isFavorite) {
-                        return TalkCard(
-                          title: talk.title,
-                          speakerNames: talk.speakerNames,
-                          room: talk.room,
-                          isFavorite: isFavorite,
-                          onFavoriteTap: () {
-                            final userId =
-                                context.read<UserCubit>().state?.id ?? '';
-                            context.read<TalksBloc>().add(
-                                  FavoriteToggleRequested(
-                                    userId: userId,
-                                    talkId: talk.id,
-                                    isFavorite: isFavorite,
-                                  ),
-                                );
-                          },
-                        );
-                      },
-                    );
-                  },
-                ).toList(),
+                children: timeSlot.talks
+                    .map(
+                      (talk) => BlocSelector<TalksBloc, TalksState, bool>(
+                        selector: (state) {
+                          final favoriteIds =
+                              (state as TalksLoaded).favoriteIds;
+                          return favoriteIds.contains(talk.id);
+                        },
+                        builder: (context, isFavorite) {
+                          return TalkCard(
+                            title: talk.title,
+                            speakerNames: talk.speakerNames,
+                            room: talk.room,
+                            isFavorite: isFavorite,
+                            onFavoriteTap: () {
+                              final userId =
+                                  context.read<UserCubit>().state?.id ?? '';
+                              context.read<TalksBloc>().add(
+                                    FavoriteToggleRequested(
+                                      userId: userId,
+                                      talkId: talk.id,
+                                      isFavorite: isFavorite,
+                                    ),
+                                  );
+                            },
+                          );
+                        },
+                      ),
+                    )
+                    .toList(),
               ),
             ),
           ],
