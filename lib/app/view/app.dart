@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttercon_api/fluttercon_api.dart';
+import 'package:fluttercon_usa_2024/favorites/favorites.dart';
 import 'package:fluttercon_usa_2024/l10n/l10n.dart';
 import 'package:fluttercon_usa_2024/speakers/speakers.dart';
 import 'package:fluttercon_usa_2024/talks/talks.dart';
@@ -73,9 +74,7 @@ class _HomePageState extends State<HomePage> {
         body: const [
           TalksPage(),
           SpeakersPage(),
-          Center(
-            child: Text('Favorites coming soon!'),
-          ),
+          FavoritesPage(),
         ][_selectedIndex],
       ),
     );
