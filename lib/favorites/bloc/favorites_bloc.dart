@@ -62,7 +62,6 @@ class FavoritesBloc extends Bloc<FavoritesEvent, FavoritesState> {
               .toList(),
         ),
       );
-      print('New favorite ids: ${(state as FavoritesLoaded).favoriteIds}');
     } catch (e) {
       emit(FavoritesError(error: e));
     }

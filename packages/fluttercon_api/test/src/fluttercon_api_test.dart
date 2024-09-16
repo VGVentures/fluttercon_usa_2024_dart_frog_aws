@@ -256,9 +256,16 @@ void main() {
         },
       );
     });
-
     group('getTalks', () {
-      final url = Uri.parse('$baseUrl/talks');
+      const userId = 'id';
+      final url = Uri.parse('$baseUrl/talks/$userId');
+
+      setUp(() {
+        whenHttpClientSend(
+          url: Uri.parse('$baseUrl/user'),
+          response: TestHelpers.userResponse,
+        );
+      });
 
       test(
         'returns ${PaginatedData<TalkTimeSlot>} on successful response',
