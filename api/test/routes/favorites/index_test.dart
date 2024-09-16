@@ -23,6 +23,68 @@ void main() {
     talksRepository = _MockTalksRepository();
   });
 
+  group('GET /favorites', () {
+    const userId = 'userId';
+
+    final responseData = PaginatedData(
+      items: [
+        TalkTimeSlot(
+          startTime: DateTime(2024),
+          talks: [
+            TalkPreview(
+              id: 'id',
+              title: 'title',
+              room: 'room',
+              startTime: DateTime(2024),
+              speakerNames: const ['speakerName'],
+              isFavorite: true,
+            ),
+          ],
+        ),
+      ],
+    );
+    test(
+      'responds with a 200 and a list of talks by userId when successful',
+      () async {
+        final context = _MockRequestContext();
+        final request =
+            Request('GET', Uri.parse('http://127.0.0.1/?userId=$userId'));
+        when(() => context.request).thenReturn(request);
+        when(() => context.read<TalksRepository>()).thenReturn(talksRepository);
+        when(() => talksRepository.getFavorites(userId: userId))
+            .thenAnswer((_) async => responseData);
+
+        final response = await route.onRequest(context);
+        expect(response.statusCode, equals(HttpStatus.ok));
+        expect(
+          await response.body(),
+          equals(jsonEncode(responseData.toJson((value) => value.toJson()))),
+        );
+      },
+    );
+
+    test(
+      'responds with a 500 and an exception when there is a failure',
+      () async {
+        final context = _MockRequestContext();
+        final request =
+            Request('GET', Uri.parse('http://127.0.0.1/?userId=$userId'));
+        const amplifyException = AmplifyApiException(exception: 'oops');
+        when(() => context.request).thenReturn(request);
+        when(() => context.read<TalksRepository>()).thenReturn(talksRepository);
+        when(() => talksRepository.getFavorites(userId: userId))
+            .thenThrow(amplifyException);
+
+        final response = await route.onRequest(context);
+        expect(response.statusCode, equals(HttpStatus.internalServerError));
+        expect(
+          await response.body(),
+          equals(jsonEncode(amplifyException.exception)),
+        );
+      },
+    );
+  });
+
   group('POST /favorites', () {
     const requestBody = CreateFavoriteRequest(
       talkId: 'talkId',

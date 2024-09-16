@@ -76,7 +76,7 @@ class FlutterconApi {
         ),
       );
 
-  /// GET /talks/:userId
+  /// GET /talks
   /// Fetches a paginated list of talks.
   /// If not already present, fetches the current user
   /// in order to return the user's favorites.
@@ -84,16 +84,17 @@ class FlutterconApi {
     _currentUser ??= await getUser();
 
     return _sendRequest(
-      uri: Uri.parse('$_baseUrl/talks/${_currentUser?.id}'),
+      uri: Uri.parse('$_baseUrl/talks'),
       method: HttpMethod.get,
       fromJson: (json) => PaginatedData.fromJson(
         json,
         (item) => TalkTimeSlot.fromJson((item ?? {}) as Map<String, dynamic>),
       ),
+      queryParameters: {'userId': _currentUser!.id},
     );
   }
 
-  /// POST /favorites/
+  /// POST /favorites
   /// Adds a talk to the current user's favorites.
   Future<CreateFavoriteResponse> addFavorite({
     required CreateFavoriteRequest request,
@@ -105,7 +106,7 @@ class FlutterconApi {
         body: request,
       );
 
-  /// DELETE /favorites/:userId/:talkId
+  /// DELETE /favorites
   /// Removes a talk from the current user's favorites.
   Future<DeleteFavoriteResponse> removeFavorite({
     required DeleteFavoriteRequest request,
@@ -117,18 +118,19 @@ class FlutterconApi {
         body: request,
       );
 
-  /// GET /favorites/:userId
+  /// GET /favorites
   /// Fetches a paginated list of talks for a given [userId].
   Future<PaginatedData<TalkTimeSlot>> getFavorites({
     required String userId,
   }) async =>
       _sendRequest(
-        uri: Uri.parse('$_baseUrl/favorites/$userId'),
+        uri: Uri.parse('$_baseUrl/favorites'),
         method: HttpMethod.get,
         fromJson: (json) => PaginatedData.fromJson(
           json,
           (item) => TalkTimeSlot.fromJson((item ?? {}) as Map<String, dynamic>),
         ),
+        queryParameters: {'userId': userId},
       );
 
   Future<T> _sendRequest<T>({
@@ -136,9 +138,17 @@ class FlutterconApi {
     required HttpMethod method,
     required FromJson<T> fromJson,
     Object? body,
+    Map<String, String>? queryParameters,
   }) async {
     try {
-      final request = Request(method.name.toUpperCase(), uri);
+      final requestUri = Uri(
+        scheme: uri.scheme,
+        host: uri.host,
+        path: uri.path,
+        port: uri.port,
+        queryParameters: queryParameters,
+      );
+      final request = Request(method.name.toUpperCase(), requestUri);
 
       if (body != null) {
         request.bodyBytes = utf8.encode(jsonEncode(body));
