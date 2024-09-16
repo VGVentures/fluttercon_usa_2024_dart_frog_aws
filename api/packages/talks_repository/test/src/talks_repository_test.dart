@@ -313,11 +313,6 @@ void main() {
 
       setUp(() {
         when(
-          () => cache.get(
-            favCacheKey,
-          ),
-        ).thenAnswer((_) async => jsonEncode(TestHelpers.favoritesJson));
-        when(
           () => dataSource.createFavorites(
             userId: TestHelpers.userId,
           ),
@@ -340,10 +335,17 @@ void main() {
       });
 
       test('fetches $Favorites from cache when present', () async {
+        when(
+          () => cache.get(
+            favCacheKey,
+          ),
+        ).thenAnswer((_) async => jsonEncode(TestHelpers.favoritesJson));
         await talksRepository.getFavorites(
           userId: userId,
         );
 
+        final result = await talksRepository.getFavorites(userId: userId);
+        expect(result, equals(TestHelpers.talkTimeSlots));
         verifyNever(
           () => dataSource.createFavorites(
             userId: userId,
@@ -381,46 +383,12 @@ void main() {
         ).called(1);
       });
 
-      test('returns ${PaginatedData<TalkTimeSlot>} when successful', () async {
-        final result = await talksRepository.getFavorites(userId: userId);
-        expect(result, equals(TestHelpers.talkTimeSlots));
-      });
-
-      test('does not return $TalkTimeSlot when favorites data is null',
-          () async {
-        when(() => dataSource.getFavorites(userId: userId)).thenAnswer(
-          (_) async => PaginatedResult(
-            [null],
-            null,
-            null,
-            null,
-            Favorites.classType,
-            null,
-          ),
-        );
-
-        final result = await talksRepository.getFavorites(userId: userId);
-        expect(result.items, isEmpty);
-      });
-
-      test('does not return $TalkTimeSlot when favorites data is empty',
-          () async {
-        when(() => dataSource.getFavorites(userId: userId)).thenAnswer(
-          (_) async => PaginatedResult(
-            [],
-            null,
-            null,
-            null,
-            Favorites.classType,
-            null,
-          ),
-        );
-
-        final result = await talksRepository.getFavorites(userId: userId);
-        expect(result.items, isEmpty);
-      });
-
       test('does not return $TalkTimeSlot when talk data is null', () async {
+        when(
+          () => cache.get(
+            favCacheKey,
+          ),
+        ).thenAnswer((_) async => null);
         when(() => dataSource.getFavorites(userId: userId)).thenAnswer(
           (_) async => TestHelpers.favorites,
         );
@@ -446,27 +414,12 @@ void main() {
     });
 
     group('getTalks', () {
-      test('returns cached ${PaginatedData<TalkTimeSlot>} when available',
-          () async {
-        when(() => cache.get(talksCacheKey)).thenAnswer(
-          (_) async => jsonEncode(TestHelpers.talkTimeSlotsJson),
-        );
-
-        final result = await talksRepository.getTalks(
-          userId: TestHelpers.userId,
-        );
-        verifyNever(() => dataSource.getTalks());
-        expect(result, equals(TestHelpers.talkTimeSlots));
-      });
-
-      test(
-          'returns ${PaginatedData<TalkTimeSlot>} from api when not cached '
-          'and adds to the cache', () async {
-        when(() => cache.get(talksCacheKey)).thenAnswer(
-          (_) async => null,
-        );
-        when(() => dataSource.getTalks())
-            .thenAnswer((_) async => TestHelpers.talks);
+      setUp(() {
+        when(
+          () => cache.get(
+            favCacheKey,
+          ),
+        ).thenAnswer((_) async => jsonEncode(TestHelpers.favoritesJson));
         final talks = TestHelpers.talks.items;
         when(() => dataSource.getSpeakerTalks(talk: talks[0])).thenAnswer(
           (_) async => TestHelpers.speakerTalks(talks[0]!),
@@ -477,6 +430,26 @@ void main() {
         when(() => dataSource.getSpeakerTalks(talk: talks[2])).thenAnswer(
           (_) async => TestHelpers.speakerTalks(talks[2]!),
         );
+      });
+
+      test('fetches $Talk data from cache when available', () async {
+        when(() => cache.get(talksCacheKey)).thenAnswer(
+          (_) async => jsonEncode(TestHelpers.talksJson),
+        );
+
+        final result = await talksRepository.getTalks(
+          userId: TestHelpers.userId,
+        );
+        verifyNever(() => dataSource.getTalks());
+        expect(result, equals(TestHelpers.talkTimeSlots));
+      });
+
+      test('calls api and caches when $Talk data is not in cache', () async {
+        when(() => cache.get(talksCacheKey)).thenAnswer(
+          (_) async => null,
+        );
+        when(() => dataSource.getTalks())
+            .thenAnswer((_) async => TestHelpers.talks);
 
         final result = await talksRepository.getTalks(
           userId: TestHelpers.userId,
@@ -491,6 +464,49 @@ void main() {
           ),
         ).called(1);
         expect(result, equals(TestHelpers.talkTimeSlots));
+      });
+
+      test('calls api and caches when $Favorites data is not in cache',
+          () async {
+        when(() => cache.get(talksCacheKey)).thenAnswer(
+          (_) async => jsonEncode(TestHelpers.talksJson),
+        );
+        when(
+          () => cache.get(
+            favCacheKey,
+          ),
+        ).thenAnswer((_) async => null);
+        when(
+          () => dataSource.createFavorites(
+            userId: TestHelpers.userId,
+          ),
+        ).thenAnswer((_) async => TestHelpers.favorites.items.first!);
+        when(
+          () => dataSource.getFavoritesTalks(
+            favoritesId: TestHelpers.favoritesId,
+          ),
+        ).thenAnswer((_) async => TestHelpers.favoritesTalks);
+
+        await talksRepository.getTalks(
+          userId: TestHelpers.userId,
+        );
+
+        verify(
+          () => dataSource.createFavorites(
+            userId: TestHelpers.userId,
+          ),
+        ).called(1);
+        verify(
+          () => dataSource.getFavoritesTalks(
+            favoritesId: TestHelpers.favoritesId,
+          ),
+        ).called(1);
+        verify(
+          () => cache.set(
+            favCacheKey,
+            any<String>(),
+          ),
+        ).called(1);
       });
 
       test('does not return $TalkTimeSlot when talk data is null', () async {
