@@ -76,16 +76,22 @@ class FlutterconApi {
         ),
       );
 
-  /// GET /talks
+  /// GET /talks/:userId
   /// Fetches a paginated list of talks.
-  Future<PaginatedData<TalkTimeSlot>> getTalks() async => _sendRequest(
-        uri: Uri.parse('$_baseUrl/talks'),
-        method: HttpMethod.get,
-        fromJson: (json) => PaginatedData.fromJson(
-          json,
-          (item) => TalkTimeSlot.fromJson((item ?? {}) as Map<String, dynamic>),
-        ),
-      );
+  /// If not already present, fetches the current user
+  /// in order to return the user's favorites.
+  Future<PaginatedData<TalkTimeSlot>> getTalks() async {
+    _currentUser ??= await getUser();
+
+    return _sendRequest(
+      uri: Uri.parse('$_baseUrl/talks/${_currentUser?.id}'),
+      method: HttpMethod.get,
+      fromJson: (json) => PaginatedData.fromJson(
+        json,
+        (item) => TalkTimeSlot.fromJson((item ?? {}) as Map<String, dynamic>),
+      ),
+    );
+  }
 
   /// POST /favorites/
   /// Adds a talk to the current user's favorites.

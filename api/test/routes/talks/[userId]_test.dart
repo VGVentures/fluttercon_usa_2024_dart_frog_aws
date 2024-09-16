@@ -9,7 +9,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:talks_repository/talks_repository.dart';
 import 'package:test/test.dart';
 
-import '../../../routes/talks/index.dart' as route;
+import '../../../routes/talks/[userId].dart' as route;
 import '../../helpers/method_not_allowed.dart';
 
 class _MockRequestContext extends Mock implements RequestContext {}

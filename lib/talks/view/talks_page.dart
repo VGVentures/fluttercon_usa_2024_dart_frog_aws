@@ -12,8 +12,9 @@ class TalksPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => TalksBloc(api: context.read<FlutterconApi>())
-        ..add(const TalksRequested()),
+      create: (context) => TalksBloc(
+        api: context.read<FlutterconApi>(),
+      )..add(const TalksRequested()),
       child: const TalksView(),
     );
   }

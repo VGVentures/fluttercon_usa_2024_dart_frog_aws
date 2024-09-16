@@ -4,21 +4,18 @@ import 'dart:io';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:fluttercon_data_source/fluttercon_data_source.dart';
 import 'package:talks_repository/talks_repository.dart';
-import 'package:user_repository/user_repository.dart';
 
-Future<Response> onRequest(RequestContext context) async {
+Future<Response> onRequest(RequestContext context, String userId) async {
   return switch (context.request.method) {
-    HttpMethod.get => await _get(context),
+    HttpMethod.get => await _get(context, userId),
     _ => Response(statusCode: HttpStatus.methodNotAllowed),
   };
 }
 
-Future<Response> _get(RequestContext context) async {
+Future<Response> _get(RequestContext context, String userId) async {
   final talksRepo = context.read<TalksRepository>();
-  final userRepo = context.read<UserRepository>();
   try {
-    final user = await userRepo.getCurrentUser();
-    final data = await talksRepo.getTalks(userId: user?.id ?? '');
+    final data = await talksRepo.getTalks(userId: userId);
     final json = data.toJson(
       (value) => value.toJson(),
     );
