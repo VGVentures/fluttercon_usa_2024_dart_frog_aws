@@ -97,27 +97,25 @@ class FlutterconApi {
   /// Adds a talk to the current user's favorites.
   Future<CreateFavoriteResponse> addFavorite({
     required CreateFavoriteRequest request,
-  }) async {
-    return _sendRequest(
-      uri: Uri.parse('$_baseUrl/favorites'),
-      method: HttpMethod.post,
-      fromJson: CreateFavoriteResponse.fromJson,
-      body: request,
-    );
-  }
+  }) async =>
+      _sendRequest(
+        uri: Uri.parse('$_baseUrl/favorites'),
+        method: HttpMethod.post,
+        fromJson: CreateFavoriteResponse.fromJson,
+        body: request,
+      );
 
   /// DELETE /favorites/:userId/:talkId
   /// Removes a talk from the current user's favorites.
   Future<DeleteFavoriteResponse> removeFavorite({
     required DeleteFavoriteRequest request,
-  }) async {
-    return _sendRequest(
-      uri: Uri.parse('$_baseUrl/favorites'),
-      method: HttpMethod.delete,
-      fromJson: DeleteFavoriteResponse.fromJson,
-      body: request,
-    );
-  }
+  }) async =>
+      _sendRequest(
+        uri: Uri.parse('$_baseUrl/favorites'),
+        method: HttpMethod.delete,
+        fromJson: DeleteFavoriteResponse.fromJson,
+        body: request,
+      );
 
   /// GET /favorites/:userId
   /// Fetches a paginated list of talks for a given [userId].

@@ -22,8 +22,8 @@ void main() {
     group('TalksLoaded', () {
       test('supports value equality', () {
         expect(
-          TalksLoaded(talkTimeSlots: TestData.talkTimeSlotData.items),
-          equals(TalksLoaded(talkTimeSlots: TestData.talkTimeSlotData.items)),
+          TalksLoaded(talkTimeSlots: TestData.talkTimeSlotData().items),
+          equals(TalksLoaded(talkTimeSlots: TestData.talkTimeSlotData().items)),
         );
       });
     });

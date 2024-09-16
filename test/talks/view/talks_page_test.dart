@@ -2,7 +2,9 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fluttercon_api/fluttercon_api.dart';
 import 'package:fluttercon_usa_2024/talks/talks.dart';
+import 'package:fluttercon_usa_2024/user/cubit/user_cubit.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../helpers/helpers.dart';
@@ -10,6 +12,8 @@ import '../../helpers/test_data.dart';
 
 class _MockTalksBloc extends MockBloc<TalksEvent, TalksState>
     implements TalksBloc {}
+
+class _MockUserCubit extends MockCubit<User?> implements UserCubit {}
 
 void main() {
   group('TalksPage', () {
@@ -88,7 +92,7 @@ void main() {
 
       testWidgets('renders TalksSchedule when state is loaded', (tester) async {
         when(() => talksBloc.state).thenReturn(
-          TalksLoaded(talkTimeSlots: TestData.talkTimeSlotData.items),
+          TalksLoaded(talkTimeSlots: TestData.talkTimeSlotData().items),
         );
 
         await tester.pumpApp(
@@ -102,14 +106,35 @@ void main() {
       });
 
       group('TalksSchedule', () {
-        testWidgets('can tap favorites icon', (tester) async {
+        late UserCubit userCubit;
+
+        setUp(() {
+          userCubit = _MockUserCubit();
+          when(() => userCubit.state).thenReturn(TestData.user);
+          registerFallbackValue(
+            FavoriteToggleRequested(
+              userId: TestData.user.id,
+              talkId: '1',
+              isFavorite: false,
+            ),
+          );
+        });
+
+        testWidgets('can tap favorites icon to toggle', (tester) async {
           when(() => talksBloc.state).thenReturn(
-            TalksLoaded(talkTimeSlots: TestData.talkTimeSlotData.items),
+            TalksLoaded(talkTimeSlots: TestData.talkTimeSlotData().items),
           );
 
           await tester.pumpApp(
-            BlocProvider.value(
-              value: talksBloc,
+            MultiBlocProvider(
+              providers: [
+                BlocProvider.value(
+                  value: talksBloc,
+                ),
+                BlocProvider.value(
+                  value: userCubit,
+                ),
+              ],
               child: const TalksView(),
             ),
           );
@@ -117,10 +142,14 @@ void main() {
           final icon = find.byIcon(Icons.favorite_border).first;
 
           await tester.tap(icon);
-          expect(
-            tester.widget<Icon>(icon).icon,
-            equals(Icons.favorite_border),
-          );
+
+          verify(
+            () => talksBloc.add(
+              any(
+                that: isA<FavoriteToggleRequested>(),
+              ),
+            ),
+          ).called(1);
         });
       });
     });
