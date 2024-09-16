@@ -36,6 +36,7 @@ void main() {
               room: 'room',
               startTime: DateTime(2024),
               speakerNames: const ['speakerName'],
+              isFavorite: true,
             ),
           ],
         ),

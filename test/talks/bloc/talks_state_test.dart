@@ -22,9 +22,31 @@ void main() {
     group('TalksLoaded', () {
       test('supports value equality', () {
         expect(
-          TalksLoaded(talkTimeSlots: TestData.talkTimeSlotData.items),
-          equals(TalksLoaded(talkTimeSlots: TestData.talkTimeSlotData.items)),
+          TalksLoaded(talkTimeSlots: TestData.talkTimeSlotData().items),
+          equals(TalksLoaded(talkTimeSlots: TestData.talkTimeSlotData().items)),
         );
+      });
+
+      group('copyWith', () {
+        test('returns same object when no properties are passed', () {
+          final loaded =
+              TalksLoaded(talkTimeSlots: TestData.talkTimeSlotData().items);
+          expect(loaded.copyWith(), equals(loaded));
+        });
+
+        test('returns object with updated properties', () {
+          final loaded =
+              TalksLoaded(talkTimeSlots: TestData.talkTimeSlotData().items);
+          expect(
+            loaded.copyWith(favoriteIds: ['1']),
+            equals(
+              TalksLoaded(
+                talkTimeSlots: TestData.talkTimeSlotData().items,
+                favoriteIds: const ['1'],
+              ),
+            ),
+          );
+        });
       });
     });
 

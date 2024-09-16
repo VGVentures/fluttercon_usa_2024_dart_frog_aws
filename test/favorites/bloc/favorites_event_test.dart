@@ -1,29 +1,27 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fluttercon_usa_2024/talks/talks.dart';
+import 'package:fluttercon_usa_2024/favorites/favorites.dart';
 
 void main() {
-  group('TalksEvent', () {
-    group('TalksRequested', () {
+  group('FavoritesEvent', () {
+    group('FavoritesRequested', () {
       test('supports value equality', () {
-        expect(TalksRequested(), equals(TalksRequested()));
+        expect(FavoritesRequested(), equals(FavoritesRequested()));
       });
     });
 
-    group('FavoriteToggleRequested', () {
+    group('RemoveFavoriteRequested', () {
       test('supports value equality', () {
         expect(
-          FavoriteToggleRequested(
+          RemoveFavoriteRequested(
             userId: 'userId',
             talkId: '1',
-            isFavorite: false,
           ),
           equals(
-            FavoriteToggleRequested(
+            RemoveFavoriteRequested(
               userId: 'userId',
               talkId: '1',
-              isFavorite: false,
             ),
           ),
         );

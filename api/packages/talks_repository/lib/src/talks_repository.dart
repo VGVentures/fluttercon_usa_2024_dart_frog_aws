@@ -7,15 +7,15 @@ import 'package:fluttercon_shared_models/fluttercon_shared_models.dart';
 /// The cache key for the talks cache.
 const talksCacheKey = 'talks';
 
-/// The cache key for the user Id of a favorites cache.
-String favoritesUserCacheKey(String userId) => 'favorites_$userId';
+/// The cache key for the favorites corresponding to a [userId].
+String favoritesCacheKey(String userId) => 'favorites_$userId';
 
 /// {@template talks_repository}
 /// A repository to cache and prepare talk data retrieved from the api.
 /// {@endtemplate}
 class TalksRepository {
   /// {@macro talks_repository}
-  const TalksRepository({
+  TalksRepository({
     required FlutterconDataSource dataSource,
     required FlutterconCache cache,
   })  : _dataSource = dataSource,
@@ -29,11 +29,24 @@ class TalksRepository {
   Future<CreateFavoriteResponse> createFavorite({
     required CreateFavoriteRequest request,
   }) async {
-    final favorites = await _getFavoritesByUser(request.userId);
+    final favorites = await _tryGetFromCache(
+      key: favoritesCacheKey(request.userId),
+      fromJson: _favoritesFromJson,
+      orElse: () async => _getFavoritesByUser(request.userId),
+    );
 
     final createResponse = await _dataSource.createFavoritesTalk(
       favoritesId: favorites.id,
       talkId: request.talkId,
+    );
+
+    final newFavorites = favorites.copyWith(
+      talks: [...favorites.talks ?? [], createResponse],
+    );
+
+    await _cache.set(
+      favoritesCacheKey(request.userId),
+      jsonEncode(newFavorites.toJson()),
     );
 
     return CreateFavoriteResponse(
@@ -47,7 +60,11 @@ class TalksRepository {
   Future<DeleteFavoriteResponse> deleteFavorite({
     required DeleteFavoriteRequest request,
   }) async {
-    final favorites = await _getFavoritesByUser(request.userId);
+    final favorites = await _tryGetFromCache(
+      key: favoritesCacheKey(request.userId),
+      fromJson: _favoritesFromJson,
+      orElse: () async => _getFavoritesByUser(request.userId),
+    );
 
     final favoritesTalkResponse = await _dataSource.getFavoritesTalks(
       favoritesId: favorites.id,
@@ -66,6 +83,16 @@ class TalksRepository {
       id: favoritesTalkResponse.items.first!.id,
     );
 
+    final newFavorites = favorites.copyWith(
+      talks:
+          favorites.talks?.where((ft) => ft.id != deleteResponse.id).toList(),
+    );
+
+    await _cache.set(
+      favoritesCacheKey(request.userId),
+      jsonEncode(newFavorites.toJson()),
+    );
+
     return DeleteFavoriteResponse(
       userId: deleteResponse.favorites?.userId ?? '',
       talkId: deleteResponse.talk?.id ?? '',
@@ -79,43 +106,48 @@ class TalksRepository {
   /// If fetching from api, the talks are then cached.
   /// Returns [TalkTimeSlot] objects with speaker information
   /// for each one.
-  Future<PaginatedData<TalkTimeSlot>> getTalks() async {
-    final cachedTalks = await _cache.get(talksCacheKey);
-
-    if (cachedTalks != null) {
-      final json = jsonDecode(cachedTalks) as Map<String, dynamic>;
-      final result = PaginatedData.fromJson(
+  Future<PaginatedData<TalkTimeSlot>> getTalks({
+    required String userId,
+  }) async {
+    final talkData = await _tryGetFromCache(
+      key: talksCacheKey,
+      fromJson: (json) => PaginatedData.fromJson(
         json,
-        (val) => TalkTimeSlot.fromJson((val ?? {}) as Map<String, dynamic>),
-      );
-
-      return result;
-    }
-
-    final talksResponse = await _dataSource.getTalks();
-
-    final talks = talksResponse.items
-        .where((talk) => talk != null)
-        .map((talk) => talk!)
-        .toList();
-
-    final timeSlots = await _buildTalkTimeSlots(talks);
-
-    final result = PaginatedData(
-      items: timeSlots,
-      limit: talksResponse.limit,
-      nextToken: talksResponse.nextToken,
-    );
-
-    await _cache.set(
-      talksCacheKey,
-      jsonEncode(
-        result.toJson(
-          (val) => val.toJson(),
-        ),
+        (val) => Talk.fromJson((val ?? {}) as Map<String, dynamic>),
       ),
+      orElse: () async {
+        final response = await _dataSource.getTalks();
+        final data = PaginatedData(
+          items: response.items,
+          limit: response.limit,
+          nextToken: response.nextToken,
+        );
+        await _cache.set(
+          talksCacheKey,
+          jsonEncode(
+            data.toJson(
+              (val) => val?.toJson(),
+            ),
+          ),
+        );
+        return data;
+      },
     );
-    return result;
+
+    final favorites = await _tryGetFromCache(
+      key: favoritesCacheKey(userId),
+      fromJson: _favoritesFromJson,
+      orElse: () async => _getFavoritesByUser(userId),
+    );
+
+    final timeSlots =
+        await _buildTalkTimeSlots(talkData.items, favorites.talks ?? []);
+
+    return PaginatedData(
+      items: timeSlots,
+      limit: talkData.limit,
+      nextToken: talkData.nextToken,
+    );
   }
 
   /// Fetches a paginated list of talks for a given [userId].
@@ -125,40 +157,34 @@ class TalksRepository {
   Future<PaginatedData<TalkTimeSlot>> getFavorites({
     required String userId,
   }) async {
-    final favoritesResponse = await _dataSource.getFavorites(userId: userId);
+    final favorites = await _tryGetFromCache(
+      key: favoritesCacheKey(userId),
+      fromJson: _favoritesFromJson,
+      orElse: () async => _getFavoritesByUser(userId),
+    );
 
-    if (favoritesResponse.items.isEmpty ||
-        favoritesResponse.items.first == null) {
-      return PaginatedData(
-        items: const [],
-        limit: favoritesResponse.limit,
-        nextToken: favoritesResponse.nextToken,
-      );
-    }
+    final favoritesTalks = favorites.talks ?? [];
 
-    final favorites = favoritesResponse.items.first!;
-
-    final favoritesTalks =
-        await _dataSource.getFavoritesTalks(favoritesId: favorites.id);
-
-    final talks = favoritesTalks.items
-        .where((ft) => ft?.talk != null)
-        .map((ft) => ft!.talk!)
+    final talks = favoritesTalks
+        .where((ft) => ft.talk != null)
+        .map((ft) => ft.talk!)
         .toList();
 
-    final timeSlots = await _buildTalkTimeSlots(talks);
+    final timeSlots = await _buildTalkTimeSlots(talks, favoritesTalks);
 
     return PaginatedData(
       items: timeSlots,
-      limit: favoritesTalks.limit,
-      nextToken: favoritesTalks.nextToken,
     );
   }
 
-  Future<List<TalkTimeSlot>> _buildTalkTimeSlots(List<Talk> talks) async {
+  Future<List<TalkTimeSlot>> _buildTalkTimeSlots(
+    List<Talk?> talks,
+    List<FavoritesTalk?> favorites,
+  ) async {
     final talkPreviews = <TalkPreview>[];
     final timeSlots = <TalkTimeSlot>[];
     for (final talk in talks) {
+      if (talk == null) continue;
       final speakerTalks = await _dataSource.getSpeakerTalks(talk: talk);
       final talkPreview = TalkPreview(
         id: talk.id,
@@ -167,6 +193,7 @@ class TalksRepository {
         startTime: talk.startTime?.getDateTimeInUtc() ?? DateTime(2024),
         speakerNames:
             speakerTalks.items.map((st) => st?.speaker?.name ?? '').toList(),
+        isFavorite: favorites.any((ft) => ft?.talk == talk),
       );
       talkPreviews.add(talkPreview);
     }
@@ -190,23 +217,47 @@ class TalksRepository {
   }
 
   Future<Favorites> _getFavoritesByUser(String userId) async {
-    late final Favorites favorites;
+    var favorites = await _dataSource.createFavorites(
+      userId: userId,
+    );
 
-    final cachedFavorites = await _cache.get(favoritesUserCacheKey(userId));
+    final favoritesTalksResponse =
+        await _dataSource.getFavoritesTalks(favoritesId: favorites.id);
 
-    if (cachedFavorites != null) {
-      final json = jsonDecode(cachedFavorites) as Map<String, dynamic>;
-      favorites = Favorites.fromJson(json);
-    } else {
-      favorites = await _dataSource.createFavorites(
-        userId: userId,
-      );
-      await _cache.set(
-        favoritesUserCacheKey(userId),
-        jsonEncode(favorites.toJson()),
-      );
-    }
+    final favoritesTalks = favoritesTalksResponse.items
+        .where((ft) => ft != null)
+        .map((ft) => ft!)
+        .toList();
+
+    favorites = favorites.copyWith(talks: favoritesTalks);
+
+    await _cache.set(
+      favoritesCacheKey(userId),
+      jsonEncode(favorites.toJson()),
+    );
 
     return favorites;
+  }
+
+  Future<T> _tryGetFromCache<T>({
+    required String key,
+    required T Function(Map<String, dynamic>) fromJson,
+    required Future<T> Function() orElse,
+  }) async {
+    final cached = await _cache.get(key);
+    if (cached != null) {
+      return fromJson(jsonDecode(cached) as Map<String, dynamic>);
+    }
+    return orElse();
+  }
+
+  Favorites _favoritesFromJson(Map<String, dynamic> json) {
+    return Favorites(
+      id: json['id'] as String?,
+      userId: json['userId'] as String?,
+      talks: (json['talks'] as List?)
+          ?.map((e) => FavoritesTalk.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
   }
 }

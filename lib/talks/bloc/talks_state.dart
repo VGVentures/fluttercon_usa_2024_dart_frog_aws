@@ -20,12 +20,23 @@ final class TalksLoading extends TalksState {
 }
 
 final class TalksLoaded extends TalksState {
-  const TalksLoaded({required this.talkTimeSlots});
+  const TalksLoaded({required this.talkTimeSlots, this.favoriteIds = const []});
 
   final List<TalkTimeSlot> talkTimeSlots;
+  final List<String> favoriteIds;
 
   @override
-  List<Object> get props => [talkTimeSlots];
+  List<Object> get props => [talkTimeSlots, favoriteIds];
+
+  TalksLoaded copyWith({
+    List<TalkTimeSlot>? talkTimeSlots,
+    List<String>? favoriteIds,
+  }) {
+    return TalksLoaded(
+      talkTimeSlots: talkTimeSlots ?? this.talkTimeSlots,
+      favoriteIds: favoriteIds ?? this.favoriteIds,
+    );
+  }
 }
 
 final class TalksError extends TalksState {

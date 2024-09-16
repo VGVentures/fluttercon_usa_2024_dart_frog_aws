@@ -76,10 +76,54 @@ class FlutterconApi {
         ),
       );
 
-  /// GET /talks
+  /// GET /talks/:userId
   /// Fetches a paginated list of talks.
-  Future<PaginatedData<TalkTimeSlot>> getTalks() async => _sendRequest(
-        uri: Uri.parse('$_baseUrl/talks'),
+  /// If not already present, fetches the current user
+  /// in order to return the user's favorites.
+  Future<PaginatedData<TalkTimeSlot>> getTalks() async {
+    _currentUser ??= await getUser();
+
+    return _sendRequest(
+      uri: Uri.parse('$_baseUrl/talks/${_currentUser?.id}'),
+      method: HttpMethod.get,
+      fromJson: (json) => PaginatedData.fromJson(
+        json,
+        (item) => TalkTimeSlot.fromJson((item ?? {}) as Map<String, dynamic>),
+      ),
+    );
+  }
+
+  /// POST /favorites/
+  /// Adds a talk to the current user's favorites.
+  Future<CreateFavoriteResponse> addFavorite({
+    required CreateFavoriteRequest request,
+  }) async =>
+      _sendRequest(
+        uri: Uri.parse('$_baseUrl/favorites'),
+        method: HttpMethod.post,
+        fromJson: CreateFavoriteResponse.fromJson,
+        body: request,
+      );
+
+  /// DELETE /favorites/:userId/:talkId
+  /// Removes a talk from the current user's favorites.
+  Future<DeleteFavoriteResponse> removeFavorite({
+    required DeleteFavoriteRequest request,
+  }) async =>
+      _sendRequest(
+        uri: Uri.parse('$_baseUrl/favorites'),
+        method: HttpMethod.delete,
+        fromJson: DeleteFavoriteResponse.fromJson,
+        body: request,
+      );
+
+  /// GET /favorites/:userId
+  /// Fetches a paginated list of talks for a given [userId].
+  Future<PaginatedData<TalkTimeSlot>> getFavorites({
+    required String userId,
+  }) async =>
+      _sendRequest(
+        uri: Uri.parse('$_baseUrl/favorites/$userId'),
         method: HttpMethod.get,
         fromJson: (json) => PaginatedData.fromJson(
           json,
@@ -91,9 +135,14 @@ class FlutterconApi {
     required Uri uri,
     required HttpMethod method,
     required FromJson<T> fromJson,
+    Object? body,
   }) async {
     try {
       final request = Request(method.name.toUpperCase(), uri);
+
+      if (body != null) {
+        request.bodyBytes = utf8.encode(jsonEncode(body));
+      }
 
       final responseStream = await _client.send(request);
       final response = await Response.fromStream(responseStream);

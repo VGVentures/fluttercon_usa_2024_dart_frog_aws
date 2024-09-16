@@ -14,6 +14,7 @@ TalkPreview _$TalkPreviewFromJson(Map<String, dynamic> json) => TalkPreview(
       speakerNames: (json['speakerNames'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
+      isFavorite: json['isFavorite'] as bool,
     );
 
 Map<String, dynamic> _$TalkPreviewToJson(TalkPreview instance) =>
@@ -23,4 +24,5 @@ Map<String, dynamic> _$TalkPreviewToJson(TalkPreview instance) =>
       'room': instance.room,
       'startTime': instance.startTime.toIso8601String(),
       'speakerNames': instance.speakerNames,
+      'isFavorite': instance.isFavorite,
     };

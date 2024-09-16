@@ -19,7 +19,7 @@ void main() {
     late FlutterconDataSource dataSource;
     late FlutterconCache cache;
     late TalksRepository talksRepository;
-    late String favUserCacheKey;
+    late String favCacheKey;
 
     setUp(() {
       dataSource = _MockFlutterconDataSource();
@@ -28,16 +28,20 @@ void main() {
       when(() => cache.set(talksCacheKey, any<String>())).thenAnswer(
         (_) async => {},
       );
-      when(() => cache.set(favoritesUserCacheKey(TestHelpers.userId), any()))
-          .thenAnswer(
+      favCacheKey = favoritesCacheKey(TestHelpers.userId);
+      when(() => cache.set(favCacheKey, any())).thenAnswer(
         (_) async => {},
       );
-      favUserCacheKey = favoritesUserCacheKey(TestHelpers.userId);
     });
 
     setUpAll(() {
       registerFallbackValue(
-        PaginatedData<TalkTimeSlot>(
+        PaginatedData<Favorites>(
+          items: const [],
+        ),
+      );
+      registerFallbackValue(
+        PaginatedData<Talk>(
           items: const [],
         ),
       );
@@ -51,9 +55,9 @@ void main() {
       setUp(() {
         when(
           () => cache.get(
-            favUserCacheKey,
+            favCacheKey,
           ),
-        ).thenAnswer((_) async => null);
+        ).thenAnswer((_) async => jsonEncode(TestHelpers.favoritesJson));
         when(
           () => dataSource.createFavoritesTalk(
             favoritesId: TestHelpers.favoritesId,
@@ -65,11 +69,16 @@ void main() {
             userId: TestHelpers.userId,
           ),
         ).thenAnswer((_) async => TestHelpers.favorites.items.first!);
+        when(
+          () => dataSource.getFavoritesTalks(
+            favoritesId: TestHelpers.favoritesId,
+          ),
+        ).thenAnswer((_) async => TestHelpers.favoritesTalks);
       });
       test('fetches $Favorites from cache when present', () async {
         when(
           () => cache.get(
-            favUserCacheKey,
+            favCacheKey,
           ),
         ).thenAnswer((_) async => jsonEncode(TestHelpers.favoritesJson));
 
@@ -78,13 +87,25 @@ void main() {
         );
 
         verifyNever(
-          () => dataSource.getFavorites(
-            userId: TestHelpers.createFavoriteRequest.userId,
+          () => dataSource.createFavorites(
+            userId: TestHelpers.userId,
+          ),
+        );
+        verifyNever(
+          () => dataSource.getFavoritesTalks(
+            favoritesId: TestHelpers.favoritesId,
           ),
         );
       });
 
-      test('adds $Favorites in api when not present in cache', () async {
+      test('calls api and caches when $Favorites not present in cache',
+          () async {
+        when(
+          () => cache.get(
+            favCacheKey,
+          ),
+        ).thenAnswer((_) async => null);
+
         await talksRepository.createFavorite(
           request: TestHelpers.createFavoriteRequest,
         );
@@ -95,11 +116,16 @@ void main() {
           ),
         ).called(1);
         verify(
-          () => cache.set(
-            favUserCacheKey,
-            any<String>(),
+          () => dataSource.getFavoritesTalks(
+            favoritesId: TestHelpers.favoritesId,
           ),
         ).called(1);
+        verify(
+          () => cache.set(
+            favCacheKey,
+            any<String>(),
+          ),
+        ).called(2);
       });
 
       test('returns $CreateFavoriteResponse when successful', () async {
@@ -107,6 +133,19 @@ void main() {
           request: TestHelpers.createFavoriteRequest,
         );
         expect(result, equals(TestHelpers.createFavoriteResponse));
+      });
+
+      test('updates cached $Favorites when successful', () async {
+        await talksRepository.createFavorite(
+          request: TestHelpers.createFavoriteRequest,
+        );
+
+        verify(
+          () => cache.set(
+            favCacheKey,
+            any<String>(),
+          ),
+        ).called(1);
       });
     });
 
@@ -116,14 +155,19 @@ void main() {
       setUp(() {
         when(
           () => cache.get(
-            favUserCacheKey,
+            favCacheKey,
           ),
-        ).thenAnswer((_) async => null);
+        ).thenAnswer((_) async => jsonEncode(TestHelpers.favoritesJson));
         when(
           () => dataSource.createFavorites(
             userId: TestHelpers.userId,
           ),
         ).thenAnswer((_) async => TestHelpers.favorites.items.first!);
+        when(
+          () => dataSource.getFavoritesTalks(
+            favoritesId: TestHelpers.favoritesId,
+          ),
+        ).thenAnswer((_) async => TestHelpers.favoritesTalks);
         when(
           () => dataSource.getFavoritesTalks(
             favoritesId: TestHelpers.favoritesId,
@@ -138,24 +182,29 @@ void main() {
       });
 
       test('fetches $Favorites from cache when present', () async {
-        when(
-          () => cache.get(
-            favUserCacheKey,
-          ),
-        ).thenAnswer((_) async => jsonEncode(TestHelpers.favoritesJson));
-
         await talksRepository.deleteFavorite(
           request: TestHelpers.deleteFavoriteRequest,
         );
 
         verifyNever(
-          () => dataSource.getFavorites(
-            userId: TestHelpers.createFavoriteRequest.userId,
+          () => dataSource.createFavorites(
+            userId: TestHelpers.userId,
+          ),
+        );
+        verifyNever(
+          () => dataSource.getFavoritesTalks(
+            favoritesId: TestHelpers.favoritesId,
           ),
         );
       });
 
-      test('adds $Favorites in api when not present in cache', () async {
+      test('calls api and caches when $Favorites not present in cache',
+          () async {
+        when(
+          () => cache.get(
+            favCacheKey,
+          ),
+        ).thenAnswer((_) async => null);
         await talksRepository.deleteFavorite(
           request: TestHelpers.deleteFavoriteRequest,
         );
@@ -166,11 +215,16 @@ void main() {
           ),
         ).called(1);
         verify(
-          () => cache.set(
-            favUserCacheKey,
-            any<String>(),
+          () => dataSource.getFavoritesTalks(
+            favoritesId: TestHelpers.favoritesId,
           ),
         ).called(1);
+        verify(
+          () => cache.set(
+            favCacheKey,
+            any<String>(),
+          ),
+        ).called(2);
       });
 
       test('returns $DeleteFavoriteResponse when successful', () async {
@@ -178,6 +232,19 @@ void main() {
           request: TestHelpers.deleteFavoriteRequest,
         );
         expect(result, equals(TestHelpers.deleteFavoriteResponse));
+      });
+
+      test('updates cached $Favorites when successful', () async {
+        await talksRepository.deleteFavorite(
+          request: TestHelpers.deleteFavoriteRequest,
+        );
+
+        verify(
+          () => cache.set(
+            favCacheKey,
+            any<String>(),
+          ),
+        ).called(1);
       });
 
       test(
@@ -243,17 +310,18 @@ void main() {
 
     group('getFavorites', () {
       const userId = 'userId';
-      test('returns ${PaginatedData<Favorites>} when successful', () async {
-        when(() => dataSource.getFavorites(userId: userId)).thenAnswer(
-          (_) async => TestHelpers.favorites,
-        );
+
+      setUp(() {
+        when(
+          () => dataSource.createFavorites(
+            userId: TestHelpers.userId,
+          ),
+        ).thenAnswer((_) async => TestHelpers.favorites.items.first!);
         when(
           () => dataSource.getFavoritesTalks(
-            favoritesId: any(named: 'favoritesId'),
+            favoritesId: TestHelpers.favoritesId,
           ),
-        ).thenAnswer(
-          (_) async => TestHelpers.favoritesTalks,
-        );
+        ).thenAnswer((_) async => TestHelpers.favoritesTalks);
         final talks = TestHelpers.talks.items;
         when(() => dataSource.getSpeakerTalks(talk: talks[0])).thenAnswer(
           (_) async => TestHelpers.speakerTalks(talks[0]!),
@@ -264,46 +332,63 @@ void main() {
         when(() => dataSource.getSpeakerTalks(talk: talks[2])).thenAnswer(
           (_) async => TestHelpers.speakerTalks(talks[2]!),
         );
+      });
+
+      test('fetches $Favorites from cache when present', () async {
+        when(
+          () => cache.get(
+            favCacheKey,
+          ),
+        ).thenAnswer((_) async => jsonEncode(TestHelpers.favoritesJson));
+        await talksRepository.getFavorites(
+          userId: userId,
+        );
 
         final result = await talksRepository.getFavorites(userId: userId);
         expect(result, equals(TestHelpers.talkTimeSlots));
-      });
-
-      test('does not return $TalkTimeSlot when favorites data is null',
-          () async {
-        when(() => dataSource.getFavorites(userId: userId)).thenAnswer(
-          (_) async => PaginatedResult(
-            [null],
-            null,
-            null,
-            null,
-            Favorites.classType,
-            null,
+        verifyNever(
+          () => dataSource.createFavorites(
+            userId: userId,
           ),
         );
-
-        final result = await talksRepository.getFavorites(userId: userId);
-        expect(result.items, isEmpty);
       });
 
-      test('does not return $TalkTimeSlot when favorites data is empty',
+      test('calls api and caches when $Favorites not present in cache',
           () async {
-        when(() => dataSource.getFavorites(userId: userId)).thenAnswer(
-          (_) async => PaginatedResult(
-            [],
-            null,
-            null,
-            null,
-            Favorites.classType,
-            null,
+        when(
+          () => cache.get(
+            favCacheKey,
           ),
+        ).thenAnswer((_) async => null);
+
+        await talksRepository.getFavorites(
+          userId: userId,
         );
 
-        final result = await talksRepository.getFavorites(userId: userId);
-        expect(result.items, isEmpty);
+        verify(
+          () => dataSource.createFavorites(
+            userId: TestHelpers.userId,
+          ),
+        ).called(1);
+        verify(
+          () => dataSource.getFavoritesTalks(
+            favoritesId: TestHelpers.favoritesId,
+          ),
+        ).called(1);
+        verify(
+          () => cache.set(
+            favCacheKey,
+            any<String>(),
+          ),
+        ).called(1);
       });
 
       test('does not return $TalkTimeSlot when talk data is null', () async {
+        when(
+          () => cache.get(
+            favCacheKey,
+          ),
+        ).thenAnswer((_) async => null);
         when(() => dataSource.getFavorites(userId: userId)).thenAnswer(
           (_) async => TestHelpers.favorites,
         );
@@ -329,25 +414,12 @@ void main() {
     });
 
     group('getTalks', () {
-      test('returns cached ${PaginatedData<TalkTimeSlot>} when available',
-          () async {
-        when(() => cache.get(talksCacheKey)).thenAnswer(
-          (_) async => jsonEncode(TestHelpers.talkTimeSlotsJson),
-        );
-
-        final result = await talksRepository.getTalks();
-        verifyNever(() => dataSource.getTalks());
-        expect(result, equals(TestHelpers.talkTimeSlots));
-      });
-
-      test(
-          'returns ${PaginatedData<TalkTimeSlot>} from api when not cached '
-          'and adds to the cache', () async {
-        when(() => cache.get(talksCacheKey)).thenAnswer(
-          (_) async => null,
-        );
-        when(() => dataSource.getTalks())
-            .thenAnswer((_) async => TestHelpers.talks);
+      setUp(() {
+        when(
+          () => cache.get(
+            favCacheKey,
+          ),
+        ).thenAnswer((_) async => jsonEncode(TestHelpers.favoritesJson));
         final talks = TestHelpers.talks.items;
         when(() => dataSource.getSpeakerTalks(talk: talks[0])).thenAnswer(
           (_) async => TestHelpers.speakerTalks(talks[0]!),
@@ -358,8 +430,30 @@ void main() {
         when(() => dataSource.getSpeakerTalks(talk: talks[2])).thenAnswer(
           (_) async => TestHelpers.speakerTalks(talks[2]!),
         );
+      });
 
-        final result = await talksRepository.getTalks();
+      test('fetches $Talk data from cache when available', () async {
+        when(() => cache.get(talksCacheKey)).thenAnswer(
+          (_) async => jsonEncode(TestHelpers.talksJson),
+        );
+
+        final result = await talksRepository.getTalks(
+          userId: TestHelpers.userId,
+        );
+        verifyNever(() => dataSource.getTalks());
+        expect(result, equals(TestHelpers.talkTimeSlots));
+      });
+
+      test('calls api and caches when $Talk data is not in cache', () async {
+        when(() => cache.get(talksCacheKey)).thenAnswer(
+          (_) async => null,
+        );
+        when(() => dataSource.getTalks())
+            .thenAnswer((_) async => TestHelpers.talks);
+
+        final result = await talksRepository.getTalks(
+          userId: TestHelpers.userId,
+        );
         verify(
           () => dataSource.getTalks(),
         ).called(1);
@@ -370,6 +464,49 @@ void main() {
           ),
         ).called(1);
         expect(result, equals(TestHelpers.talkTimeSlots));
+      });
+
+      test('calls api and caches when $Favorites data is not in cache',
+          () async {
+        when(() => cache.get(talksCacheKey)).thenAnswer(
+          (_) async => jsonEncode(TestHelpers.talksJson),
+        );
+        when(
+          () => cache.get(
+            favCacheKey,
+          ),
+        ).thenAnswer((_) async => null);
+        when(
+          () => dataSource.createFavorites(
+            userId: TestHelpers.userId,
+          ),
+        ).thenAnswer((_) async => TestHelpers.favorites.items.first!);
+        when(
+          () => dataSource.getFavoritesTalks(
+            favoritesId: TestHelpers.favoritesId,
+          ),
+        ).thenAnswer((_) async => TestHelpers.favoritesTalks);
+
+        await talksRepository.getTalks(
+          userId: TestHelpers.userId,
+        );
+
+        verify(
+          () => dataSource.createFavorites(
+            userId: TestHelpers.userId,
+          ),
+        ).called(1);
+        verify(
+          () => dataSource.getFavoritesTalks(
+            favoritesId: TestHelpers.favoritesId,
+          ),
+        ).called(1);
+        verify(
+          () => cache.set(
+            favCacheKey,
+            any<String>(),
+          ),
+        ).called(1);
       });
 
       test('does not return $TalkTimeSlot when talk data is null', () async {
@@ -387,7 +524,9 @@ void main() {
           ),
         );
 
-        final result = await talksRepository.getTalks();
+        final result = await talksRepository.getTalks(
+          userId: TestHelpers.userId,
+        );
         expect(result.items, isEmpty);
       });
     });

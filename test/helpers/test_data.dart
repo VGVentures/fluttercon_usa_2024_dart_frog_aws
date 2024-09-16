@@ -4,42 +4,55 @@ import 'package:fluttercon_shared_models/fluttercon_shared_models.dart';
 class TestData {
   static const user = User(id: 'id', sessionToken: 'sessionToken');
 
-  static final talkTimeSlotData = PaginatedData(
-    items: [
-      TalkTimeSlot(
-        startTime: DateTime(2024),
-        talks: [
-          TalkPreview(
-            id: '1',
-            title: 'Talk 1',
-            room: 'Room 1',
+  static PaginatedData<TalkTimeSlot> talkTimeSlotData({
+    bool favorites = false,
+  }) =>
+      PaginatedData(
+        items: [
+          TalkTimeSlot(
             startTime: DateTime(2024),
-            speakerNames: const [
-              'Speaker 1',
-            ],
-          ),
-          TalkPreview(
-            id: '2',
-            title: 'Talk 2',
-            room: 'Room 2',
-            startTime: DateTime(2024),
-            speakerNames: const [
-              'Speaker 2',
-            ],
-          ),
-          TalkPreview(
-            id: '3',
-            title: 'Talk 3',
-            room: 'Room 3',
-            startTime: DateTime(2024),
-            speakerNames: const [
-              'Speaker 3',
+            talks: [
+              TalkPreview(
+                id: '1',
+                title: 'Talk 1',
+                room: 'Room 1',
+                startTime: DateTime(2024),
+                speakerNames: const [
+                  'Speaker 1',
+                ],
+                isFavorite: favorites,
+              ),
+              TalkPreview(
+                id: '2',
+                title: 'Talk 2',
+                room: 'Room 2',
+                startTime: DateTime(2024),
+                speakerNames: const [
+                  'Speaker 2',
+                ],
+                isFavorite: favorites,
+              ),
+              TalkPreview(
+                id: '3',
+                title: 'Talk 3',
+                room: 'Room 3',
+                startTime: DateTime(2024),
+                speakerNames: const [
+                  'Speaker 3',
+                ],
+                isFavorite: favorites,
+              ),
             ],
           ),
         ],
-      ),
-    ],
-  );
+      );
+
+  static final favoriteIds = talkTimeSlotData(favorites: true)
+      .items
+      .expand((timeSlot) => timeSlot.talks)
+      .where((talk) => talk.isFavorite)
+      .map((talk) => talk.id)
+      .toList();
 
   static const speakerData = PaginatedData(
     items: [

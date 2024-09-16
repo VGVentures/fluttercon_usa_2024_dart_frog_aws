@@ -13,22 +13,6 @@ class TestHelpers {
   static const favoritesId = 'favoritesId';
   static const userId = 'userId';
 
-  static final favorites = PaginatedResult(
-    [Favorites(id: favoritesId, userId: userId)],
-    null,
-    null,
-    null,
-    Favorites.classType,
-    null,
-  );
-
-  static final favoritesJson = {
-    'id': favoritesId,
-    'items': [
-      {'userId': userId},
-    ],
-  };
-
   static final talks = PaginatedResult(
     [
       Talk(
@@ -56,6 +40,44 @@ class TestHelpers {
     Talk.classType,
     null,
   );
+
+  static final favorites = PaginatedResult(
+    [
+      Favorites(
+        id: favoritesId,
+        userId: userId,
+        talks: [
+          FavoritesTalk(
+            id: '1',
+            talk: talks.items[0],
+          ),
+          FavoritesTalk(
+            id: '2',
+            talk: talks.items[1],
+          ),
+          FavoritesTalk(
+            id: '3',
+            talk: talks.items[2],
+          ),
+        ],
+      ),
+    ],
+    null,
+    null,
+    null,
+    Favorites.classType,
+    null,
+  );
+
+  static final favoritesJson = {
+    'id': favoritesId,
+    'userId': userId,
+    'talks': [
+      {'id': '1', 'talk': talks.items[0]!.toJson()},
+      {'id': '2', 'talk': talks.items[1]!.toJson()},
+      {'id': '3', 'talk': talks.items[2]!.toJson()},
+    ],
+  };
 
   static final createFavoriteRequest = CreateFavoriteRequest(
     userId: userId,
@@ -163,6 +185,7 @@ class TestHelpers {
             room: 'Room 3',
             startTime: talk3StartTime,
             speakerNames: const ['Speaker 1', 'Speaker 2', 'Speaker 3'],
+            isFavorite: true,
           ),
         ],
       ),
@@ -175,6 +198,7 @@ class TestHelpers {
             room: 'Room 2',
             startTime: talk2StartTime,
             speakerNames: const ['Speaker 1', 'Speaker 2', 'Speaker 3'],
+            isFavorite: true,
           ),
         ],
       ),
@@ -187,49 +211,32 @@ class TestHelpers {
             room: 'Room 1',
             startTime: talk1StartTime,
             speakerNames: const ['Speaker 1', 'Speaker 2', 'Speaker 3'],
+            isFavorite: true,
           ),
         ],
       ),
     ],
   );
 
-  static final talkTimeSlotsJson = {
+  static final talksJson = {
     'items': [
       {
+        'id': '3',
+        'title': 'Test Talk 3',
+        'room': 'Room 3',
         'startTime': talk3StartTime.toIso8601String(),
-        'talks': [
-          {
-            'id': '3',
-            'title': 'Test Talk 3',
-            'room': 'Room 3',
-            'startTime': talk3StartTime.toIso8601String(),
-            'speakerNames': ['Speaker 1', 'Speaker 2', 'Speaker 3'],
-          },
-        ],
       },
       {
+        'id': '2',
+        'title': 'Test Talk 2',
+        'room': 'Room 2',
         'startTime': talk2StartTime.toIso8601String(),
-        'talks': [
-          {
-            'id': '2',
-            'title': 'Test Talk 2',
-            'room': 'Room 2',
-            'startTime': talk2StartTime.toIso8601String(),
-            'speakerNames': ['Speaker 1', 'Speaker 2', 'Speaker 3'],
-          },
-        ],
       },
       {
+        'id': '1',
+        'title': 'Test Talk 1',
+        'room': 'Room 1',
         'startTime': talk1StartTime.toIso8601String(),
-        'talks': [
-          {
-            'id': '1',
-            'title': 'Test Talk 1',
-            'room': 'Room 1',
-            'startTime': talk1StartTime.toIso8601String(),
-            'speakerNames': ['Speaker 1', 'Speaker 2', 'Speaker 3'],
-          },
-        ],
       },
     ],
   };
