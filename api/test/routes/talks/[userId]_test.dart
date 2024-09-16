@@ -18,11 +18,12 @@ class _MockTalksRepository extends Mock implements TalksRepository {}
 
 void main() {
   late TalksRepository talksRepository;
+  const userId = 'userId';
 
   setUp(() {
     talksRepository = _MockTalksRepository();
   });
-  group('GET /talks', () {
+  group('GET /talks/[userId]', () {
     final responseData = PaginatedData(
       items: [
         TalkTimeSlot(
@@ -34,6 +35,7 @@ void main() {
               room: 'room',
               startTime: DateTime(2024),
               speakerNames: const ['speakerName'],
+              isFavorite: true,
             ),
           ],
         ),
@@ -45,10 +47,10 @@ void main() {
       final request = Request('GET', Uri.parse('http://127.0.0.1/'));
       when(() => context.request).thenReturn(request);
       when(() => context.read<TalksRepository>()).thenReturn(talksRepository);
-      when(() => talksRepository.getTalks())
+      when(() => talksRepository.getTalks(userId: userId))
           .thenAnswer((_) async => responseData);
 
-      final response = await route.onRequest(context);
+      final response = await route.onRequest(context, userId);
       expect(response.statusCode, equals(HttpStatus.ok));
       expect(
         await response.body(),
@@ -62,9 +64,10 @@ void main() {
       const amplifyException = AmplifyApiException(exception: 'oops');
       when(() => context.request).thenReturn(request);
       when(() => context.read<TalksRepository>()).thenReturn(talksRepository);
-      when(() => talksRepository.getTalks()).thenThrow(amplifyException);
+      when(() => talksRepository.getTalks(userId: userId))
+          .thenThrow(amplifyException);
 
-      final response = await route.onRequest(context);
+      final response = await route.onRequest(context, userId);
       expect(response.statusCode, equals(HttpStatus.internalServerError));
       expect(
         await response.body(),
@@ -78,7 +81,7 @@ void main() {
         when(() => context.read<TalksRepository>()).thenReturn(
           talksRepository,
         );
-        FutureOr<Response> action() => route.onRequest(context);
+        FutureOr<Response> action() => route.onRequest(context, userId);
         await testMethodNotAllowed(context, action, 'POST');
         await testMethodNotAllowed(context, action, 'DELETE');
         await testMethodNotAllowed(context, action, 'PUT');
