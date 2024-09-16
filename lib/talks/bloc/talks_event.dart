@@ -26,3 +26,12 @@ final class FavoriteToggleRequested extends TalksEvent {
   @override
   List<Object?> get props => [userId, talkId, isFavorite];
 }
+
+final class TalkRequested extends TalksEvent {
+  const TalkRequested({required this.id});
+
+  final String id;
+
+  @override
+  List<Object?> get props => [id];
+}

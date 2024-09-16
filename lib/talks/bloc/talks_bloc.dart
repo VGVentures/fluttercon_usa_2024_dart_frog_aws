@@ -13,6 +13,7 @@ class TalksBloc extends Bloc<TalksEvent, TalksState> {
   TalksBloc({required FlutterconApi api})
       : _api = api,
         super(const TalksInitial()) {
+    on<TalkRequested>(_onTalkRequested);
     on<TalksRequested>(_onTalksRequested);
     on<FavoriteToggleRequested>(_onFavoriteToggleRequested);
   }
@@ -76,6 +77,22 @@ class TalksBloc extends Bloc<TalksEvent, TalksState> {
           ),
         );
       }
+    } catch (e) {
+      emit(TalksError(error: e));
+    }
+  }
+
+  FutureOr<void> _onTalkRequested(
+    TalkRequested event,
+    Emitter<TalksState> emit,
+  ) async {
+    try {
+      final talk = await _api.getTalk(id: event.id);
+      emit(
+        (state as TalksLoaded).copyWith(
+          talkDetail: talk,
+        ),
+      );
     } catch (e) {
       emit(TalksError(error: e));
     }

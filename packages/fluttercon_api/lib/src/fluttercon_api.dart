@@ -94,6 +94,17 @@ class FlutterconApi {
     );
   }
 
+  /// GET /talks/:id
+  /// Fetches a talk by its [id].
+  Future<TalkDetail> getTalk({
+    required String id,
+  }) async =>
+      _sendRequest(
+        uri: Uri.parse('$_baseUrl/talks/$id'),
+        method: HttpMethod.get,
+        fromJson: TalkDetail.fromJson,
+      );
+
   /// POST /favorites
   /// Adds a talk to the current user's favorites.
   Future<CreateFavoriteResponse> addFavorite({

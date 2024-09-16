@@ -81,6 +81,11 @@ class TalksSchedule extends StatelessWidget {
                             speakerNames: talk.speakerNames,
                             room: talk.room,
                             isFavorite: isFavorite,
+                            onTap: () async {
+                              context.read<TalksBloc>().add(
+                                    TalkRequested(id: talk.id),
+                                  );
+                            },
                             onFavoriteTap: () {
                               final userId =
                                   context.read<UserCubit>().state?.id ?? '';
