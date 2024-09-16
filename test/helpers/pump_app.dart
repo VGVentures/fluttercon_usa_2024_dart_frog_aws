@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttercon_api/fluttercon_api.dart';
 import 'package:fluttercon_usa_2024/l10n/l10n.dart';
+import 'package:fluttercon_usa_2024/user/cubit/user_cubit.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:network_image_mock/network_image_mock.dart';
 
@@ -12,6 +13,7 @@ extension PumpApp on WidgetTester {
   Future<void> pumpApp(
     Widget widget, {
     FlutterconApi? api,
+    UserCubit? userCubit,
   }) {
     return mockNetworkImagesFor(
       () => pumpWidget(
@@ -21,7 +23,12 @@ extension PumpApp on WidgetTester {
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
             home: Material(
-              child: widget,
+              child: userCubit != null
+                  ? BlocProvider.value(
+                      value: userCubit,
+                      child: widget,
+                    )
+                  : widget,
             ),
           ),
         ),

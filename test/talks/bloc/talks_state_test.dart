@@ -26,6 +26,28 @@ void main() {
           equals(TalksLoaded(talkTimeSlots: TestData.talkTimeSlotData().items)),
         );
       });
+
+      group('copyWith', () {
+        test('returns same object when no properties are passed', () {
+          final loaded =
+              TalksLoaded(talkTimeSlots: TestData.talkTimeSlotData().items);
+          expect(loaded.copyWith(), equals(loaded));
+        });
+
+        test('returns object with updated properties', () {
+          final loaded =
+              TalksLoaded(talkTimeSlots: TestData.talkTimeSlotData().items);
+          expect(
+            loaded.copyWith(favoriteIds: ['1']),
+            equals(
+              TalksLoaded(
+                talkTimeSlots: TestData.talkTimeSlotData().items,
+                favoriteIds: const ['1'],
+              ),
+            ),
+          );
+        });
+      });
     });
 
     group('TalksError', () {

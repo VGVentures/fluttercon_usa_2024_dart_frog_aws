@@ -10,5 +10,24 @@ void main() {
         expect(TalksRequested(), equals(TalksRequested()));
       });
     });
+
+    group('FavoriteToggleRequested', () {
+      test('supports value equality', () {
+        expect(
+          FavoriteToggleRequested(
+            userId: 'userId',
+            talkId: '1',
+            isFavorite: false,
+          ),
+          equals(
+            FavoriteToggleRequested(
+              userId: 'userId',
+              talkId: '1',
+              isFavorite: false,
+            ),
+          ),
+        );
+      });
+    });
   });
 }

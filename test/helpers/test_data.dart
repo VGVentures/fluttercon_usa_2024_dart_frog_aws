@@ -20,7 +20,7 @@ class TestData {
                 speakerNames: const [
                   'Speaker 1',
                 ],
-                isFavorite: false,
+                isFavorite: favorites,
               ),
               TalkPreview(
                 id: '2',
@@ -30,7 +30,7 @@ class TestData {
                 speakerNames: const [
                   'Speaker 2',
                 ],
-                isFavorite: false,
+                isFavorite: favorites,
               ),
               TalkPreview(
                 id: '3',
@@ -40,12 +40,19 @@ class TestData {
                 speakerNames: const [
                   'Speaker 3',
                 ],
-                isFavorite: false,
+                isFavorite: favorites,
               ),
             ],
           ),
         ],
       );
+
+  static final favoriteIds = talkTimeSlotData(favorites: true)
+      .items
+      .expand((timeSlot) => timeSlot.talks)
+      .where((talk) => talk.isFavorite)
+      .map((talk) => talk.id)
+      .toList();
 
   static const speakerData = PaginatedData(
     items: [

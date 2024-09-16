@@ -87,7 +87,7 @@ void main() {
         build: () => favoritesBloc,
         seed: () => FavoritesLoaded(
           talks: TestData.talkTimeSlotData(favorites: true).items,
-          favoriteIds: const ['1', '2', '3'],
+          favoriteIds: TestData.favoriteIds,
         ),
         act: (bloc) {
           bloc.add(
