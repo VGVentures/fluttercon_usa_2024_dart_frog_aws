@@ -62,6 +62,11 @@ class FavoritesSchedule extends StatelessWidget {
       itemCount: talkTimeSlots.length,
       itemBuilder: (context, index) {
         final timeSlot = talkTimeSlots[index];
+
+        if (!timeSlot.talks.any((t) => favoriteIds.contains(t.id))) {
+          return const SizedBox.shrink();
+        }
+
         return Row(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,
