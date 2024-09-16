@@ -150,6 +150,41 @@ class TalksRepository {
     );
   }
 
+  /// Fetches a [TalkDetail] entity by [id].
+  Future<TalkDetail> getTalk({required String id}) async => _tryGetFromCache(
+        key: 'talk_$id',
+        fromJson: TalkDetail.fromJson,
+        orElse: () async {
+          final talk = await _dataSource.getTalk(id: id);
+          final speakerTalks = await _dataSource.getSpeakerTalks(
+            talk: talk,
+          );
+          final detail = TalkDetail(
+            id: id,
+            title: talk.title ?? '',
+            room: talk.room ?? '',
+            startTime: talk.startTime?.getDateTimeInUtc() ?? DateTime(2024),
+            speakers: speakerTalks.items
+                .map(
+                  (st) => SpeakerPreview(
+                    id: id,
+                    name: st?.speaker?.name ?? '',
+                    title: st?.speaker?.title ?? '',
+                    imageUrl: st?.speaker?.imageUrl ?? '',
+                  ),
+                )
+                .toList(),
+            description: talk.description ?? '',
+          );
+
+          await _cache.set(
+            'talk_$id',
+            jsonEncode(detail.toJson()),
+          );
+          return detail;
+        },
+      );
+
   /// Fetches a paginated list of talks for a given [userId].
   ///
   ///  Returns [TalkTimeSlot] objects with speaker information
