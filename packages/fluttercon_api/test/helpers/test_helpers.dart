@@ -35,6 +35,22 @@ class TestHelpers {
   static const userId = 'userId';
   static const talkId = 'talkId';
 
+  static final talkDetailResponse = {
+    'id': talkId,
+    'title': 'title',
+    'room': 'room',
+    'startTime': '2024-01-01T00:00:00.000Z',
+    'speakers': [
+      {
+        'id': 'id',
+        'name': 'name',
+        'title': 'title',
+        'imageUrl': 'imageUrl',
+      },
+    ],
+    'description': 'description',
+  };
+
   static const createFavoriteRequest = CreateFavoriteRequest(
     userId: userId,
     talkId: talkId,

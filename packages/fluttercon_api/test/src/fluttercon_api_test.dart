@@ -258,7 +258,7 @@ void main() {
     });
     group('getTalks', () {
       const userId = 'id';
-      final url = Uri.parse('$baseUrl/talks/$userId');
+      final url = Uri.parse('$baseUrl/talks?userId=$userId');
 
       setUp(() {
         whenHttpClientSend(
@@ -328,6 +328,79 @@ void main() {
 
           expect(
             () async => flutterconApi.getTalks(),
+            throwsA(
+              isA<FlutterconApiClientException>(),
+            ),
+          );
+        },
+      );
+    });
+
+    group('getTalk', () {
+      const talkId = 'talkId';
+      final url = Uri.parse('$baseUrl/talks/$talkId');
+
+      test('returns $TalkDetail on successful response', () async {
+        whenHttpClientSend(
+          url: url,
+          response: TestHelpers.talkDetailResponse,
+        );
+
+        final talk = await flutterconApi.getTalk(id: talkId);
+
+        expect(talk, isA<TalkDetail>());
+      });
+
+      test(
+        'throws $FlutterconApiMalformedResponseException '
+        'when body is malformed',
+        () async {
+          whenHttpClientSend(url: url, response: '');
+
+          expect(
+            () async => flutterconApi.getTalk(id: talkId),
+            throwsA(isA<FlutterconApiMalformedResponseException>()),
+          );
+        },
+      );
+
+      test(
+        'throws $FlutterconApiClientException '
+        'when response is not successful',
+        () async {
+          whenHttpClientSend(
+            url: url,
+            // ignore: inference_failure_on_collection_literal
+            response: {},
+            httpStatus: HttpStatus.notFound,
+          );
+
+          expect(
+            () async => flutterconApi.getTalk(id: talkId),
+            throwsA(
+              isA<FlutterconApiClientException>().having(
+                (e) => e.statusCode,
+                'status code',
+                equals(
+                  HttpStatus.notFound,
+                ),
+              ),
+            ),
+          );
+        },
+      );
+
+      test(
+        'throws $FlutterconApiClientException '
+        'when an unexpected error occurs',
+        () async {
+          whenHttpClientSend<TalkDetail>(
+            url: url,
+            exception: Exception('oops'),
+          );
+
+          expect(
+            () async => flutterconApi.getTalk(id: talkId),
             throwsA(
               isA<FlutterconApiClientException>(),
             ),
