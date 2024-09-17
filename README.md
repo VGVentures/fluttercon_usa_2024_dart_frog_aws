@@ -13,6 +13,20 @@ the power of integrating Flutter, Dart Frog, and AWS services.
 
 ## Getting Started 🚀
 
+This project connects to auto-generated AWS resources using [AWS Amplify](https://docs.amplify.aws/flutter/). Deploying resources requires an AWS account with access to Amplify. See [Amplify documentation on account setup](https://docs.amplify.aws/flutter/start/account-setup/) for more details.
+
+If your account is setup correctly, you should be able to generate sandbox AWS resources for local development by the following script:
+
+```sh
+cd api && npm run watch
+```
+
+If you need to make any changes to [Amplify-generated data models](https://docs.amplify.aws/flutter/build-a-backend/data/set-up-data/), run the following script to update Dart code:
+
+```sh
+cd api && npm run modelgen
+```
+
 This project contains 3 flavors:
 
 - development
