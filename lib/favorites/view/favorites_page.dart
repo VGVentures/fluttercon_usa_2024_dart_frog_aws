@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttercon_api/fluttercon_api.dart';
 import 'package:fluttercon_shared_models/fluttercon_shared_models.dart';
 import 'package:fluttercon_usa_2024/favorites/favorites.dart';
+import 'package:fluttercon_usa_2024/talk_detail/talk_detail.dart';
 import 'package:fluttercon_usa_2024/user/cubit/user_cubit.dart';
 import 'package:fluttercon_usa_2024/widgets/widgets.dart';
 
@@ -89,7 +90,13 @@ class FavoritesSchedule extends StatelessWidget {
                         speakerNames: talk.speakerNames,
                         room: talk.room,
                         isFavorite: true,
-                        onTap: () {},
+                        onTap: () async {
+                          await Navigator.of(context).push<void>(
+                            MaterialPageRoute(
+                              builder: (context) => TalkDetailPage(id: talk.id),
+                            ),
+                          );
+                        },
                         onFavoriteTap: () {
                           final userId =
                               context.read<UserCubit>().state?.id ?? '';
