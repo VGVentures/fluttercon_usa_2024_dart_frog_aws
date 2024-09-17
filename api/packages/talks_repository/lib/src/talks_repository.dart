@@ -10,6 +10,9 @@ const talksCacheKey = 'talks';
 /// The cache key for the favorites corresponding to a [userId].
 String favoritesCacheKey(String userId) => 'favorites_$userId';
 
+/// The cache key for an individual cached talk.
+String talkCacheKey(String id) => 'talk_$id';
+
 /// {@template talks_repository}
 /// A repository to cache and prepare talk data retrieved from the api.
 /// {@endtemplate}
@@ -152,17 +155,14 @@ class TalksRepository {
 
   /// Fetches a [TalkDetail] entity by [id].
   Future<TalkDetail> getTalk({required String id}) async {
-    //TODO: remove this debug clear
-    await _cache.clear();
     return _tryGetFromCache(
-      key: 'talk_$id',
+      key: talkCacheKey(id),
       fromJson: TalkDetail.fromJson,
       orElse: () async {
         final talk = await _dataSource.getTalk(id: id);
         final speakerTalks = await _dataSource.getSpeakerTalks(
           talk: talk,
         );
-        print('there are ${speakerTalks.items.length} speakerTalks');
         final detail = TalkDetail(
           id: id,
           title: talk.title ?? '',
@@ -171,7 +171,7 @@ class TalksRepository {
           speakers: speakerTalks.items
               .map(
                 (st) => SpeakerPreview(
-                  id: id,
+                  id: st?.speaker?.id ?? '',
                   name: st?.speaker?.name ?? '',
                   title: st?.speaker?.title ?? '',
                   imageUrl: st?.speaker?.imageUrl ?? '',

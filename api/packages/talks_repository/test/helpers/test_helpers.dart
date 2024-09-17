@@ -20,18 +20,21 @@ class TestHelpers {
         title: 'Test Talk 1',
         room: 'Room 1',
         startTime: talk1StartTimeTemporal,
+        description: 'Test Description',
       ),
       Talk(
         id: '2',
         title: 'Test Talk 2',
         room: 'Room 2',
         startTime: talk2StartTimeTemporal,
+        description: 'Test Description',
       ),
       Talk(
         id: '3',
         title: 'Test Talk 3',
         room: 'Room 3',
         startTime: talk3StartTimeTemporal,
+        description: 'Test Description',
       ),
     ],
     null,
@@ -225,19 +228,63 @@ class TestHelpers {
         'title': 'Test Talk 3',
         'room': 'Room 3',
         'startTime': talk3StartTime.toIso8601String(),
+        'description': 'Test Description',
       },
       {
         'id': '2',
         'title': 'Test Talk 2',
         'room': 'Room 2',
         'startTime': talk2StartTime.toIso8601String(),
+        'description': 'Test Description',
       },
       {
         'id': '1',
         'title': 'Test Talk 1',
         'room': 'Room 1',
         'startTime': talk1StartTime.toIso8601String(),
+        'description': 'Test Description',
       },
     ],
+  };
+
+  static final talkDetail = TalkDetail(
+    id: '1',
+    title: 'Test Talk 1',
+    room: 'Room 1',
+    startTime: talk1StartTime,
+    speakers: const [
+      SpeakerPreview(id: '1', name: 'Speaker 1', title: '', imageUrl: ''),
+      SpeakerPreview(id: '2', name: 'Speaker 2', title: '', imageUrl: ''),
+      SpeakerPreview(id: '3', name: 'Speaker 3', title: '', imageUrl: ''),
+    ],
+    description: 'Test Description',
+  );
+
+  static final talkDetailJson = {
+    'id': '1',
+    'title': 'Test Talk 1',
+    'room': 'Room 1',
+    'startTime': talk1StartTime.toIso8601String(),
+    'speakers': [
+      {
+        'id': '1',
+        'name': 'Speaker 1',
+        'title': '',
+        'imageUrl': '',
+      },
+      {
+        'id': '2',
+        'name': 'Speaker 2',
+        'title': '',
+        'imageUrl': '',
+      },
+      {
+        'id': '3',
+        'name': 'Speaker 3',
+        'title': '',
+        'imageUrl': '',
+      },
+    ],
+    'description': 'Test Description',
   };
 }
