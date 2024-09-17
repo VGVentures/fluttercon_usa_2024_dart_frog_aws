@@ -585,7 +585,7 @@ void main() {
 
     group('getFavorites', () {
       const userId = 'userId';
-      final url = Uri.parse('$baseUrl/favorites/$userId');
+      final url = Uri.parse('$baseUrl/favorites?userId=$userId');
 
       test(
         'returns ${PaginatedData<TalkTimeSlot>} on successful response',

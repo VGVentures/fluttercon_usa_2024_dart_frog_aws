@@ -210,7 +210,6 @@ void main() {
         talksRepository,
       );
       FutureOr<Response> action() => route.onRequest(context);
-      await testMethodNotAllowed(context, action, 'GET');
       await testMethodNotAllowed(context, action, 'PUT');
       await testMethodNotAllowed(context, action, 'PATCH');
       await testMethodNotAllowed(context, action, 'HEAD');
