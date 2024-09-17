@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttercon_api/fluttercon_api.dart';
 import 'package:fluttercon_shared_models/fluttercon_shared_models.dart';
 import 'package:fluttercon_usa_2024/speakers/speakers.dart';
+import 'package:fluttercon_usa_2024/widgets/widgets.dart';
 
 class SpeakersPage extends StatelessWidget {
   const SpeakersPage({super.key});
@@ -53,12 +54,10 @@ class SpeakersList extends StatelessWidget {
       itemCount: speakers.length,
       itemBuilder: (context, index) {
         final speaker = speakers[index];
-        return ListTile(
-          leading: CircleAvatar(
-            backgroundImage: NetworkImage(speaker.imageUrl),
-          ),
-          title: Text(speaker.name),
-          subtitle: Text(speaker.title),
+        return SpeakerTile(
+          name: speaker.name,
+          title: speaker.title,
+          imageUrl: speaker.imageUrl,
           onTap: () {},
         );
       },

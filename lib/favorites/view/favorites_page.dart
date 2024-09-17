@@ -89,6 +89,7 @@ class FavoritesSchedule extends StatelessWidget {
                         speakerNames: talk.speakerNames,
                         room: talk.room,
                         isFavorite: true,
+                        onTap: () {},
                         onFavoriteTap: () {
                           final userId =
                               context.read<UserCubit>().state?.id ?? '';

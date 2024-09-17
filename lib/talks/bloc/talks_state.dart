@@ -23,29 +23,24 @@ final class TalksLoaded extends TalksState {
   const TalksLoaded({
     required this.talkTimeSlots,
     this.favoriteIds = const [],
-    this.talkDetail,
   });
 
   final List<TalkTimeSlot> talkTimeSlots;
   final List<String> favoriteIds;
-  final TalkDetail? talkDetail;
 
   @override
   List<Object?> get props => [
         talkTimeSlots,
         favoriteIds,
-        talkDetail,
       ];
 
   TalksLoaded copyWith({
     List<TalkTimeSlot>? talkTimeSlots,
     List<String>? favoriteIds,
-    TalkDetail? talkDetail,
   }) {
     return TalksLoaded(
       talkTimeSlots: talkTimeSlots ?? this.talkTimeSlots,
       favoriteIds: favoriteIds ?? this.favoriteIds,
-      talkDetail: talkDetail ?? this.talkDetail,
     );
   }
 }
