@@ -530,5 +530,65 @@ void main() {
         expect(result.items, isEmpty);
       });
     });
+
+    group('getTalk', () {
+      final talk = TestHelpers.talks.items[0]!;
+      setUp(() {
+        when(
+          () => dataSource.getTalk(id: any(named: 'id')),
+        ).thenAnswer(
+          (_) async => talk,
+        );
+        when(
+          () => dataSource.getSpeakerTalks(talk: talk),
+        ).thenAnswer(
+          (_) async => TestHelpers.speakerTalks(talk),
+        );
+        when(() => cache.set(talkCacheKey(talk.id), any<String>())).thenAnswer(
+          (_) async => {},
+        );
+      });
+
+      test('fetches from cache when $TalkDetail is available', () async {
+        when(
+          () => cache.get('talk_${talk.id}'),
+        ).thenAnswer(
+          (_) async => jsonEncode(TestHelpers.talkDetailJson),
+        );
+
+        final result = await talksRepository.getTalk(
+          id: talk.id,
+        );
+        verifyNever(
+          () => dataSource.getTalk(id: talk.id),
+        );
+        expect(result, equals(TestHelpers.talkDetail));
+      });
+
+      test(
+        'calls api and updates cache when $TalkDetail is not available',
+        () async {
+          when(
+            () => cache.get('talk_${talk.id}'),
+          ).thenAnswer(
+            (_) async => null,
+          );
+
+          final result = await talksRepository.getTalk(
+            id: talk.id,
+          );
+          verify(
+            () => dataSource.getTalk(id: talk.id),
+          ).called(1);
+          verify(
+            () => cache.set(
+              'talk_${talk.id}',
+              any<String>(),
+            ),
+          ).called(1);
+          expect(result, equals(TestHelpers.talkDetail));
+        },
+      );
+    });
   });
 }

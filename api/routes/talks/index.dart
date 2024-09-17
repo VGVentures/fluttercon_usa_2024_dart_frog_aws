@@ -5,19 +5,18 @@ import 'package:dart_frog/dart_frog.dart';
 import 'package:fluttercon_data_source/fluttercon_data_source.dart';
 import 'package:talks_repository/talks_repository.dart';
 
-Future<Response> onRequest(RequestContext context, String userId) async {
+Future<Response> onRequest(RequestContext context) async {
   return switch (context.request.method) {
-    HttpMethod.get => await _get(context, userId),
+    HttpMethod.get => await _get(context),
     _ => Response(statusCode: HttpStatus.methodNotAllowed),
   };
 }
 
-Future<Response> _get(RequestContext context, String userId) async {
+Future<Response> _get(RequestContext context) async {
   final talksRepo = context.read<TalksRepository>();
   try {
-    final data = await talksRepo.getFavorites(
-      userId: userId,
-    );
+    final userId = context.request.uri.queryParameters['userId'] ?? '';
+    final data = await talksRepo.getTalks(userId: userId);
     final json = data.toJson(
       (value) => value.toJson(),
     );

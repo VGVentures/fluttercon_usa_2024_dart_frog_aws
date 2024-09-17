@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttercon_api/fluttercon_api.dart';
 import 'package:fluttercon_shared_models/fluttercon_shared_models.dart';
 import 'package:fluttercon_usa_2024/favorites/favorites.dart';
+import 'package:fluttercon_usa_2024/talk_detail/talk_detail.dart';
 import 'package:fluttercon_usa_2024/user/cubit/user_cubit.dart';
 import 'package:fluttercon_usa_2024/widgets/widgets.dart';
 import 'package:mocktail/mocktail.dart';
@@ -139,6 +140,40 @@ void main() {
       );
 
       group('FavoritesSchedule', () {
+        testWidgets(
+          'can tap $TalkCard to navigate to detail',
+          (tester) async {
+            when(() => favoritesBloc.state).thenReturn(
+              FavoritesLoaded(
+                talks: TestData.talkTimeSlotData(favorites: true).items,
+                favoriteIds: TestData.favoriteIds,
+              ),
+            );
+
+            await tester.pumpApp(
+              MultiBlocProvider(
+                providers: [
+                  BlocProvider.value(
+                    value: favoritesBloc,
+                  ),
+                  BlocProvider.value(
+                    value: userCubit,
+                  ),
+                ],
+                child: const FavoritesView(),
+              ),
+            );
+
+            final card = find.byType(TalkCard).first;
+
+            await tester.tap(card);
+
+            await tester.pumpAndSettle();
+
+            expect(find.byType(TalkDetailPage), findsOneWidget);
+          },
+        );
+
         testWidgets('can tap favorites icon to remove', (tester) async {
           when(() => favoritesBloc.state).thenReturn(
             FavoritesLoaded(

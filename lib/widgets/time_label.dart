@@ -15,6 +15,7 @@ class TimeLabel extends StatelessWidget {
       padding: const EdgeInsets.all(8),
       child: Text(
         DateFormat('MMM dd hh:mm:a').format(time.toLocal()),
+        style: Theme.of(context).textTheme.bodyMedium,
       ),
     );
   }

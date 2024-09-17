@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttercon_api/fluttercon_api.dart';
+import 'package:fluttercon_usa_2024/talk_detail/talk_detail.dart';
 import 'package:fluttercon_usa_2024/talks/talks.dart';
 import 'package:fluttercon_usa_2024/user/cubit/user_cubit.dart';
+import 'package:fluttercon_usa_2024/widgets/widgets.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../helpers/helpers.dart';
@@ -119,6 +121,37 @@ void main() {
             ),
           );
         });
+
+        testWidgets(
+          'can tap $TalkCard to navigate to detail',
+          (tester) async {
+            when(() => talksBloc.state).thenReturn(
+              TalksLoaded(talkTimeSlots: TestData.talkTimeSlotData().items),
+            );
+
+            await tester.pumpApp(
+              MultiBlocProvider(
+                providers: [
+                  BlocProvider.value(
+                    value: talksBloc,
+                  ),
+                  BlocProvider.value(
+                    value: userCubit,
+                  ),
+                ],
+                child: const TalksView(),
+              ),
+            );
+
+            final card = find.byType(TalkCard).first;
+
+            await tester.tap(card);
+
+            await tester.pumpAndSettle();
+
+            expect(find.byType(TalkDetailPage), findsOneWidget);
+          },
+        );
 
         testWidgets('can tap favorites icon to toggle', (tester) async {
           when(() => talksBloc.state).thenReturn(

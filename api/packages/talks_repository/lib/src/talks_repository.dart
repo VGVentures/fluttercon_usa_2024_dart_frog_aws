@@ -10,6 +10,9 @@ const talksCacheKey = 'talks';
 /// The cache key for the favorites corresponding to a [userId].
 String favoritesCacheKey(String userId) => 'favorites_$userId';
 
+/// The cache key for an individual cached talk.
+String talkCacheKey(String id) => 'talk_$id';
+
 /// {@template talks_repository}
 /// A repository to cache and prepare talk data retrieved from the api.
 /// {@endtemplate}
@@ -147,6 +150,43 @@ class TalksRepository {
       items: timeSlots,
       limit: talkData.limit,
       nextToken: talkData.nextToken,
+    );
+  }
+
+  /// Fetches a [TalkDetail] entity by [id].
+  Future<TalkDetail> getTalk({required String id}) async {
+    return _tryGetFromCache(
+      key: talkCacheKey(id),
+      fromJson: TalkDetail.fromJson,
+      orElse: () async {
+        final talk = await _dataSource.getTalk(id: id);
+        final speakerTalks = await _dataSource.getSpeakerTalks(
+          talk: talk,
+        );
+        final detail = TalkDetail(
+          id: id,
+          title: talk.title ?? '',
+          room: talk.room ?? '',
+          startTime: talk.startTime?.getDateTimeInUtc() ?? DateTime(2024),
+          speakers: speakerTalks.items
+              .map(
+                (st) => SpeakerPreview(
+                  id: st?.speaker?.id ?? '',
+                  name: st?.speaker?.name ?? '',
+                  title: st?.speaker?.title ?? '',
+                  imageUrl: st?.speaker?.imageUrl ?? '',
+                ),
+              )
+              .toList(),
+          description: talk.description ?? '',
+        );
+
+        await _cache.set(
+          'talk_$id',
+          jsonEncode(detail.toJson()),
+        );
+        return detail;
+      },
     );
   }
 

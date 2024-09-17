@@ -9,7 +9,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:talks_repository/talks_repository.dart';
 import 'package:test/test.dart';
 
-import '../../../routes/talks/[userId].dart' as route;
+import '../../../routes/talks/index.dart' as route;
 import '../../helpers/method_not_allowed.dart';
 
 class _MockRequestContext extends Mock implements RequestContext {}
@@ -44,13 +44,14 @@ void main() {
 
     test('responds with a 200 and a list of talks when successful', () async {
       final context = _MockRequestContext();
-      final request = Request('GET', Uri.parse('http://127.0.0.1/'));
+      final request =
+          Request('GET', Uri.parse('http://127.0.0.1/?userId=$userId'));
       when(() => context.request).thenReturn(request);
       when(() => context.read<TalksRepository>()).thenReturn(talksRepository);
       when(() => talksRepository.getTalks(userId: userId))
           .thenAnswer((_) async => responseData);
 
-      final response = await route.onRequest(context, userId);
+      final response = await route.onRequest(context);
       expect(response.statusCode, equals(HttpStatus.ok));
       expect(
         await response.body(),
@@ -60,14 +61,15 @@ void main() {
 
     test('responds with a 500 and exception when there is a failure', () async {
       final context = _MockRequestContext();
-      final request = Request('GET', Uri.parse('http://127.0.0.1/'));
+      final request =
+          Request('GET', Uri.parse('http://127.0.0.1/?userId=$userId'));
       const amplifyException = AmplifyApiException(exception: 'oops');
       when(() => context.request).thenReturn(request);
       when(() => context.read<TalksRepository>()).thenReturn(talksRepository);
       when(() => talksRepository.getTalks(userId: userId))
           .thenThrow(amplifyException);
 
-      final response = await route.onRequest(context, userId);
+      final response = await route.onRequest(context);
       expect(response.statusCode, equals(HttpStatus.internalServerError));
       expect(
         await response.body(),
@@ -81,7 +83,7 @@ void main() {
         when(() => context.read<TalksRepository>()).thenReturn(
           talksRepository,
         );
-        FutureOr<Response> action() => route.onRequest(context, userId);
+        FutureOr<Response> action() => route.onRequest(context);
         await testMethodNotAllowed(context, action, 'POST');
         await testMethodNotAllowed(context, action, 'DELETE');
         await testMethodNotAllowed(context, action, 'PUT');

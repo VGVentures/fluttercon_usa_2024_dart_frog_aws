@@ -78,4 +78,20 @@ class TestData {
   );
 
   static final error = Exception('oops');
+
+  static final talkDetail = TalkDetail(
+    id: 'talkId',
+    title: 'title',
+    room: 'room',
+    startTime: DateTime(2024),
+    speakers: const [
+      SpeakerPreview(
+        id: 'speakerId',
+        name: 'Speaker',
+        title: 'Title',
+        imageUrl: 'imageUrl',
+      ),
+    ],
+    description: '',
+  );
 }
