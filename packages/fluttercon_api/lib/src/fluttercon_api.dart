@@ -79,34 +79,31 @@ class FlutterconApi {
   /// GET /speakers/:id
   Future<SpeakerDetail> getSpeaker({
     required String id,
-  }) async {
-    _currentUser ??= await getUser();
-
-    return _sendRequest(
-      uri: Uri.parse('$_baseUrl/speakers/$id'),
-      method: HttpMethod.get,
-      fromJson: SpeakerDetail.fromJson,
-      queryParameters: {'userId': _currentUser!.id},
-    );
-  }
+    required String userId,
+  }) async =>
+      _sendRequest(
+        uri: Uri.parse('$_baseUrl/speakers/$id'),
+        method: HttpMethod.get,
+        fromJson: SpeakerDetail.fromJson,
+        queryParameters: {'userId': userId},
+      );
 
   /// GET /talks
   /// Fetches a paginated list of talks.
   /// If not already present, fetches the current user
   /// in order to return the user's favorites.
-  Future<PaginatedData<TalkTimeSlot>> getTalks() async {
-    _currentUser ??= await getUser();
-
-    return _sendRequest(
-      uri: Uri.parse('$_baseUrl/talks'),
-      method: HttpMethod.get,
-      fromJson: (json) => PaginatedData.fromJson(
-        json,
-        (item) => TalkTimeSlot.fromJson((item ?? {}) as Map<String, dynamic>),
-      ),
-      queryParameters: {'userId': _currentUser!.id},
-    );
-  }
+  Future<PaginatedData<TalkTimeSlot>> getTalks({
+    required String userId,
+  }) async =>
+      _sendRequest(
+        uri: Uri.parse('$_baseUrl/talks'),
+        method: HttpMethod.get,
+        fromJson: (json) => PaginatedData.fromJson(
+          json,
+          (item) => TalkTimeSlot.fromJson((item ?? {}) as Map<String, dynamic>),
+        ),
+        queryParameters: {'userId': userId},
+      );
 
   /// GET /talks/:id
   /// Fetches a talk by its [id].

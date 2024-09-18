@@ -11,13 +11,16 @@ part 'speaker_detail_state.dart';
 class SpeakerDetailBloc extends Bloc<SpeakerDetailEvent, SpeakerDetailState> {
   SpeakerDetailBloc({
     required FlutterconApi api,
+    required String userId,
   })  : _api = api,
+        _userId = userId,
         super(const SpeakerDetailInitial()) {
     on<SpeakerDetailRequested>(_onSpeakerDetailRequested);
     on<FavoriteToggleRequested>(_onFavoriteToggleRequested);
   }
 
   final FlutterconApi _api;
+  final String _userId;
 
   FutureOr<void> _onSpeakerDetailRequested(
     SpeakerDetailRequested event,
@@ -25,7 +28,7 @@ class SpeakerDetailBloc extends Bloc<SpeakerDetailEvent, SpeakerDetailState> {
   ) async {
     emit(const SpeakerDetailLoading());
     try {
-      final speaker = await _api.getSpeaker(id: event.id);
+      final speaker = await _api.getSpeaker(id: event.id, userId: _userId);
       emit(SpeakerDetailLoaded(speaker: speaker));
     } catch (error) {
       emit(SpeakerDetailError(error: error));

@@ -49,33 +49,36 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      bottomNavigationBar: NavigationBar(
-        destinations: [
-          NavigationDestination(
-            icon: const Icon(
-              Icons.article_outlined,
+    final userId = context.select((UserCubit cubit) => cubit.state?.id);
+    return userId == null
+        ? const CircularProgressIndicator()
+        : Scaffold(
+            bottomNavigationBar: NavigationBar(
+              destinations: [
+                NavigationDestination(
+                  icon: const Icon(
+                    Icons.article_outlined,
+                  ),
+                  label: context.l10n.talksTabText,
+                ),
+                NavigationDestination(
+                  icon: const Icon(Icons.people_outlined),
+                  label: context.l10n.speakersTabText,
+                ),
+                NavigationDestination(
+                  icon: const Icon(Icons.favorite_outline),
+                  label: context.l10n.favoritesTabText,
+                ),
+              ],
+              selectedIndex: _selectedIndex,
+              onDestinationSelected: (index) =>
+                  setState(() => _selectedIndex = index),
             ),
-            label: context.l10n.talksTabText,
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.people_outlined),
-            label: context.l10n.speakersTabText,
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.favorite_outline),
-            label: context.l10n.favoritesTabText,
-          ),
-        ],
-        selectedIndex: _selectedIndex,
-        onDestinationSelected: (index) =>
-            setState(() => _selectedIndex = index),
-      ),
-      body: const [
-        TalksPage(),
-        SpeakersPage(),
-        FavoritesPage(),
-      ][_selectedIndex],
-    );
+            body: const [
+              TalksPage(),
+              SpeakersPage(),
+              FavoritesPage(),
+            ][_selectedIndex],
+          );
   }
 }

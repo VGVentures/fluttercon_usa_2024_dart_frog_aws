@@ -10,14 +10,16 @@ part 'talks_event.dart';
 part 'talks_state.dart';
 
 class TalksBloc extends Bloc<TalksEvent, TalksState> {
-  TalksBloc({required FlutterconApi api})
+  TalksBloc({required FlutterconApi api, required String userId})
       : _api = api,
+        _userId = userId,
         super(const TalksInitial()) {
     on<TalksRequested>(_onTalksRequested);
     on<FavoriteToggleRequested>(_onFavoriteToggleRequested);
   }
 
   final FlutterconApi _api;
+  final String _userId;
 
   FutureOr<void> _onTalksRequested(
     TalksRequested event,
@@ -25,7 +27,7 @@ class TalksBloc extends Bloc<TalksEvent, TalksState> {
   ) async {
     try {
       emit(const TalksLoading());
-      final talks = await _api.getTalks();
+      final talks = await _api.getTalks(userId: _userId);
       emit(
         TalksLoaded(
           talkTimeSlots: talks.items,

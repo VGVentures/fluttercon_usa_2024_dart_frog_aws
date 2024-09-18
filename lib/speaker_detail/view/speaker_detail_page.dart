@@ -18,6 +18,7 @@ class SpeakerDetailPage extends StatelessWidget {
     return BlocProvider(
       create: (context) => SpeakerDetailBloc(
         api: context.read<FlutterconApi>(),
+        userId: context.read<UserCubit>().state?.id ?? '',
       )..add(SpeakerDetailRequested(id: id)),
       child: const SpeakerDetailView(),
     );

@@ -15,6 +15,7 @@ class TalksPage extends StatelessWidget {
     return BlocProvider(
       create: (context) => TalksBloc(
         api: context.read<FlutterconApi>(),
+        userId: context.read<UserCubit>().state?.id ?? '',
       )..add(const TalksRequested()),
       child: const TalksView(),
     );
