@@ -128,14 +128,21 @@ class TalksRepository {
       },
     );
 
+    //TODO: cache this!
+    final speakersResponse =
+        await _dataSource.getSpeakerTalks(talks: talkData.items);
+
     final favorites = await _cache.getOrElse(
       key: favoritesCacheKey(userId),
       fromJson: favoritesFromJson,
       orElse: () async => _getFavoritesByUser(userId),
     );
 
-    final timeSlots =
-        await _buildTalkTimeSlots(talkData.items, favorites.talks ?? []);
+    final timeSlots = await _buildTalkTimeSlots(
+      talks: talkData.items,
+      speakers: speakersResponse.items,
+      favorites: favorites.talks ?? [],
+    );
 
     return PaginatedData(
       items: timeSlots,
@@ -201,29 +208,38 @@ class TalksRepository {
         .map((ft) => ft.talk!)
         .toList();
 
-    final timeSlots = await _buildTalkTimeSlots(talks, favoritesTalks);
+    //TODO: cache this!
+    final speakersResponse = await _dataSource.getSpeakerTalks(talks: talks);
+
+    final timeSlots = await _buildTalkTimeSlots(
+      talks: talks,
+      speakers: speakersResponse.items,
+      favorites: favoritesTalks,
+    );
 
     return PaginatedData(
       items: timeSlots,
     );
   }
 
-  Future<List<TalkTimeSlot>> _buildTalkTimeSlots(
-    List<Talk?> talks,
-    List<FavoritesTalk?> favorites,
-  ) async {
+  Future<List<TalkTimeSlot>> _buildTalkTimeSlots({
+    required List<Talk?> talks,
+    required List<SpeakerTalk?> speakers,
+    required List<FavoritesTalk?> favorites,
+  }) async {
     final talkPreviews = <TalkPreview>[];
     final timeSlots = <TalkTimeSlot>[];
     for (final talk in talks) {
       if (talk == null) continue;
-      final speakerTalks = await _dataSource.getSpeakerTalks(talks: [talk]);
+      final speakersForTalk =
+          speakers.where((st) => st?.talk?.id == talk.id).toList();
       final talkPreview = TalkPreview(
         id: talk.id,
         title: talk.title ?? '',
         room: talk.room ?? '',
         startTime: talk.startTime?.getDateTimeInUtc() ?? DateTime(2024),
         speakerNames:
-            speakerTalks.items.map((st) => st?.speaker?.name ?? '').toList(),
+            speakersForTalk.map((st) => st?.speaker?.name ?? '').toList(),
         isFavorite: favorites.any((ft) => ft?.talk == talk),
       );
       talkPreviews.add(talkPreview);

@@ -77,6 +77,8 @@ class SpeakersRepository {
     required String id,
     required String userId,
   }) async {
+    //TODO: remove debug cache clear
+    await _cache.clear();
     final cachedSpeaker = await _cache.get(speakerCacheKey(id));
 
     if (cachedSpeaker != null) {
@@ -86,21 +88,18 @@ class SpeakersRepository {
       return result;
     }
 
-    final speakerResponse = await _dataSource.getSpeaker(id: id);
-    final linksResponse = await _dataSource.getLinks(speaker: speakerResponse);
+    final speaker = await _dataSource.getSpeaker(id: id);
+    final links = await _dataSource.getLinks(speaker: speaker);
 
-    //this is gross. Get talks for speaker then get speakers for talks.
-    // Will usually end up giving us the same data we already have.
-    // Can we do this a better way?
-    final talksForSpeakerResponse = await _dataSource.getSpeakerTalks(
-      speaker: speakerResponse,
+    final talks = await _dataSource.getSpeakerTalks(
+      speakers: [speaker],
     );
-    PaginatedResult<SpeakerTalk>? speakersForTalkResponse;
-    for (final speakerTalk in talksForSpeakerResponse.items) {
-      speakersForTalkResponse = await _dataSource.getSpeakerTalks(
-        talk: speakerTalk?.talk,
-      );
-    }
+    final speakers = await _dataSource.getSpeakerTalks(
+      talks: talks.items
+          .where((st) => st?.talk != null)
+          .map((st) => st!.talk!)
+          .toList(),
+    );
 
     final favorites = await _cache.getOrElse(
       key: favoritesCacheKey(userId),
@@ -112,12 +111,12 @@ class SpeakersRepository {
     );
 
     final result = SpeakerDetail(
-      id: speakerResponse.id,
-      name: speakerResponse.name ?? '',
-      title: speakerResponse.title ?? '',
-      bio: speakerResponse.bio ?? '',
-      imageUrl: speakerResponse.imageUrl ?? '',
-      links: linksResponse.items
+      id: speaker.id,
+      name: speaker.name ?? '',
+      title: speaker.title ?? '',
+      bio: speaker.bio ?? '',
+      imageUrl: speaker.imageUrl ?? '',
+      links: links.items
           .map(
             (link) => SpeakerLink(
               id: link?.id ?? '',
@@ -126,7 +125,7 @@ class SpeakersRepository {
             ),
           )
           .toList(),
-      talks: talksForSpeakerResponse.items.map(
+      talks: talks.items.map(
         (st) {
           return TalkPreview(
             id: st?.talk?.id ?? '',
@@ -134,10 +133,10 @@ class SpeakersRepository {
             room: st?.talk?.room ?? '',
             startTime:
                 st?.talk?.startTime?.getDateTimeInUtc() ?? DateTime(2024),
-            speakerNames: speakersForTalkResponse?.items
-                    .map((st) => st?.speaker?.name ?? '')
-                    .toList() ??
-                [],
+            speakerNames: speakers.items
+                .where((st) => st?.talk?.id == st?.talk?.id)
+                .map((st) => st?.speaker?.name ?? '')
+                .toList(),
             isFavorite:
                 favorites?.talks?.any((ft) => ft.talk == st?.talk) ?? false,
           );

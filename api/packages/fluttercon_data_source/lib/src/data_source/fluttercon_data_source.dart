@@ -209,14 +209,14 @@ class FlutterconDataSource {
   /// Consumers can optionally provide a list of [Speaker]
   /// and/or [Talk] entities to filter the results.
   Future<PaginatedResult<SpeakerTalk>> getSpeakerTalks({
-    List<Speaker> speakers = const [],
-    List<Talk> talks = const [],
+    List<Speaker?> speakers = const [],
+    List<Talk?> talks = const [],
   }) async {
     try {
       final queryPredicateGroup =
           QueryPredicateGroup(QueryPredicateGroupType.or, [
-        for (final speaker in speakers) SpeakerTalk.SPEAKER.eq(speaker.id),
-        for (final talk in talks) SpeakerTalk.TALK.eq(talk.id),
+        for (final speaker in speakers) SpeakerTalk.SPEAKER.eq(speaker?.id),
+        for (final talk in talks) SpeakerTalk.TALK.eq(talk?.id),
       ]);
       final request = _apiClient.list(
         SpeakerTalk.classType,
