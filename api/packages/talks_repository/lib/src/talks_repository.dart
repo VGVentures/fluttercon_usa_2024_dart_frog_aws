@@ -4,15 +4,6 @@ import 'package:fluttercon_cache/fluttercon_cache.dart';
 import 'package:fluttercon_data_source/fluttercon_data_source.dart';
 import 'package:fluttercon_shared_models/fluttercon_shared_models.dart';
 
-/// The cache key for the talks cache.
-const talksCacheKey = 'talks';
-
-/// The cache key for the favorites corresponding to a [userId].
-String favoritesCacheKey(String userId) => 'favorites_$userId';
-
-/// The cache key for an individual cached talk.
-String talkCacheKey(String id) => 'talk_$id';
-
 /// {@template talks_repository}
 /// A repository to cache and prepare talk data retrieved from the api.
 /// {@endtemplate}
@@ -32,9 +23,9 @@ class TalksRepository {
   Future<CreateFavoriteResponse> createFavorite({
     required CreateFavoriteRequest request,
   }) async {
-    final favorites = await _tryGetFromCache(
+    final favorites = await _cache.getOrElse(
       key: favoritesCacheKey(request.userId),
-      fromJson: _favoritesFromJson,
+      fromJson: favoritesFromJson,
       orElse: () async => _getFavoritesByUser(request.userId),
     );
 
@@ -63,9 +54,9 @@ class TalksRepository {
   Future<DeleteFavoriteResponse> deleteFavorite({
     required DeleteFavoriteRequest request,
   }) async {
-    final favorites = await _tryGetFromCache(
+    final favorites = await _cache.getOrElse(
       key: favoritesCacheKey(request.userId),
-      fromJson: _favoritesFromJson,
+      fromJson: favoritesFromJson,
       orElse: () async => _getFavoritesByUser(request.userId),
     );
 
@@ -112,7 +103,7 @@ class TalksRepository {
   Future<PaginatedData<TalkTimeSlot>> getTalks({
     required String userId,
   }) async {
-    final talkData = await _tryGetFromCache(
+    final talkData = await _cache.getOrElse(
       key: talksCacheKey,
       fromJson: (json) => PaginatedData.fromJson(
         json,
@@ -137,9 +128,9 @@ class TalksRepository {
       },
     );
 
-    final favorites = await _tryGetFromCache(
+    final favorites = await _cache.getOrElse(
       key: favoritesCacheKey(userId),
-      fromJson: _favoritesFromJson,
+      fromJson: favoritesFromJson,
       orElse: () async => _getFavoritesByUser(userId),
     );
 
@@ -155,13 +146,13 @@ class TalksRepository {
 
   /// Fetches a [TalkDetail] entity by [id].
   Future<TalkDetail> getTalk({required String id}) async {
-    return _tryGetFromCache(
+    return _cache.getOrElse(
       key: talkCacheKey(id),
       fromJson: TalkDetail.fromJson,
       orElse: () async {
         final talk = await _dataSource.getTalk(id: id);
         final speakerTalks = await _dataSource.getSpeakerTalks(
-          talk: talk,
+          talks: [talk],
         );
         final detail = TalkDetail(
           id: id,
@@ -197,9 +188,9 @@ class TalksRepository {
   Future<PaginatedData<TalkTimeSlot>> getFavorites({
     required String userId,
   }) async {
-    final favorites = await _tryGetFromCache(
+    final favorites = await _cache.getOrElse(
       key: favoritesCacheKey(userId),
-      fromJson: _favoritesFromJson,
+      fromJson: favoritesFromJson,
       orElse: () async => _getFavoritesByUser(userId),
     );
 
@@ -225,7 +216,7 @@ class TalksRepository {
     final timeSlots = <TalkTimeSlot>[];
     for (final talk in talks) {
       if (talk == null) continue;
-      final speakerTalks = await _dataSource.getSpeakerTalks(talk: talk);
+      final speakerTalks = await _dataSource.getSpeakerTalks(talks: [talk]);
       final talkPreview = TalkPreview(
         id: talk.id,
         title: talk.title ?? '',
@@ -277,27 +268,5 @@ class TalksRepository {
     );
 
     return favorites;
-  }
-
-  Future<T> _tryGetFromCache<T>({
-    required String key,
-    required T Function(Map<String, dynamic>) fromJson,
-    required Future<T> Function() orElse,
-  }) async {
-    final cached = await _cache.get(key);
-    if (cached != null) {
-      return fromJson(jsonDecode(cached) as Map<String, dynamic>);
-    }
-    return orElse();
-  }
-
-  Favorites _favoritesFromJson(Map<String, dynamic> json) {
-    return Favorites(
-      id: json['id'] as String?,
-      userId: json['userId'] as String?,
-      talks: (json['talks'] as List?)
-          ?.map((e) => FavoritesTalk.fromJson(e as Map<String, dynamic>))
-          .toList(),
-    );
   }
 }
