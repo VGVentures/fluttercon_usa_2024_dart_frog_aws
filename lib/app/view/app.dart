@@ -16,16 +16,20 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return RepositoryProvider.value(
       value: api,
-      child: MaterialApp(
-        theme: ThemeData(
-          appBarTheme: AppBarTheme(
-            backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      child: BlocProvider(
+        lazy: false,
+        create: (context) => UserCubit(api: api)..getUser(),
+        child: MaterialApp(
+          theme: ThemeData(
+            appBarTheme: AppBarTheme(
+              backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+            ),
+            useMaterial3: true,
           ),
-          useMaterial3: true,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: const HomePage(),
         ),
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        home: const HomePage(),
       ),
     );
   }
@@ -45,38 +49,33 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      lazy: false,
-      create: (context) =>
-          UserCubit(api: context.read<FlutterconApi>())..getUser(),
-      child: Scaffold(
-        bottomNavigationBar: NavigationBar(
-          destinations: [
-            NavigationDestination(
-              icon: const Icon(
-                Icons.article_outlined,
-              ),
-              label: context.l10n.talksTabText,
+    return Scaffold(
+      bottomNavigationBar: NavigationBar(
+        destinations: [
+          NavigationDestination(
+            icon: const Icon(
+              Icons.article_outlined,
             ),
-            NavigationDestination(
-              icon: const Icon(Icons.people_outlined),
-              label: context.l10n.speakersTabText,
-            ),
-            NavigationDestination(
-              icon: const Icon(Icons.favorite_outline),
-              label: context.l10n.favoritesTabText,
-            ),
-          ],
-          selectedIndex: _selectedIndex,
-          onDestinationSelected: (index) =>
-              setState(() => _selectedIndex = index),
-        ),
-        body: const [
-          TalksPage(),
-          SpeakersPage(),
-          FavoritesPage(),
-        ][_selectedIndex],
+            label: context.l10n.talksTabText,
+          ),
+          NavigationDestination(
+            icon: const Icon(Icons.people_outlined),
+            label: context.l10n.speakersTabText,
+          ),
+          NavigationDestination(
+            icon: const Icon(Icons.favorite_outline),
+            label: context.l10n.favoritesTabText,
+          ),
+        ],
+        selectedIndex: _selectedIndex,
+        onDestinationSelected: (index) =>
+            setState(() => _selectedIndex = index),
       ),
+      body: const [
+        TalksPage(),
+        SpeakersPage(),
+        FavoritesPage(),
+      ][_selectedIndex],
     );
   }
 }

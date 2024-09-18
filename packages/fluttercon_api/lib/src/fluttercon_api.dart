@@ -76,6 +76,20 @@ class FlutterconApi {
         ),
       );
 
+  /// GET /speakers/:id
+  Future<SpeakerDetail> getSpeaker({
+    required String id,
+  }) async {
+    _currentUser ??= await getUser();
+
+    return _sendRequest(
+      uri: Uri.parse('$_baseUrl/speakers/$id'),
+      method: HttpMethod.get,
+      fromJson: SpeakerDetail.fromJson,
+      queryParameters: {'userId': _currentUser!.id},
+    );
+  }
+
   /// GET /talks
   /// Fetches a paginated list of talks.
   /// If not already present, fetches the current user
