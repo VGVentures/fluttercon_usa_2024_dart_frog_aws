@@ -140,7 +140,7 @@ void main() {
         when(
           () => dataSource.getFavoritesTalks(
             favoritesId: TestHelpers.favoritesId,
-            talkId: TestHelpers.talks.items.first!.id,
+            talkId: TestHelpers.talksData.items.first!.id,
           ),
         ).thenAnswer(
           (_) async => PaginatedResult(
@@ -170,7 +170,7 @@ void main() {
         when(
           () => dataSource.getFavoritesTalks(
             favoritesId: TestHelpers.favoritesId,
-            talkId: TestHelpers.talks.items.first!.id,
+            talkId: TestHelpers.talksData.items.first!.id,
           ),
         ).thenAnswer(
           (_) async => PaginatedResult(
@@ -214,7 +214,7 @@ void main() {
             fromJson: any(named: 'fromJson'),
             orElse: any(named: 'orElse'),
           ),
-        ).thenAnswer((_) async => TestHelpers.speakerTalks);
+        ).thenAnswer((_) async => TestHelpers.speakerData);
       });
 
       test('returns $TalkTimeSlot data', () async {
@@ -231,16 +231,16 @@ void main() {
             fromJson: any(named: 'fromJson'),
             orElse: any(named: 'orElse'),
           ),
-        ).thenAnswer((_) async => TestHelpers.talks);
+        ).thenAnswer((_) async => TestHelpers.talksData);
         when(
           () => cache.getOrElse<PaginatedData<SpeakerTalk?>>(
             key: speakerTalksCacheKey(
-              TestHelpers.talks.items.map((e) => e?.id).join(','),
+              TestHelpers.talksData.items.map((e) => e?.id).join(','),
             ),
             fromJson: any(named: 'fromJson'),
             orElse: any(named: 'orElse'),
           ),
-        ).thenAnswer((_) async => TestHelpers.speakerTalks);
+        ).thenAnswer((_) async => TestHelpers.speakerData);
         when(
           () => cache.getOrElse<Favorites>(
             key: favoritesCacheKey(TestHelpers.userId),
@@ -259,21 +259,146 @@ void main() {
     });
 
     group('getTalk', () {
-      final talk = TestHelpers.talks.items[0]!;
+      final talkDetail = TestHelpers.talkDetail;
       setUp(() {
         when(
-          () => cache.getOrElse<Talk>(
-            key: talkCacheKey(talk.id),
+          () => cache.getOrElse<TalkDetail>(
+            key: talkCacheKey(talkDetail.id),
             fromJson: any(named: 'fromJson'),
             orElse: any(named: 'orElse'),
           ),
-        ).thenAnswer((_) async => talk);
+        ).thenAnswer((_) async => talkDetail);
       });
 
       test('returns $TalkDetail', () async {
-        final result = await talksRepository.getTalk(id: talk.id);
+        final result = await talksRepository.getTalk(id: talkDetail.id);
 
         expect(result, equals(TestHelpers.talkDetail));
+      });
+    });
+
+    group('getFavoritesFromApi', () {
+      setUp(() {
+        when(
+          () => dataSource.createFavorites(userId: TestHelpers.userId),
+        ).thenAnswer((_) async => TestHelpers.favorites);
+        when(
+          () => dataSource.getFavoritesTalks(
+            favoritesId: TestHelpers.favoritesId,
+          ),
+        ).thenAnswer((_) async => TestHelpers.favoritesTalks);
+        when(
+          () => cache.set(
+            favoritesCacheKey(TestHelpers.userId),
+            any(),
+          ),
+        ).thenAnswer((_) async => {});
+      });
+
+      test('fetches $Favorites from api and caches', () async {
+        await talksRepository.getFavoritesFromApi(TestHelpers.userId);
+
+        verify(
+          () => dataSource.createFavorites(userId: TestHelpers.userId),
+        ).called(1);
+        verify(
+          () => dataSource.getFavoritesTalks(
+            favoritesId: TestHelpers.favoritesId,
+          ),
+        ).called(1);
+        verify(
+          () => cache.set(
+            favoritesCacheKey(TestHelpers.userId),
+            any(),
+          ),
+        ).called(1);
+      });
+    });
+
+    group('getSpeakersFromApi', () {
+      setUp(() {
+        when(() =>
+                dataSource.getSpeakerTalks(talks: TestHelpers.talksData.items))
+            .thenAnswer((_) async => TestHelpers.speakerResult);
+        when(
+          () => cache.set(
+            speakerTalksCacheKey(
+              TestHelpers.talksData.items.map((e) => e?.id).join(','),
+            ),
+            any(),
+          ),
+        ).thenAnswer((_) async => {});
+      });
+
+      test('fetches $SpeakerTalk data from api and caches', () async {
+        await talksRepository.getSpeakersFromApi(
+          TestHelpers.talksData.items,
+        );
+        verify(
+          () => dataSource.getSpeakerTalks(talks: TestHelpers.talksData.items),
+        ).called(1);
+        verify(
+          () => cache.set(
+            speakerTalksCacheKey(
+              TestHelpers.talksData.items.map((e) => e?.id).join(','),
+            ),
+            any(),
+          ),
+        ).called(1);
+      });
+    });
+
+    group('getTalksFromApi', () {
+      setUp(() {
+        when(() => dataSource.getTalks())
+            .thenAnswer((_) async => TestHelpers.talksResult);
+        when(
+          () => cache.set(
+            talksCacheKey,
+            any(),
+          ),
+        ).thenAnswer((_) async => {});
+      });
+
+      test('fetches $Talk data from api and caches', () async {
+        await talksRepository.getTalksFromApi();
+
+        verify(
+          () => dataSource.getTalks(),
+        ).called(1);
+        verify(
+          () => cache.set(talksCacheKey, any()),
+        ).called(1);
+      });
+    });
+
+    group('getTalkDetailFromApi', () {
+      final talk = TestHelpers.talks[0]!;
+      setUp(() {
+        when(() => dataSource.getTalk(id: talk.id))
+            .thenAnswer((_) async => talk);
+        when(() => dataSource.getSpeakerTalks(talks: [talk]))
+            .thenAnswer((_) async => TestHelpers.speakerResult);
+        when(
+          () => cache.set(
+            talkCacheKey(talk.id),
+            any(),
+          ),
+        ).thenAnswer((_) async => {});
+      });
+
+      test('fetches $TalkDetail from api and caches', () async {
+        await talksRepository.getTalkDetailFromApi(talk.id);
+
+        verify(
+          () => dataSource.getTalk(id: talk.id),
+        ).called(1);
+        verify(
+          () => dataSource.getSpeakerTalks(talks: [talk]),
+        ).called(1);
+        verify(
+          () => cache.set(talkCacheKey(talk.id), any()),
+        ).called(1);
       });
     });
   });

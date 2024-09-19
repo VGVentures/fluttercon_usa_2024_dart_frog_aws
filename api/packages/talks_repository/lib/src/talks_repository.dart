@@ -26,7 +26,9 @@ class TalksRepository {
     final favorites = await _cache.getOrElse(
       key: favoritesCacheKey(request.userId),
       fromJson: favoritesFromJson,
-      orElse: () async => _getFavoritesByUser(request.userId),
+      // coverage:ignore-start
+      orElse: () async => getFavoritesFromApi(request.userId),
+      // coverage:ignore-end
     );
 
     final createResponse = await _dataSource.createFavoritesTalk(
@@ -57,7 +59,9 @@ class TalksRepository {
     final favorites = await _cache.getOrElse(
       key: favoritesCacheKey(request.userId),
       fromJson: favoritesFromJson,
-      orElse: () async => _getFavoritesByUser(request.userId),
+      // coverage:ignore-start
+      orElse: () async => getFavoritesFromApi(request.userId),
+      // coverage:ignore-end
     );
 
     final favoritesTalkResponse = await _dataSource.getFavoritesTalks(
@@ -105,60 +109,32 @@ class TalksRepository {
   }) async {
     final talkData = await _cache.getOrElse(
       key: talksCacheKey,
+      // coverage:ignore-start
       fromJson: (json) => PaginatedData.fromJson(
         json,
         (val) => Talk.fromJson((val ?? {}) as Map<String, dynamic>),
       ),
-      orElse: () async {
-        final response = await _dataSource.getTalks();
-        final data = PaginatedData(
-          items: response.items,
-          limit: response.limit,
-          nextToken: response.nextToken,
-        );
-        await _cache.set(
-          talksCacheKey,
-          jsonEncode(
-            data.toJson(
-              (val) => val?.toJson(),
-            ),
-          ),
-        );
-        return data;
-      },
+      orElse: getTalksFromApi,
+      // coverage:ignore-end
     );
 
     final speakerData = await _cache.getOrElse(
       key: speakerTalksCacheKey(talkData.items.map((t) => t?.id).join(',')),
+      // coverage:ignore-start
       fromJson: (json) => PaginatedData.fromJson(
         json,
         (val) => SpeakerTalk.fromJson((val ?? {}) as Map<String, dynamic>),
       ),
-      orElse: () async {
-        final response = await _dataSource.getSpeakerTalks(
-          talks: talkData.items,
-        );
-        final data = PaginatedData(
-          items: response.items,
-          limit: response.limit,
-          nextToken: response.nextToken,
-        );
-        await _cache.set(
-          speakersCacheKey,
-          jsonEncode(
-            data.toJson(
-              (val) => val?.toJson(),
-            ),
-          ),
-        );
-        return data;
-      },
+      orElse: () => getSpeakersFromApi(talkData.items),
+      // coverage:ignore-end
     );
 
     final favorites = await _cache.getOrElse(
       key: favoritesCacheKey(userId),
       fromJson: favoritesFromJson,
-      orElse: () async => _getFavoritesByUser(userId),
+      // coverage:ignore-start
+      orElse: () async => getFavoritesFromApi(userId),
+      // coverage:ignore-end
     );
 
     final timeSlots = await _buildTalkTimeSlots(
@@ -178,35 +154,9 @@ class TalksRepository {
   Future<TalkDetail> getTalk({required String id}) async => _cache.getOrElse(
         key: talkCacheKey(id),
         fromJson: TalkDetail.fromJson,
-        orElse: () async {
-          final talk = await _dataSource.getTalk(id: id);
-          final speakerTalks = await _dataSource.getSpeakerTalks(
-            talks: [talk],
-          );
-          final detail = TalkDetail(
-            id: id,
-            title: talk.title ?? '',
-            room: talk.room ?? '',
-            startTime: talk.startTime?.getDateTimeInUtc() ?? DateTime(2024),
-            speakers: speakerTalks.items
-                .map(
-                  (st) => SpeakerPreview(
-                    id: st?.speaker?.id ?? '',
-                    name: st?.speaker?.name ?? '',
-                    title: st?.speaker?.title ?? '',
-                    imageUrl: st?.speaker?.imageUrl ?? '',
-                  ),
-                )
-                .toList(),
-            description: talk.description ?? '',
-          );
-
-          await _cache.set(
-            'talk_$id',
-            jsonEncode(detail.toJson()),
-          );
-          return detail;
-        },
+        // coverage:ignore-start
+        orElse: () => getTalkDetailFromApi(id),
+        // coverage:ignore-end
       );
 
   /// Fetches a paginated list of talks for a given [userId].
@@ -219,7 +169,9 @@ class TalksRepository {
     final favorites = await _cache.getOrElse(
       key: favoritesCacheKey(userId),
       fromJson: favoritesFromJson,
-      orElse: () async => _getFavoritesByUser(userId),
+      // coverage:ignore-start
+      orElse: () async => getFavoritesFromApi(userId),
+      // coverage:ignore-end
     );
 
     final favoritesTalks = favorites.talks ?? [];
@@ -231,29 +183,13 @@ class TalksRepository {
 
     final speakerData = await _cache.getOrElse(
       key: speakerTalksCacheKey(talks.map((t) => t.id).join(',')),
+      // coverage:ignore-start
       fromJson: (json) => PaginatedData.fromJson(
         json,
         (val) => SpeakerTalk.fromJson((val ?? {}) as Map<String, dynamic>),
       ),
-      orElse: () async {
-        final response = await _dataSource.getSpeakerTalks(
-          talks: talks,
-        );
-        final data = PaginatedData(
-          items: response.items,
-          limit: response.limit,
-          nextToken: response.nextToken,
-        );
-        await _cache.set(
-          speakersCacheKey,
-          jsonEncode(
-            data.toJson(
-              (val) => val?.toJson(),
-            ),
-          ),
-        );
-        return data;
-      },
+      orElse: () => getSpeakersFromApi(talks),
+      // coverage:ignore-end
     );
 
     final timeSlots = await _buildTalkTimeSlots(
@@ -308,7 +244,8 @@ class TalksRepository {
     return sortedTimeSlots;
   }
 
-  Future<Favorites> _getFavoritesByUser(String userId) async {
+  /// Fetch [Favorites] from the api.
+  Future<Favorites> getFavoritesFromApi(String userId) async {
     var favorites = await _dataSource.createFavorites(
       userId: userId,
     );
@@ -329,5 +266,83 @@ class TalksRepository {
     );
 
     return favorites;
+  }
+
+  /// Get [SpeakerTalk] entities from the api.
+  /// For internal use inside [TalksRepository].
+  Future<PaginatedData<SpeakerTalk?>> getSpeakersFromApi(
+    List<Talk?> talks,
+  ) async {
+    final response = await _dataSource.getSpeakerTalks(
+      talks: talks,
+    );
+    final data = PaginatedData(
+      items: response.items,
+      limit: response.limit,
+      nextToken: response.nextToken,
+    );
+    await _cache.set(
+      speakerTalksCacheKey(
+        talks.map((t) => t?.id).join(','),
+      ),
+      jsonEncode(
+        data.toJson(
+          (val) => val?.toJson(),
+        ),
+      ),
+    );
+    return data;
+  }
+
+  /// Get [Talk] entities from the api.
+  /// For internal use inside [TalksRepository].
+  Future<PaginatedData<Talk?>> getTalksFromApi() async {
+    final response = await _dataSource.getTalks();
+    final data = PaginatedData(
+      items: response.items,
+      limit: response.limit,
+      nextToken: response.nextToken,
+    );
+    await _cache.set(
+      talksCacheKey,
+      jsonEncode(
+        data.toJson(
+          (val) => val?.toJson(),
+        ),
+      ),
+    );
+    return data;
+  }
+
+  /// Get a [TalkDetail] entity from the api.
+  /// For internal use inside [TalksRepository].
+  Future<TalkDetail> getTalkDetailFromApi(String id) async {
+    final talk = await _dataSource.getTalk(id: id);
+    final speakerTalks = await _dataSource.getSpeakerTalks(
+      talks: [talk],
+    );
+    final detail = TalkDetail(
+      id: id,
+      title: talk.title ?? '',
+      room: talk.room ?? '',
+      startTime: talk.startTime?.getDateTimeInUtc() ?? DateTime(2024),
+      speakers: speakerTalks.items
+          .map(
+            (st) => SpeakerPreview(
+              id: st?.speaker?.id ?? '',
+              name: st?.speaker?.name ?? '',
+              title: st?.speaker?.title ?? '',
+              imageUrl: st?.speaker?.imageUrl ?? '',
+            ),
+          )
+          .toList(),
+      description: talk.description ?? '',
+    );
+
+    await _cache.set(
+      'talk_$id',
+      jsonEncode(detail.toJson()),
+    );
+    return detail;
   }
 }
