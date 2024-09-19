@@ -77,8 +77,6 @@ class SpeakersRepository {
     required String id,
     required String userId,
   }) async {
-    //TODO: remove debug cache clear
-    await _cache.clear();
     final cachedSpeaker = await _cache.get(speakerCacheKey(id));
 
     if (cachedSpeaker != null) {

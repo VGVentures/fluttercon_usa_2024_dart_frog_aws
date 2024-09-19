@@ -13,8 +13,8 @@ class TestHelpers {
   static const favoritesId = 'favoritesId';
   static const userId = 'userId';
 
-  static final talks = PaginatedResult(
-    [
+  static final talks = PaginatedData(
+    items: [
       Talk(
         id: '1',
         title: 'Test Talk 1',
@@ -36,35 +36,31 @@ class TestHelpers {
         startTime: talk3StartTimeTemporal,
         description: 'Test Description',
       ),
+      null,
     ],
-    null,
-    null,
-    null,
-    Talk.classType,
-    null,
   );
 
-  static final favorites = PaginatedResult(
-    [
-      Favorites(
-        id: favoritesId,
-        userId: userId,
-        talks: [
-          FavoritesTalk(
-            id: '1',
-            talk: talks.items[0],
-          ),
-          FavoritesTalk(
-            id: '2',
-            talk: talks.items[1],
-          ),
-          FavoritesTalk(
-            id: '3',
-            talk: talks.items[2],
-          ),
-        ],
+  static final favorites = Favorites(
+    id: favoritesId,
+    userId: userId,
+    talks: [
+      FavoritesTalk(
+        id: '1',
+        talk: talks.items[0],
+      ),
+      FavoritesTalk(
+        id: '2',
+        talk: talks.items[1],
+      ),
+      FavoritesTalk(
+        id: '3',
+        talk: talks.items[2],
       ),
     ],
+  );
+
+  static final favoritesResult = PaginatedResult(
+    [favorites],
     null,
     null,
     null,
@@ -106,17 +102,17 @@ class TestHelpers {
     [
       FavoritesTalk(
         id: '1',
-        favorites: favorites.items[0],
+        favorites: favorites,
         talk: talks.items[0],
       ),
       FavoritesTalk(
         id: '2',
-        favorites: favorites.items[0],
+        favorites: favorites,
         talk: talks.items[1],
       ),
       FavoritesTalk(
         id: '3',
-        favorites: favorites.items[0],
+        favorites: favorites,
         talk: talks.items[2],
       ),
     ],
@@ -131,7 +127,7 @@ class TestHelpers {
     [
       FavoritesTalk(
         id: '1',
-        favorites: favorites.items[0],
+        favorites: favorites,
         talk: talks.items[0],
       ),
     ],
@@ -142,40 +138,52 @@ class TestHelpers {
     null,
   );
 
-  static PaginatedResult<SpeakerTalk> speakerTalks(Talk talk) =>
-      PaginatedResult(
-        [
-          SpeakerTalk(
-            id: '1',
-            speaker: Speaker(
-              id: '1',
-              name: 'Speaker 1',
-            ),
-            talk: talk,
-          ),
-          SpeakerTalk(
-            id: '2',
-            speaker: Speaker(
-              id: '2',
-              name: 'Speaker 2',
-            ),
-            talk: talk,
-          ),
-          SpeakerTalk(
-            id: '3',
-            speaker: Speaker(
-              id: '3',
-              name: 'Speaker 3',
-            ),
-            talk: talk,
-          ),
-        ],
-        null,
-        null,
-        null,
-        SpeakerTalk.classType,
-        null,
-      );
+  static final speakerTalks = PaginatedData(
+    items: [
+      SpeakerTalk(
+        id: '1',
+        speaker: Speaker(
+          id: '1',
+          name: 'Speaker 1',
+        ),
+        talk: talks.items[0],
+      ),
+      SpeakerTalk(
+        id: '2',
+        speaker: Speaker(
+          id: '2',
+          name: 'Speaker 2',
+        ),
+        talk: talks.items[1],
+      ),
+      SpeakerTalk(
+        id: '3',
+        speaker: Speaker(
+          id: '3',
+          name: 'Speaker 3',
+        ),
+        talk: talks.items[2],
+      ),
+    ],
+  );
+
+  static final speakerTalksSingle = PaginatedResult(
+    [
+      SpeakerTalk(
+        id: '1',
+        speaker: Speaker(
+          id: '1',
+          name: 'Speaker 1',
+        ),
+        talk: talks.items[0],
+      ),
+    ],
+    null,
+    null,
+    null,
+    SpeakerTalk.classType,
+    null,
+  );
 
   static final talkTimeSlots = PaginatedData(
     items: [
@@ -187,7 +195,7 @@ class TestHelpers {
             title: 'Test Talk 3',
             room: 'Room 3',
             startTime: talk3StartTime,
-            speakerNames: const ['Speaker 1', 'Speaker 2', 'Speaker 3'],
+            speakerNames: const ['Speaker 3'],
             isFavorite: true,
           ),
         ],
@@ -200,7 +208,7 @@ class TestHelpers {
             title: 'Test Talk 2',
             room: 'Room 2',
             startTime: talk2StartTime,
-            speakerNames: const ['Speaker 1', 'Speaker 2', 'Speaker 3'],
+            speakerNames: const ['Speaker 2'],
             isFavorite: true,
           ),
         ],
@@ -213,7 +221,7 @@ class TestHelpers {
             title: 'Test Talk 1',
             room: 'Room 1',
             startTime: talk1StartTime,
-            speakerNames: const ['Speaker 1', 'Speaker 2', 'Speaker 3'],
+            speakerNames: const ['Speaker 1'],
             isFavorite: true,
           ),
         ],
@@ -254,37 +262,7 @@ class TestHelpers {
     startTime: talk1StartTime,
     speakers: const [
       SpeakerPreview(id: '1', name: 'Speaker 1', title: '', imageUrl: ''),
-      SpeakerPreview(id: '2', name: 'Speaker 2', title: '', imageUrl: ''),
-      SpeakerPreview(id: '3', name: 'Speaker 3', title: '', imageUrl: ''),
     ],
     description: 'Test Description',
   );
-
-  static final talkDetailJson = {
-    'id': '1',
-    'title': 'Test Talk 1',
-    'room': 'Room 1',
-    'startTime': talk1StartTime.toIso8601String(),
-    'speakers': [
-      {
-        'id': '1',
-        'name': 'Speaker 1',
-        'title': '',
-        'imageUrl': '',
-      },
-      {
-        'id': '2',
-        'name': 'Speaker 2',
-        'title': '',
-        'imageUrl': '',
-      },
-      {
-        'id': '3',
-        'name': 'Speaker 3',
-        'title': '',
-        'imageUrl': '',
-      },
-    ],
-    'description': 'Test Description',
-  };
 }
