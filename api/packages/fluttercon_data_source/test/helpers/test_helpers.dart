@@ -20,6 +20,12 @@ class TestHelpers {
     userId: '1',
   );
 
+  static final link = Link(
+    id: '1',
+    url: 'https://example.com',
+    type: LinkType.other,
+  );
+
   static final speakerTalk = SpeakerTalk(
     id: '1',
     speaker: speaker,

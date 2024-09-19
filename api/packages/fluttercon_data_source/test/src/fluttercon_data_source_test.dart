@@ -29,6 +29,8 @@ void main() {
       registerFallbackValue(
         GraphQLRequest<FavoritesTalk>(document: ''),
       );
+      registerFallbackValue(GraphQLRequest<Speaker>(document: ''));
+
       registerFallbackValue(GraphQLRequest<Talk>(document: ''));
 
       registerFallbackValue(
@@ -38,6 +40,9 @@ void main() {
         GraphQLRequest<PaginatedResult<FavoritesTalk>>(document: ''),
       );
       registerFallbackValue(
+        GraphQLRequest<PaginatedResult<Link>>(document: ''),
+      );
+      registerFallbackValue(
         GraphQLRequest<PaginatedResult<Speaker>>(document: ''),
       );
       registerFallbackValue(
@@ -45,6 +50,10 @@ void main() {
       );
       registerFallbackValue(
         GraphQLRequest<PaginatedResult<Talk>>(document: ''),
+      );
+
+      registerFallbackValue(
+        SpeakerModelIdentifier(id: 'id'),
       );
       registerFallbackValue(
         TalkModelIdentifier(id: 'id'),
@@ -475,6 +484,108 @@ void main() {
       );
     });
 
+    group('getLinks', () {
+      setUp(() {
+        when(
+          () => apiClient.list(
+            Link.classType,
+            where: any(
+              named: 'where',
+              that: isA<QueryPredicateOperation>()
+                  .having((qpo) => qpo.field, 'Field', equals('speaker')),
+            ),
+          ),
+        ).thenAnswer(
+          (_) => GraphQLRequest<PaginatedResult<Link>>(
+            document: '',
+          ),
+        );
+      });
+
+      test('returns ${PaginatedResult<Link>} when successful', () async {
+        when(
+          () => apiClient.query<PaginatedResult<Link>>(
+            request: any(
+              named: 'request',
+              that: isA<GraphQLRequest<PaginatedResult<Link>>>(),
+            ),
+          ),
+        ).thenReturn(
+          TestHelpers.graphQLOperation(
+            TestHelpers.paginatedResult(TestHelpers.link, Link.classType),
+          ),
+        );
+
+        final result = await dataSource.getLinks(speaker: TestHelpers.speaker);
+        expect(result, isA<PaginatedResult<Link>>());
+      });
+
+      test('throws $AmplifyApiException when response has errors', () async {
+        when(
+          () => apiClient.query<PaginatedResult<Link>>(
+            request: any(
+              named: 'request',
+              that: isA<GraphQLRequest<PaginatedResult<Link>>>(),
+            ),
+          ),
+        ).thenReturn(
+          TestHelpers.graphQLOperation(
+            TestHelpers.paginatedResult(TestHelpers.link, Link.classType),
+            errors: [GraphQLResponseError(message: 'Error')],
+          ),
+        );
+
+        expect(
+          () => dataSource.getLinks(speaker: TestHelpers.speaker),
+          throwsA(isA<AmplifyApiException>()),
+        );
+      });
+
+      test(
+        'throws $AmplifyApiException when response data is null',
+        () async {
+          when(
+            () => apiClient.query<PaginatedResult<Link>>(
+              request: any(
+                named: 'request',
+                that: isA<GraphQLRequest<PaginatedResult<Link>>>(),
+              ),
+            ),
+          ).thenReturn(
+            TestHelpers.graphQLOperation(null),
+          );
+
+          expect(
+            () => dataSource.getLinks(speaker: TestHelpers.speaker),
+            throwsA(isA<AmplifyApiException>()),
+          );
+        },
+      );
+
+      test(
+        'throws $AmplifyApiException when an exception is thrown',
+        () async {
+          when(
+            () => apiClient.list(
+              Link.classType,
+              where: any(
+                named: 'where',
+                that: isA<QueryPredicateOperation>()
+                    .having((qpo) => qpo.field, 'Field', equals('speaker')),
+              ),
+            ),
+          ).thenThrow(
+            Exception('Error'),
+          );
+
+          expect(
+            () => dataSource.getLinks(speaker: TestHelpers.speaker),
+            throwsA(isA<AmplifyApiException>()),
+          );
+        },
+      );
+    });
+
     group('getSpeakers', () {
       setUp(() {
         when(() => apiClient.list(Speaker.classType)).thenAnswer(
@@ -552,6 +663,88 @@ void main() {
 
           expect(
             () => dataSource.getSpeakers(),
+            throwsA(isA<AmplifyApiException>()),
+          );
+        },
+      );
+    });
+
+    group('getSpeaker', () {
+      setUp(() {
+        when(() => apiClient.get<Speaker>(Speaker.classType, any())).thenAnswer(
+          (_) => GraphQLRequest<Speaker>(
+            document: '',
+          ),
+        );
+      });
+
+      test('returns $Speaker when successful', () async {
+        when(
+          () => apiClient.query<Speaker>(
+            request: any(
+              named: 'request',
+              that: isA<GraphQLRequest<Speaker>>(),
+            ),
+          ),
+        ).thenReturn(
+          TestHelpers.graphQLOperation(TestHelpers.speaker),
+        );
+
+        final result = await dataSource.getSpeaker(id: 'id');
+        expect(result, isA<Speaker>());
+      });
+
+      test('throws $AmplifyApiException when response has errors', () async {
+        when(
+          () => apiClient.query<Speaker>(
+            request: any(
+              named: 'request',
+              that: isA<GraphQLRequest<Speaker>>(),
+            ),
+          ),
+        ).thenReturn(
+          TestHelpers.graphQLOperation(
+            TestHelpers.speaker,
+            errors: [GraphQLResponseError(message: 'Error')],
+          ),
+        );
+
+        expect(
+          () => dataSource.getSpeaker(id: 'id'),
+          throwsA(isA<AmplifyApiException>()),
+        );
+      });
+
+      test(
+        'throws $AmplifyApiException when response data is null',
+        () async {
+          when(
+            () => apiClient.query<Speaker>(
+              request: any(
+                named: 'request',
+                that: isA<GraphQLRequest<Speaker>>(),
+              ),
+            ),
+          ).thenReturn(
+            TestHelpers.graphQLOperation(null),
+          );
+
+          expect(
+            () => dataSource.getSpeaker(id: 'id'),
+            throwsA(isA<AmplifyApiException>()),
+          );
+        },
+      );
+
+      test(
+        'throws $AmplifyApiException when an exception is thrown',
+        () async {
+          when(() => apiClient.get<Talk>(Talk.classType, any())).thenThrow(
+            Exception('Error'),
+          );
+
+          expect(
+            () => dataSource.getTalk(id: 'id'),
             throwsA(isA<AmplifyApiException>()),
           );
         },
@@ -969,25 +1162,17 @@ void main() {
 
     group('getSpeakerTalks', () {
       setUp(() {
-        when(() => apiClient.list(SpeakerTalk.classType)).thenAnswer(
+        when(
+          () => apiClient.list(
+            SpeakerTalk.classType,
+            where: any(named: 'where', that: isA<QueryPredicateGroup>()),
+          ),
+        ).thenAnswer(
           (_) => GraphQLRequest<PaginatedResult<SpeakerTalk>>(
             document: '',
           ),
         );
       });
-
-      test(
-        'throws assertion error if both speaker and talk are provided',
-        () async {
-          expect(
-            () => dataSource.getSpeakerTalks(
-              speaker: TestHelpers.speaker,
-              talk: TestHelpers.talk,
-            ),
-            throwsA(isA<AssertionError>()),
-          );
-        },
-      );
 
       test(
         'returns ${PaginatedResult<SpeakerTalk>} when successful',
@@ -1012,82 +1197,6 @@ void main() {
           expect(result, isA<PaginatedResult<SpeakerTalk>>());
         },
       );
-
-      group('can filter', () {
-        test('by $Speaker', () async {
-          when(
-            () => apiClient.list(
-              SpeakerTalk.classType,
-              where: any(
-                named: 'where',
-                that: isA<QueryPredicateOperation>()
-                    .having((qpo) => qpo.field, 'Field', equals('speaker')),
-              ),
-            ),
-          ).thenAnswer(
-            (_) => GraphQLRequest<PaginatedResult<SpeakerTalk>>(
-              document: '',
-            ),
-          );
-          when(
-            () => apiClient.query<PaginatedResult<SpeakerTalk>>(
-              request: any(
-                named: 'request',
-                that: isA<GraphQLRequest<PaginatedResult<SpeakerTalk>>>(),
-              ),
-            ),
-          ).thenReturn(
-            TestHelpers.graphQLOperation(
-              TestHelpers.paginatedResult(
-                TestHelpers.speakerTalk,
-                SpeakerTalk.classType,
-              ),
-            ),
-          );
-
-          final result = await dataSource.getSpeakerTalks(
-            speaker: TestHelpers.speaker,
-          );
-          expect(result, isA<PaginatedResult<SpeakerTalk>>());
-        });
-
-        test('by $Talk', () async {
-          when(
-            () => apiClient.list(
-              SpeakerTalk.classType,
-              where: any(
-                named: 'where',
-                that: isA<QueryPredicateOperation>()
-                    .having((qpo) => qpo.field, 'Field', equals('talk')),
-              ),
-            ),
-          ).thenAnswer(
-            (_) => GraphQLRequest<PaginatedResult<SpeakerTalk>>(
-              document: '',
-            ),
-          );
-          when(
-            () => apiClient.query<PaginatedResult<SpeakerTalk>>(
-              request: any(
-                named: 'request',
-                that: isA<GraphQLRequest<PaginatedResult<SpeakerTalk>>>(),
-              ),
-            ),
-          ).thenReturn(
-            TestHelpers.graphQLOperation(
-              TestHelpers.paginatedResult(
-                TestHelpers.speakerTalk,
-                SpeakerTalk.classType,
-              ),
-            ),
-          );
-
-          final result = await dataSource.getSpeakerTalks(
-            talk: TestHelpers.talk,
-          );
-          expect(result, isA<PaginatedResult<SpeakerTalk>>());
-        });
-      });
 
       test('throws $AmplifyApiException when response has errors', () async {
         when(
@@ -1137,7 +1246,12 @@ void main() {
       test(
         'throws $AmplifyApiException when an exception is thrown',
         () async {
-          when(() => apiClient.list(SpeakerTalk.classType)).thenThrow(
+          when(
+            () => apiClient.list(
+              SpeakerTalk.classType,
+              where: any(named: 'where', that: isA<QueryPredicateGroup>()),
+            ),
+          ).thenThrow(
             Exception('Error'),
           );
 
