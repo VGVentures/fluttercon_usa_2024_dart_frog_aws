@@ -2,6 +2,8 @@ import 'package:fluttercon_data_source/fluttercon_data_source.dart';
 import 'package:fluttercon_shared_models/fluttercon_shared_models.dart';
 
 class TestHelpers {
+  static const userId = 'userId';
+
   static final speakers = PaginatedResult(
     [
       Speaker(
@@ -75,4 +77,14 @@ class TestHelpers {
       },
     ],
   };
+
+  static const speakerDetail = SpeakerDetail(
+    id: '1',
+    name: 'John Doe',
+    title: 'Test Title 1',
+    imageUrl: 'Test Image Url 1',
+    bio: 'Sample bio',
+    links: [],
+    talks: [],
+  );
 }

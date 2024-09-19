@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:fluttercon_cache/fluttercon_cache.dart';
 import 'package:fluttercon_data_source/fluttercon_data_source.dart';
@@ -25,9 +26,6 @@ void main() {
       cache = _MockFlutterconCache();
       speakersRepository =
           SpeakersRepository(dataSource: dataSource, cache: cache);
-      when(() => cache.set(speakersCacheKey, any<String>())).thenAnswer(
-        (_) async => {},
-      );
     });
 
     setUpAll(() {
@@ -42,28 +40,54 @@ void main() {
       expect(speakersRepository, isNotNull);
     });
 
-    group('getTalks', () {
-      test('returns cached ${PaginatedData<SpeakerPreview>} when available',
-          () async {
-        when(() => cache.get(speakersCacheKey)).thenAnswer(
-          (_) async => jsonEncode(TestHelpers.speakerPreviewsJson),
-        );
-
-        final result = await speakersRepository.getSpeakers();
-        verifyNever(() => dataSource.getSpeakers());
-        expect(result, equals(TestHelpers.speakerPreviews));
+    group('getSpeakers', () {
+      setUp(() {
+        when(
+          () => cache.getOrElse<PaginatedData<SpeakerPreview>>(
+            key: speakersCacheKey,
+            fromJson: any(named: 'fromJson'),
+            orElse: any(named: 'orElse'),
+          ),
+        ).thenAnswer((_) async => TestHelpers.speakerPreviews);
       });
 
-      test(
-          'returns ${PaginatedData<SpeakerPreview>} from api when not cached '
-          'and adds to the cache', () async {
-        when(() => cache.get(speakersCacheKey)).thenAnswer(
-          (_) async => null,
+      test('returns $SpeakerPreview list', () async {
+        final speakers = await speakersRepository.getSpeakers();
+        expect(speakers, equals(TestHelpers.speakerPreviews));
+      });
+    });
+
+    group('getSpeaker', () {
+      setUp(() {
+        when(
+          () => cache.getOrElse<SpeakerDetail>(
+            key: speakersCacheKey,
+            fromJson: any(named: 'fromJson'),
+            orElse: any(named: 'orElse'),
+          ),
+        ).thenAnswer((_) async => TestHelpers.speakerDetail);
+      });
+
+      test('returns $SpeakerDetail', () async {
+        final speakers = await speakersRepository.getSpeaker(
+          id: TestHelpers.speakers.items[0]!.id,
+          userId: TestHelpers.userId,
         );
+        expect(speakers, equals(TestHelpers.speakerPreviews));
+      });
+    });
+
+    group('getSpeakersFromApi', () {
+      setUp(() {
         when(() => dataSource.getSpeakers())
             .thenAnswer((_) async => TestHelpers.speakers);
+        when(() => cache.set(speakersCacheKey, any<String>())).thenAnswer(
+          (_) async => {},
+        );
+      });
 
-        final result = await speakersRepository.getSpeakers();
+      test('fetches $Speaker list from api and caches', () async {
+        await speakersRepository.getSpeakersFromApi();
         verify(
           () => dataSource.getSpeakers(),
         ).called(1);
@@ -73,8 +97,9 @@ void main() {
             any<String>(),
           ),
         ).called(1);
-        expect(result, equals(TestHelpers.speakerPreviews));
       });
     });
+
+    group('getSpeakerDetailFromApi', () {});
   });
 }

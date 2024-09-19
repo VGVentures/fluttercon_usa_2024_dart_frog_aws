@@ -44,7 +44,7 @@ class SpeakersRepository {
     return _cache.getOrElse(
       key: speakerCacheKey(id),
       fromJson: SpeakerDetail.fromJson,
-      orElse: () => getSpeakerFromApi(id: id, userId: userId),
+      orElse: () => getSpeakerDetailFromApi(id: id, userId: userId),
     );
   }
 
@@ -86,7 +86,7 @@ class SpeakersRepository {
 
   /// Fetches a [SpeakerDetail] from the api with a given [id] and
   /// the current [userId].
-  Future<SpeakerDetail> getSpeakerFromApi({
+  Future<SpeakerDetail> getSpeakerDetailFromApi({
     required String id,
     required String userId,
   }) async {
