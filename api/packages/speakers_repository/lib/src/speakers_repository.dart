@@ -23,22 +23,36 @@ class SpeakersRepository {
   /// if the cache is empty.
   ///
   /// If fetching from api, the speakers are then cached.
-  Future<PaginatedData<SpeakerPreview>> getSpeakers() async {
-    final cachedSpeakers = await _cache.get(speakersCacheKey);
-
-    if (cachedSpeakers != null) {
-      final json = jsonDecode(cachedSpeakers) as Map<String, dynamic>;
-      final result = PaginatedData.fromJson(
-        json,
-        (val) => SpeakerPreview.fromJson((val ?? {}) as Map<String, dynamic>),
+  Future<PaginatedData<SpeakerPreview>> getSpeakers() async => _cache.getOrElse(
+        key: speakersCacheKey,
+        // coverage:ignore-start
+        fromJson: (json) => PaginatedData.fromJson(
+          json,
+          (val) => SpeakerPreview.fromJson((val ?? {}) as Map<String, dynamic>),
+        ),
+        orElse: getSpeakersFromApi,
+        // coverage:ignore-end
       );
 
-      return result;
-    }
+  /// Fetches a [SpeakerDetail] with a given [id].
+  /// Requires a [userId] to determine if the speaker's talks
+  /// are included in the current user's favorites.
+  Future<SpeakerDetail> getSpeaker({
+    required String id,
+    required String userId,
+  }) async {
+    return _cache.getOrElse(
+      key: speakerCacheKey(id),
+      fromJson: SpeakerDetail.fromJson,
+      orElse: () => getSpeakerFromApi(id: id, userId: userId),
+    );
+  }
 
-    final speakersResponse = await _dataSource.getSpeakers();
+  /// Fetches a paginated list of speakers from the api.
+  Future<PaginatedData<SpeakerPreview>> getSpeakersFromApi() async {
+    final speakers = await _dataSource.getSpeakers();
 
-    final speakerPreviews = speakersResponse.items
+    final speakerPreviews = speakers.items
         .map(
           (speaker) => SpeakerPreview(
             id: speaker?.id ?? '',
@@ -54,8 +68,8 @@ class SpeakersRepository {
 
     final result = PaginatedData(
       items: sortedSpeakerPreviews,
-      limit: speakersResponse.limit,
-      nextToken: speakersResponse.nextToken,
+      limit: speakers.limit,
+      nextToken: speakers.nextToken,
     );
 
     await _cache.set(
@@ -70,22 +84,12 @@ class SpeakersRepository {
     return result;
   }
 
-  /// Fetches a [SpeakerDetail] with a given [id].
-  /// Requires a [userId] to determine if the speaker's talks
-  /// are included in the current user's favorites.
-  Future<SpeakerDetail> getSpeaker({
+  /// Fetches a [SpeakerDetail] from the api with a given [id] and
+  /// the current [userId].
+  Future<SpeakerDetail> getSpeakerFromApi({
     required String id,
     required String userId,
   }) async {
-    final cachedSpeaker = await _cache.get(speakerCacheKey(id));
-
-    if (cachedSpeaker != null) {
-      final json = jsonDecode(cachedSpeaker) as Map<String, dynamic>;
-      final result = SpeakerDetail.fromJson(json);
-
-      return result;
-    }
-
     final speaker = await _dataSource.getSpeaker(id: id);
     final links = await _dataSource.getLinks(speaker: speaker);
 
@@ -101,10 +105,12 @@ class SpeakersRepository {
 
     final favorites = await _cache.getOrElse(
       key: favoritesCacheKey(userId),
+      // coverage:ignore-start
       fromJson: favoritesFromJson,
       orElse: () async {
         final response = await _dataSource.getFavorites(userId: userId);
         return response.items.first;
+        // coverage:ignore-end
       },
     );
 
