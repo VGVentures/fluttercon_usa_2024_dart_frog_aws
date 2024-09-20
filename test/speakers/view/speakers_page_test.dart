@@ -106,11 +106,14 @@ void main() {
           );
 
           await tester.pumpApp(
-            BlocProvider.value(
-              value: speakersBloc,
+            MultiBlocProvider(
+              providers: [
+                BlocProvider.value(
+                  value: speakersBloc,
+                ),
+              ],
               child: const SpeakersView(),
             ),
-            userCubit: userCubit,
           );
 
           await tester.tap(find.byType(SpeakerTile).first);

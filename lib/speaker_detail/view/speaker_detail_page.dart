@@ -9,16 +9,17 @@ import 'package:fluttercon_usa_2024/widgets/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SpeakerDetailPage extends StatelessWidget {
-  const SpeakerDetailPage({required this.id, super.key});
+  const SpeakerDetailPage({required this.id, required this.userId, super.key});
 
   final String id;
+  final String userId;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => SpeakerDetailBloc(
         api: context.read<FlutterconApi>(),
-        userId: context.read<UserCubit>().state?.id ?? '',
+        userId: userId,
       )..add(SpeakerDetailRequested(id: id)),
       child: const SpeakerDetailView(),
     );
