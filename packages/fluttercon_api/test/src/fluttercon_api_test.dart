@@ -256,27 +256,26 @@ void main() {
         },
       );
     });
-    group('getTalks', () {
-      const userId = 'id';
-      final url = Uri.parse('$baseUrl/talks?userId=$userId');
 
-      setUp(() {
-        whenHttpClientSend(
-          url: Uri.parse('$baseUrl/user'),
-          response: TestHelpers.userResponse,
-        );
-      });
-
-      test(
-        'returns ${PaginatedData<TalkTimeSlot>} on successful response',
-        () async {
-          whenHttpClientSend(url: url, response: TestHelpers.talksResponse);
-
-          final talks = await flutterconApi.getTalks();
-
-          expect(talks, isA<PaginatedData<TalkTimeSlot>>());
-        },
+    group('getSpeaker', () {
+      const speakerId = 'speakerId';
+      final url = Uri.parse(
+        '$baseUrl/speakers/$speakerId?userId=${TestHelpers.userId}',
       );
+
+      test('returns $SpeakerDetail on successful response', () async {
+        whenHttpClientSend(
+          url: url,
+          response: TestHelpers.speakerDetailResponse,
+        );
+
+        final speaker = await flutterconApi.getSpeaker(
+          id: speakerId,
+          userId: TestHelpers.userId,
+        );
+
+        expect(speaker, isA<SpeakerDetail>());
+      });
 
       test(
         'throws $FlutterconApiMalformedResponseException '
@@ -285,7 +284,10 @@ void main() {
           whenHttpClientSend(url: url, response: '');
 
           expect(
-            () async => flutterconApi.getTalks(),
+            () async => flutterconApi.getSpeaker(
+              id: speakerId,
+              userId: TestHelpers.userId,
+            ),
             throwsA(isA<FlutterconApiMalformedResponseException>()),
           );
         },
@@ -303,7 +305,98 @@ void main() {
           );
 
           expect(
-            () async => flutterconApi.getTalks(),
+            () async => flutterconApi.getSpeaker(
+              id: speakerId,
+              userId: TestHelpers.userId,
+            ),
+            throwsA(
+              isA<FlutterconApiClientException>().having(
+                (e) => e.statusCode,
+                'status code',
+                equals(
+                  HttpStatus.notFound,
+                ),
+              ),
+            ),
+          );
+        },
+      );
+
+      test(
+        'throws $FlutterconApiClientException '
+        'when an unexpected error occurs',
+        () async {
+          whenHttpClientSend<SpeakerDetail>(
+            url: url,
+            exception: Exception('oops'),
+          );
+
+          expect(
+            () async => flutterconApi.getSpeaker(
+              id: speakerId,
+              userId: TestHelpers.userId,
+            ),
+            throwsA(
+              isA<FlutterconApiClientException>(),
+            ),
+          );
+        },
+      );
+    });
+
+    group('getTalks', () {
+      final url = Uri.parse('$baseUrl/talks?userId=${TestHelpers.userId}');
+
+      setUp(() {
+        whenHttpClientSend(
+          url: Uri.parse('$baseUrl/user'),
+          response: TestHelpers.userResponse,
+        );
+      });
+
+      test(
+        'returns ${PaginatedData<TalkTimeSlot>} on successful response',
+        () async {
+          whenHttpClientSend(url: url, response: TestHelpers.talksResponse);
+
+          final talks = await flutterconApi.getTalks(
+            userId: TestHelpers.userId,
+          );
+
+          expect(talks, isA<PaginatedData<TalkTimeSlot>>());
+        },
+      );
+
+      test(
+        'throws $FlutterconApiMalformedResponseException '
+        'when body is malformed',
+        () async {
+          whenHttpClientSend(url: url, response: '');
+
+          expect(
+            () async => flutterconApi.getTalks(
+              userId: TestHelpers.userId,
+            ),
+            throwsA(isA<FlutterconApiMalformedResponseException>()),
+          );
+        },
+      );
+
+      test(
+        'throws $FlutterconApiClientException '
+        'when response is not successful',
+        () async {
+          whenHttpClientSend(
+            url: url,
+            // ignore: inference_failure_on_collection_literal
+            response: {},
+            httpStatus: HttpStatus.notFound,
+          );
+
+          expect(
+            () async => flutterconApi.getTalks(
+              userId: TestHelpers.userId,
+            ),
             throwsA(
               isA<FlutterconApiClientException>().having(
                 (e) => e.statusCode,
@@ -327,7 +420,9 @@ void main() {
           );
 
           expect(
-            () async => flutterconApi.getTalks(),
+            () async => flutterconApi.getTalks(
+              userId: TestHelpers.userId,
+            ),
             throwsA(
               isA<FlutterconApiClientException>(),
             ),
