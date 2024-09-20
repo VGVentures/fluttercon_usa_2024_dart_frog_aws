@@ -38,8 +38,10 @@ void main() {
 
     test('responds with a 200 and a $SpeakerDetail when successful', () async {
       final context = _MockRequestContext();
-      final request = Request('GET',
-          Uri.parse('http://127.0.0.1/speakers/$speakerId?userId=$userId'));
+      final request = Request(
+        'GET',
+        Uri.parse('http://127.0.0.1/speakers/$speakerId?userId=$userId'),
+      );
       when(() => context.request).thenReturn(request);
       when(() => context.read<SpeakersRepository>())
           .thenReturn(speakersRepository);
@@ -58,8 +60,10 @@ void main() {
       'responds with a 500 and an exception when there is a failure',
       () async {
         final context = _MockRequestContext();
-        final request = Request('GET',
-            Uri.parse('http://127.0.0.1/talks/$speakerId?userId=$userId'));
+        final request = Request(
+          'GET',
+          Uri.parse('http://127.0.0.1/talks/$speakerId?userId=$userId'),
+        );
         const amplifyException = AmplifyApiException(exception: 'oops');
 
         when(() => context.request).thenReturn(request);

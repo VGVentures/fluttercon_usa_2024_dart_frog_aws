@@ -96,11 +96,12 @@ class TestData {
   );
 
   static final speakerDetail = SpeakerDetail(
-      id: speakerData.items[0].id,
-      name: speakerData.items[0].name,
-      title: speakerData.items[0].title,
-      imageUrl: speakerData.items[0].imageUrl,
-      bio: 'Test bio',
-      links: [],
-      talks: []);
+    id: speakerData.items[0].id,
+    name: speakerData.items[0].name,
+    title: speakerData.items[0].title,
+    imageUrl: speakerData.items[0].imageUrl,
+    bio: 'Test bio',
+    links: const [],
+    talks: const [],
+  );
 }

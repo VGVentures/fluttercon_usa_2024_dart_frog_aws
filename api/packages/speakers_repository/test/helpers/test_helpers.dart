@@ -94,7 +94,7 @@ class TestHelpers {
         speaker: speakers.items[0],
         url: 'https://test.com',
         type: LinkType.other,
-      )
+      ),
     ],
     null,
     null,

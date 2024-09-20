@@ -29,7 +29,15 @@ class SpeakerDetailBloc extends Bloc<SpeakerDetailEvent, SpeakerDetailState> {
     emit(const SpeakerDetailLoading());
     try {
       final speaker = await _api.getSpeaker(id: event.id, userId: _userId);
-      emit(SpeakerDetailLoaded(speaker: speaker));
+      emit(
+        SpeakerDetailLoaded(
+          speaker: speaker,
+          favoriteIds: speaker.talks
+              .where((talk) => talk.isFavorite)
+              .map((talk) => talk.id)
+              .toList(),
+        ),
+      );
     } catch (error) {
       emit(SpeakerDetailError(error: error));
     }

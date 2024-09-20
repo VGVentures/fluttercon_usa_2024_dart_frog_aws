@@ -317,9 +317,9 @@ void main() {
 
     group('getSpeakersFromApi', () {
       setUp(() {
-        when(() =>
-                dataSource.getSpeakerTalks(talks: TestHelpers.talksData.items))
-            .thenAnswer((_) async => TestHelpers.speakerResult);
+        when(
+          () => dataSource.getSpeakerTalks(talks: TestHelpers.talksData.items),
+        ).thenAnswer((_) async => TestHelpers.speakerResult);
         when(
           () => cache.set(
             speakerTalksCacheKey(

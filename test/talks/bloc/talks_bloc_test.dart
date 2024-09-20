@@ -27,9 +27,11 @@ void main() {
       blocTest<TalksBloc, TalksState>(
         'emits [TalksLoading, TalksLoaded] when successful',
         setUp: () {
-          when(() => api.getTalks(
-                userId: TestData.user.id,
-              )).thenAnswer(
+          when(
+            () => api.getTalks(
+              userId: TestData.user.id,
+            ),
+          ).thenAnswer(
             (_) async => TestData.talkTimeSlotData(),
           );
         },
