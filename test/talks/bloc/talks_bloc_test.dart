@@ -16,7 +16,7 @@ void main() {
 
     setUp(() {
       api = _MockFlutterconApi();
-      talksBloc = TalksBloc(api: api);
+      talksBloc = TalksBloc(api: api, userId: TestData.user.id);
     });
 
     test('initial state is TalksInitial', () {
@@ -27,7 +27,9 @@ void main() {
       blocTest<TalksBloc, TalksState>(
         'emits [TalksLoading, TalksLoaded] when successful',
         setUp: () {
-          when(() => api.getTalks()).thenAnswer(
+          when(() => api.getTalks(
+                userId: TestData.user.id,
+              )).thenAnswer(
             (_) async => TestData.talkTimeSlotData(),
           );
         },
@@ -48,7 +50,11 @@ void main() {
       blocTest<TalksBloc, TalksState>(
         'emits [TalksLoading, TalksError] when unsuccessful',
         setUp: () {
-          when(() => api.getTalks()).thenThrow(TestData.error);
+          when(
+            () => api.getTalks(
+              userId: TestData.user.id,
+            ),
+          ).thenThrow(TestData.error);
         },
         build: () => talksBloc,
         act: (bloc) {

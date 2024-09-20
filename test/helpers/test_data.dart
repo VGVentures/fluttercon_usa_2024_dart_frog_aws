@@ -2,7 +2,7 @@ import 'package:fluttercon_api/fluttercon_api.dart';
 import 'package:fluttercon_shared_models/fluttercon_shared_models.dart';
 
 class TestData {
-  static const user = User(id: 'id', sessionToken: 'sessionToken');
+  static const user = User(id: 'userId', sessionToken: 'sessionToken');
 
   static PaginatedData<TalkTimeSlot> talkTimeSlotData({
     bool favorites = false,

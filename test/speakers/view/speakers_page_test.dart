@@ -2,7 +2,11 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fluttercon_api/fluttercon_api.dart';
+import 'package:fluttercon_usa_2024/speaker_detail/speaker_detail.dart';
 import 'package:fluttercon_usa_2024/speakers/speakers.dart';
+import 'package:fluttercon_usa_2024/user/cubit/user_cubit.dart';
+import 'package:fluttercon_usa_2024/widgets/widgets.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../helpers/helpers.dart';
@@ -10,6 +14,8 @@ import '../../helpers/test_data.dart';
 
 class _MockSpeakersBloc extends MockBloc<SpeakersEvent, SpeakersState>
     implements SpeakersBloc {}
+
+class _MockUserCubit extends MockCubit<User?> implements UserCubit {}
 
 void main() {
   group('SpeakersPage', () {
@@ -86,7 +92,15 @@ void main() {
       });
 
       group('SpeakersList', () {
-        testWidgets('can tap speaker list tile', (tester) async {
+        late UserCubit userCubit;
+
+        setUp(() {
+          userCubit = _MockUserCubit();
+          when(() => userCubit.state).thenReturn(TestData.user);
+        });
+
+        testWidgets('can tap $SpeakerTile to navigate to detail',
+            (tester) async {
           when(() => speakersBloc.state).thenReturn(
             SpeakersLoaded(speakers: TestData.speakerData.items),
           );
@@ -96,11 +110,13 @@ void main() {
               value: speakersBloc,
               child: const SpeakersView(),
             ),
+            userCubit: userCubit,
           );
 
-          await tester.tap(find.byType(ListTile).first);
+          await tester.tap(find.byType(SpeakerTile).first);
+          await tester.pumpAndSettle();
 
-          expect(find.byType(SpeakersList), findsOneWidget);
+          expect(find.byType(SpeakerDetailPage), findsOneWidget);
         });
       });
     });
