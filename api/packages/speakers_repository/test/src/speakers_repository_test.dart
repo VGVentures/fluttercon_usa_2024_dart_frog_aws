@@ -1,6 +1,4 @@
 // ignore_for_file: prefer_const_constructors
-import 'dart:convert';
-import 'dart:developer';
 
 import 'package:fluttercon_cache/fluttercon_cache.dart';
 import 'package:fluttercon_data_source/fluttercon_data_source.dart';
@@ -61,7 +59,7 @@ void main() {
       setUp(() {
         when(
           () => cache.getOrElse<SpeakerDetail>(
-            key: speakersCacheKey,
+            key: speakerCacheKey(TestHelpers.speakers.items[0]!.id),
             fromJson: any(named: 'fromJson'),
             orElse: any(named: 'orElse'),
           ),
@@ -73,7 +71,7 @@ void main() {
           id: TestHelpers.speakers.items[0]!.id,
           userId: TestHelpers.userId,
         );
-        expect(speakers, equals(TestHelpers.speakerPreviews));
+        expect(speakers, equals(TestHelpers.speakerDetail));
       });
     });
 
@@ -100,6 +98,52 @@ void main() {
       });
     });
 
-    group('getSpeakerDetailFromApi', () {});
+    group('getSpeakerDetailFromApi', () {
+      final speaker = TestHelpers.speakers.items[0]!;
+      setUp(() {
+        when(() => dataSource.getSpeaker(id: speaker.id))
+            .thenAnswer((_) async => speaker);
+        when(() => dataSource.getLinks(speaker: speaker))
+            .thenAnswer((_) async => TestHelpers.links);
+        when(() => dataSource.getSpeakerTalks(speakers: [speaker]))
+            .thenAnswer((_) async => TestHelpers.talks);
+        when(() => dataSource.getSpeakerTalks(talks: [TestHelpers.talk]))
+            .thenAnswer((_) async => TestHelpers.talks);
+        when(
+          () => cache.getOrElse(
+            key: favoritesCacheKey(TestHelpers.userId),
+            fromJson: any(named: 'fromJson'),
+            orElse: any(named: 'orElse'),
+          ),
+        ).thenAnswer((_) async => TestHelpers.favorites);
+        when(() => cache.set(speakerCacheKey(speaker.id), any()))
+            .thenAnswer((_) async => {});
+      });
+
+      test('fetches $SpeakerDetail from api and caches', () async {
+        await speakersRepository.getSpeakerDetailFromApi(
+          id: speaker.id,
+          userId: TestHelpers.userId,
+        );
+        verify(
+          () => dataSource.getSpeaker(id: speaker.id),
+        ).called(1);
+        verify(
+          () => dataSource.getLinks(speaker: speaker),
+        ).called(1);
+        verify(
+          () => dataSource.getSpeakerTalks(speakers: [speaker]),
+        ).called(1);
+        verify(
+          () => dataSource.getSpeakerTalks(talks: [TestHelpers.talk]),
+        ).called(1);
+        verify(
+          () => cache.set(
+            speakerCacheKey(speaker.id),
+            any(),
+          ),
+        ).called(1);
+      });
+    });
   });
 }

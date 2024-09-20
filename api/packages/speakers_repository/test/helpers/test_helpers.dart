@@ -87,4 +87,48 @@ class TestHelpers {
     links: [],
     talks: [],
   );
+
+  static final links = PaginatedResult(
+    [
+      Link(
+        speaker: speakers.items[0],
+        url: 'https://test.com',
+        type: LinkType.other,
+      )
+    ],
+    null,
+    null,
+    null,
+    Link.classType,
+    null,
+  );
+
+  static final talk = Talk(
+    id: '1',
+    title: 'Test Talk',
+    room: 'Test Room',
+  );
+
+  static final talks = PaginatedResult(
+    [
+      SpeakerTalk(
+        speaker: speakers.items[0],
+        talk: talk,
+      ),
+    ],
+    null,
+    null,
+    null,
+    SpeakerTalk.classType,
+    null,
+  );
+
+  static final Favorites? favorites = Favorites(
+    userId: userId,
+    talks: [
+      FavoritesTalk(
+        talk: talk,
+      ),
+    ],
+  );
 }
