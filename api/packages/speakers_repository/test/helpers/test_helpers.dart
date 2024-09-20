@@ -123,7 +123,8 @@ class TestHelpers {
     null,
   );
 
-  static final Favorites? favorites = Favorites(
+  static final favorites = Favorites(
+    id: 'favoritesId',
     userId: userId,
     talks: [
       FavoritesTalk(

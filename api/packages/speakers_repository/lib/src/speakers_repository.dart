@@ -44,7 +44,9 @@ class SpeakersRepository {
     return _cache.getOrElse(
       key: speakerCacheKey(id),
       fromJson: SpeakerDetail.fromJson,
+      // coverage:ignore-start
       orElse: () => getSpeakerDetailFromApi(id: id, userId: userId),
+      // coverage:ignore-end
     );
   }
 

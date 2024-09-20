@@ -110,7 +110,7 @@ void main() {
         when(() => dataSource.getSpeakerTalks(talks: [TestHelpers.talk]))
             .thenAnswer((_) async => TestHelpers.talks);
         when(
-          () => cache.getOrElse(
+          () => cache.getOrElse<Favorites?>(
             key: favoritesCacheKey(TestHelpers.userId),
             fromJson: any(named: 'fromJson'),
             orElse: any(named: 'orElse'),
