@@ -6,7 +6,6 @@ import 'package:fluttercon_usa_2024/speaker_detail/speaker_detail.dart';
 import 'package:fluttercon_usa_2024/talk_detail/talk_detail.dart';
 import 'package:fluttercon_usa_2024/user/cubit/user_cubit.dart';
 import 'package:fluttercon_usa_2024/widgets/widgets.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class SpeakerDetailPage extends StatelessWidget {
   const SpeakerDetailPage({required this.id, required this.userId, super.key});
@@ -83,9 +82,9 @@ class SpeakerDetailContent extends StatelessWidget {
               children: [
                 for (final link in speaker.links)
                   TextButton(
-                    onPressed: () async {
-                      await launchUrl(Uri.parse(link.url));
-                    },
+                    onPressed: () => context.read<SpeakerDetailBloc>().add(
+                          SpeakerLinkTapped(url: link.url),
+                        ),
                     child: Text(
                       link.type.name.toUpperCase(),
                       style: theme.textTheme.bodyMedium,
@@ -104,13 +103,11 @@ class SpeakerDetailContent extends StatelessWidget {
                 builder: (context, isFavorite) {
                   return TalkCard(
                     title: talk.title,
-                    onTap: () async {
-                      await Navigator.of(context).push<void>(
-                        MaterialPageRoute(
-                          builder: (context) => TalkDetailPage(id: talk.id),
-                        ),
-                      );
-                    },
+                    onTap: () async => Navigator.of(context).push<void>(
+                      MaterialPageRoute(
+                        builder: (context) => TalkDetailPage(id: talk.id),
+                      ),
+                    ),
                     speakerNames: talk.speakerNames,
                     room: talk.room,
                     onFavoriteTap: () {

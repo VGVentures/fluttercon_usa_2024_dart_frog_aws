@@ -27,3 +27,12 @@ final class FavoriteToggleRequested extends SpeakerDetailEvent {
   @override
   List<Object?> get props => [userId, talkId, isFavorite];
 }
+
+final class SpeakerLinkTapped extends SpeakerDetailEvent {
+  const SpeakerLinkTapped({required this.url});
+
+  final String url;
+
+  @override
+  List<Object?> get props => [url];
+}

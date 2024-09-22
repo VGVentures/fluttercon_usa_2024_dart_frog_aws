@@ -34,5 +34,16 @@ void main() {
         );
       });
     });
+
+    group('SpeakerLinkTapped', () {
+      test('supports value equality', () {
+        expect(
+          SpeakerLinkTapped(url: 'url'),
+          equals(
+            SpeakerLinkTapped(url: 'url'),
+          ),
+        );
+      });
+    });
   });
 }

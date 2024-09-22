@@ -3,23 +3,29 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fluttercon_api/fluttercon_api.dart';
 import 'package:fluttercon_shared_models/fluttercon_shared_models.dart';
 import 'package:fluttercon_usa_2024/speaker_detail/speaker_detail.dart';
+import 'package:fluttercon_usa_2024/utils/url_launcher.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../helpers/test_data.dart';
 
 class _MockFlutterconApi extends Mock implements FlutterconApi {}
 
+class _MockUrlLauncher extends Mock implements UrlLauncher {}
+
 void main() {
   group('SpeakerDetailBloc', () {
     late FlutterconApi api;
+    late UrlLauncher urlLauncher;
     late SpeakerDetailBloc speakerDetailBloc;
     const speakerId = 'speakerId';
 
     setUp(() {
       api = _MockFlutterconApi();
+      urlLauncher = _MockUrlLauncher();
       speakerDetailBloc = SpeakerDetailBloc(
         api: api,
         userId: TestData.user.id,
+        urlLauncher: urlLauncher,
       );
     });
 
@@ -202,6 +208,56 @@ void main() {
           isA<SpeakerDetailError>().having(
             (state) => state.error,
             'Error',
+            equals(TestData.error),
+          ),
+        ],
+      );
+    });
+
+    group('SpeakerLinkTapped', () {
+      blocTest<SpeakerDetailBloc, SpeakerDetailState>(
+        'launches url when url is valid',
+        setUp: () {
+          when(() => urlLauncher.validateUrl(url: any(named: 'url')))
+              .thenAnswer((_) async => true);
+          when(() => urlLauncher.launchUrl(url: any(named: 'url')))
+              .thenAnswer((_) async {});
+        },
+        build: () => speakerDetailBloc,
+        act: (bloc) =>
+            bloc.add(const SpeakerLinkTapped(url: 'https://url.com')),
+        verify: (_) {
+          verify(() => urlLauncher.launchUrl(url: any(named: 'url'))).called(1);
+        },
+      );
+
+      blocTest<SpeakerDetailBloc, SpeakerDetailState>(
+        'does not launch url when url is invalid',
+        setUp: () {
+          when(() => urlLauncher.validateUrl(url: any(named: 'url')))
+              .thenAnswer((_) async => false);
+          when(() => urlLauncher.launchUrl(url: any(named: 'url')))
+              .thenAnswer((_) async {});
+        },
+        build: () => speakerDetailBloc,
+        act: (bloc) => bloc.add(const SpeakerLinkTapped(url: 'invalid-url')),
+        verify: (_) {
+          verifyNever(() => urlLauncher.launchUrl(url: any(named: 'url')));
+        },
+      );
+
+      blocTest<SpeakerDetailBloc, SpeakerDetailState>(
+        'emits [BlogDetailFailure] when url launcher throws exception',
+        setUp: () {
+          when(() => urlLauncher.validateUrl(url: any(named: 'url')))
+              .thenThrow(TestData.error);
+        },
+        build: () => speakerDetailBloc,
+        act: (bloc) => bloc.add(const SpeakerLinkTapped(url: 'invalid-url')),
+        expect: () => [
+          isA<SpeakerDetailError>().having(
+            (state) => state.error,
+            'error',
             equals(TestData.error),
           ),
         ],

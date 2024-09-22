@@ -139,6 +139,35 @@ void main() {
             ),
           ).called(1);
         });
+
+        testWidgets('can tap link to navigate to url', (tester) async {
+          when(() => speakerDetailBloc.state).thenReturn(
+            SpeakerDetailLoaded(speaker: TestData.speakerDetail),
+          );
+
+          await tester.pumpApp(
+            MultiBlocProvider(
+              providers: [
+                BlocProvider.value(
+                  value: speakerDetailBloc,
+                ),
+              ],
+              child: const SpeakerDetailView(),
+            ),
+          );
+
+          final link = find.text('OTHER');
+
+          await tester.tap(link);
+
+          verify(
+            () => speakerDetailBloc.add(
+              any(
+                that: isA<SpeakerLinkTapped>(),
+              ),
+            ),
+          ).called(1);
+        });
       });
     });
   });

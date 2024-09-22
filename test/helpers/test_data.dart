@@ -101,7 +101,13 @@ class TestData {
     title: speakerData.items[0].title,
     imageUrl: speakerData.items[0].imageUrl,
     bio: 'Test bio',
-    links: const [],
+    links: const [
+      SpeakerLink(
+        id: '1',
+        type: SpeakerLinkType.other,
+        url: 'https://example.com',
+      ),
+    ],
     talks: [
       TalkPreview(
         id: '1',
