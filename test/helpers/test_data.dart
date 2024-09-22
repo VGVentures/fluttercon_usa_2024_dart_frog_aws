@@ -102,6 +102,17 @@ class TestData {
     imageUrl: speakerData.items[0].imageUrl,
     bio: 'Test bio',
     links: const [],
-    talks: const [],
+    talks: [
+      TalkPreview(
+        id: '1',
+        title: 'Talk 1',
+        room: 'Room 1',
+        startTime: DateTime(2024),
+        speakerNames: const [
+          'Speaker 1',
+        ],
+        isFavorite: false,
+      ),
+    ],
   );
 }

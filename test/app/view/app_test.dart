@@ -32,6 +32,7 @@ void main() {
           api: api,
         ),
       );
+      await tester.pumpAndSettle();
 
       await tester.tap(find.byIcon(Icons.people_outlined));
       await tester.pumpAndSettle();

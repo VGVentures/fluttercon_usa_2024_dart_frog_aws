@@ -2,9 +2,6 @@ part of 'speaker_detail_bloc.dart';
 
 sealed class SpeakerDetailEvent extends Equatable {
   const SpeakerDetailEvent();
-
-  @override
-  List<Object?> get props => [];
 }
 
 final class SpeakerDetailRequested extends SpeakerDetailEvent {

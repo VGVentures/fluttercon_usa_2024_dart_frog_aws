@@ -2,9 +2,8 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:fluttercon_api/fluttercon_api.dart';
 import 'package:fluttercon_usa_2024/speaker_detail/speaker_detail.dart';
-import 'package:fluttercon_usa_2024/user/cubit/user_cubit.dart';
+import 'package:fluttercon_usa_2024/talk_detail/view/talk_detail_page.dart';
 import 'package:fluttercon_usa_2024/widgets/widgets.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -14,8 +13,6 @@ import '../../helpers/test_data.dart';
 class _MockSpeakerDetailBloc
     extends MockBloc<SpeakerDetailEvent, SpeakerDetailState>
     implements SpeakerDetailBloc {}
-
-class _MockUserCubit extends MockCubit<User?> implements UserCubit {}
 
 void main() {
   group('SpeakerDetailPage', () {
@@ -86,11 +83,7 @@ void main() {
       });
 
       group('SpeakerDetailContent', () {
-        late UserCubit userCubit;
-
         setUp(() {
-          userCubit = _MockUserCubit();
-          when(() => userCubit.state).thenReturn(TestData.user);
           registerFallbackValue(
             FavoriteToggleRequested(
               userId: TestData.user.id,
@@ -101,12 +94,21 @@ void main() {
         });
         testWidgets('can tap on $TalkCard to navigate to detail ',
             (tester) async {
+          when(() => speakerDetailBloc.state).thenReturn(
+            SpeakerDetailLoaded(speaker: TestData.speakerDetail),
+          );
+
           await tester.pumpApp(
-            SpeakerDetailContent(speaker: TestData.speakerDetail),
+            BlocProvider.value(
+              value: speakerDetailBloc,
+              child: const SpeakerDetailView(),
+            ),
           );
 
           await tester.tap(find.byType(TalkCard).first);
           await tester.pumpAndSettle();
+
+          expect(find.byType(TalkDetailPage), findsOneWidget);
         });
 
         testWidgets('can tap favorites icon to toggle', (tester) async {
@@ -119,9 +121,6 @@ void main() {
               providers: [
                 BlocProvider.value(
                   value: speakerDetailBloc,
-                ),
-                BlocProvider.value(
-                  value: userCubit,
                 ),
               ],
               child: const SpeakerDetailView(),
