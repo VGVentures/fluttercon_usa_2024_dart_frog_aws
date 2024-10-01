@@ -23,15 +23,13 @@ class SpeakersRepository {
   /// if the cache is empty.
   ///
   /// If fetching from api, the speakers are then cached.
-  Future<PaginatedData<SpeakerPreview>> getSpeakers() async => _cache.getOrElse(
-        key: speakersCacheKey,
-        // coverage:ignore-start
+  Future<PaginatedData<SpeakerPreview>> getSpeakers() async => tryGetFromCache(
+        getFromCache: () => _cache.get(speakersCacheKey),
         fromJson: (json) => PaginatedData.fromJson(
           json,
           (val) => SpeakerPreview.fromJson((val ?? {}) as Map<String, dynamic>),
         ),
         orElse: getSpeakersFromApi,
-        // coverage:ignore-end
       );
 
   /// Fetches a [SpeakerDetail] with a given [id].
@@ -41,12 +39,10 @@ class SpeakersRepository {
     required String id,
     required String userId,
   }) async {
-    return _cache.getOrElse(
-      key: speakerCacheKey(id),
+    return tryGetFromCache(
+      getFromCache: () => _cache.get(speakerCacheKey(id)),
       fromJson: SpeakerDetail.fromJson,
-      // coverage:ignore-start
       orElse: () => getSpeakerDetailFromApi(id: id, userId: userId),
-      // coverage:ignore-end
     );
   }
 
@@ -105,14 +101,12 @@ class SpeakersRepository {
           .toList(),
     );
 
-    final favorites = await _cache.getOrElse(
-      key: favoritesCacheKey(userId),
-      // coverage:ignore-start
+    final favorites = await tryGetFromCache(
+      getFromCache: () => _cache.get(favoritesCacheKey(userId)),
       fromJson: favoritesFromJson,
       orElse: () async {
         final response = await _dataSource.getFavorites(userId: userId);
         return response.items.first;
-        // coverage:ignore-end
       },
     );
 

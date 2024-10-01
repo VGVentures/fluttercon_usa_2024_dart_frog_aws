@@ -1,5 +1,3 @@
-// coverage:ignore-file
-
 /// The cache key for the speakers cache.
 const speakersCacheKey = 'speakers';
 

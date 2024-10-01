@@ -23,12 +23,10 @@ class TalksRepository {
   Future<CreateFavoriteResponse> createFavorite({
     required CreateFavoriteRequest request,
   }) async {
-    final favorites = await _cache.getOrElse(
-      key: favoritesCacheKey(request.userId),
+    final favorites = await tryGetFromCache(
+      getFromCache: () => _cache.get(favoritesCacheKey(request.userId)),
       fromJson: favoritesFromJson,
-      // coverage:ignore-start
       orElse: () async => getFavoritesFromApi(request.userId),
-      // coverage:ignore-end
     );
 
     final createResponse = await _dataSource.createFavoritesTalk(
@@ -56,12 +54,10 @@ class TalksRepository {
   Future<DeleteFavoriteResponse> deleteFavorite({
     required DeleteFavoriteRequest request,
   }) async {
-    final favorites = await _cache.getOrElse(
-      key: favoritesCacheKey(request.userId),
+    final favorites = await tryGetFromCache(
+      getFromCache: () => _cache.get(favoritesCacheKey(request.userId)),
       fromJson: favoritesFromJson,
-      // coverage:ignore-start
       orElse: () async => getFavoritesFromApi(request.userId),
-      // coverage:ignore-end
     );
 
     final favoritesTalkResponse = await _dataSource.getFavoritesTalks(
@@ -107,34 +103,32 @@ class TalksRepository {
   Future<PaginatedData<TalkTimeSlot>> getTalks({
     required String userId,
   }) async {
-    final talkData = await _cache.getOrElse(
-      key: talksCacheKey,
-      // coverage:ignore-start
+    final talkData = await tryGetFromCache(
+      getFromCache: () => _cache.get(talksCacheKey),
       fromJson: (json) => PaginatedData.fromJson(
         json,
         (val) => Talk.fromJson((val ?? {}) as Map<String, dynamic>),
       ),
       orElse: getTalksFromApi,
-      // coverage:ignore-end
     );
 
-    final speakerData = await _cache.getOrElse(
-      key: speakerTalksCacheKey(talkData.items.map((t) => t?.id).join(',')),
-      // coverage:ignore-start
+    final speakerData = await tryGetFromCache(
+      getFromCache: () => _cache.get(
+        speakerTalksCacheKey(
+          talkData.items.map((t) => t?.id).join(','),
+        ),
+      ),
       fromJson: (json) => PaginatedData.fromJson(
         json,
         (val) => SpeakerTalk.fromJson((val ?? {}) as Map<String, dynamic>),
       ),
       orElse: () => getSpeakersFromApi(talkData.items),
-      // coverage:ignore-end
     );
 
-    final favorites = await _cache.getOrElse(
-      key: favoritesCacheKey(userId),
+    final favorites = await tryGetFromCache(
+      getFromCache: () => _cache.get(favoritesCacheKey(userId)),
       fromJson: favoritesFromJson,
-      // coverage:ignore-start
       orElse: () async => getFavoritesFromApi(userId),
-      // coverage:ignore-end
     );
 
     final timeSlots = await _buildTalkTimeSlots(
@@ -151,12 +145,10 @@ class TalksRepository {
   }
 
   /// Fetches a [TalkDetail] entity by [id].
-  Future<TalkDetail> getTalk({required String id}) async => _cache.getOrElse(
-        key: talkCacheKey(id),
+  Future<TalkDetail> getTalk({required String id}) async => tryGetFromCache(
+        getFromCache: () => _cache.get(talkCacheKey(id)),
         fromJson: TalkDetail.fromJson,
-        // coverage:ignore-start
         orElse: () => getTalkDetailFromApi(id),
-        // coverage:ignore-end
       );
 
   /// Fetches a paginated list of talks for a given [userId].
@@ -166,12 +158,10 @@ class TalksRepository {
   Future<PaginatedData<TalkTimeSlot>> getFavorites({
     required String userId,
   }) async {
-    final favorites = await _cache.getOrElse(
-      key: favoritesCacheKey(userId),
+    final favorites = await tryGetFromCache(
+      getFromCache: () => _cache.get(favoritesCacheKey(userId)),
       fromJson: favoritesFromJson,
-      // coverage:ignore-start
       orElse: () async => getFavoritesFromApi(userId),
-      // coverage:ignore-end
     );
 
     final favoritesTalks = favorites.talks ?? [];
@@ -181,15 +171,17 @@ class TalksRepository {
         .map((ft) => ft.talk!)
         .toList();
 
-    final speakerData = await _cache.getOrElse(
-      key: speakerTalksCacheKey(talks.map((t) => t.id).join(',')),
-      // coverage:ignore-start
+    final speakerData = await tryGetFromCache(
+      getFromCache: () => _cache.get(
+        speakerTalksCacheKey(
+          talks.map((t) => t.id).join(','),
+        ),
+      ),
       fromJson: (json) => PaginatedData.fromJson(
         json,
         (val) => SpeakerTalk.fromJson((val ?? {}) as Map<String, dynamic>),
       ),
       orElse: () => getSpeakersFromApi(talks),
-      // coverage:ignore-end
     );
 
     final timeSlots = await _buildTalkTimeSlots(
