@@ -29,7 +29,7 @@ class SpeakersRepository {
           json,
           (val) => SpeakerPreview.fromJson((val ?? {}) as Map<String, dynamic>),
         ),
-        orElse: getSpeakersFromApi,
+        orElse: _getSpeakersFromApi,
       );
 
   /// Fetches a [SpeakerDetail] with a given [id].
@@ -42,12 +42,11 @@ class SpeakersRepository {
     return tryGetFromCache(
       getFromCache: () => _cache.get(speakerCacheKey(id)),
       fromJson: SpeakerDetail.fromJson,
-      orElse: () => getSpeakerDetailFromApi(id: id, userId: userId),
+      orElse: () => _getSpeakerDetailFromApi(id: id, userId: userId),
     );
   }
 
-  /// Fetches a paginated list of speakers from the api.
-  Future<PaginatedData<SpeakerPreview>> getSpeakersFromApi() async {
+  Future<PaginatedData<SpeakerPreview>> _getSpeakersFromApi() async {
     final speakers = await _dataSource.getSpeakers();
 
     final speakerPreviews = speakers.items
@@ -82,9 +81,7 @@ class SpeakersRepository {
     return result;
   }
 
-  /// Fetches a [SpeakerDetail] from the api with a given [id] and
-  /// the current [userId].
-  Future<SpeakerDetail> getSpeakerDetailFromApi({
+  Future<SpeakerDetail> _getSpeakerDetailFromApi({
     required String id,
     required String userId,
   }) async {

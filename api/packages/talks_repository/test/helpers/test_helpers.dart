@@ -42,6 +42,32 @@ class TestHelpers {
     items: talks,
   );
 
+  static final talksDataJson = {
+    'items': [
+      {
+        'id': '1',
+        'title': 'Test Talk 1',
+        'room': 'Room 1',
+        'startTime': talk1StartTime.toIso8601String(),
+        'description': 'Test Description',
+      },
+      {
+        'id': '2',
+        'title': 'Test Talk 2',
+        'room': 'Room 2',
+        'startTime': talk2StartTime.toIso8601String(),
+        'description': 'Test Description',
+      },
+      {
+        'id': '3',
+        'title': 'Test Talk 3',
+        'room': 'Room 3',
+        'startTime': talk3StartTime.toIso8601String(),
+        'description': 'Test Description',
+      },
+    ],
+  };
+
   static final talksResult = PaginatedResult(
     talks,
     null,
@@ -178,6 +204,26 @@ class TestHelpers {
 
   static final speakerData = PaginatedData(items: speakerTalks);
 
+  static final speakerDataJson = {
+    'items': [
+      {
+        'id': '1',
+        'speaker': {'id': '1', 'name': 'Speaker 1'},
+        'talk': talksData.items[0]!.toJson(),
+      },
+      {
+        'id': '2',
+        'speaker': {'id': '2', 'name': 'Speaker 2'},
+        'talk': talksData.items[1]!.toJson(),
+      },
+      {
+        'id': '3',
+        'speaker': {'id': '3', 'name': 'Speaker 3'},
+        'talk': talksData.items[2]!.toJson(),
+      },
+    ],
+  };
+
   static final speakerResult = PaginatedResult(
     speakerTalks,
     null,
@@ -285,4 +331,15 @@ class TestHelpers {
     ],
     description: 'Test Description',
   );
+
+  static final talkDetailJson = {
+    'id': '1',
+    'title': 'Test Talk 1',
+    'room': 'Room 1',
+    'startTime': talk1StartTime.toIso8601String(),
+    'speakers': [
+      {'id': '1', 'name': 'Speaker 1', 'title': '', 'imageUrl': ''},
+    ],
+    'description': 'Test Description',
+  };
 }

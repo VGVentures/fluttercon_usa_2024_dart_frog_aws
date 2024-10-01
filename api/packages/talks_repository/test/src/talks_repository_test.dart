@@ -1,4 +1,6 @@
 // ignore_for_file: prefer_const_constructors
+import 'dart:convert';
+
 import 'package:fluttercon_cache/fluttercon_cache.dart';
 import 'package:fluttercon_data_source/fluttercon_data_source.dart';
 import 'package:fluttercon_shared_models/fluttercon_shared_models.dart';
@@ -53,12 +55,10 @@ void main() {
       final request = TestHelpers.createFavoriteRequest;
       setUp(() {
         when(
-          () => cache.getOrElse<Favorites>(
-            key: favoritesCacheKey(request.userId),
-            fromJson: any(named: 'fromJson'),
-            orElse: any(named: 'orElse'),
+          () => cache.get(
+            favoritesCacheKey(request.userId),
           ),
-        ).thenAnswer((_) async => TestHelpers.favorites);
+        ).thenAnswer((_) async => jsonEncode(TestHelpers.favoritesJson));
         when(
           () => dataSource.createFavoritesTalk(
             favoritesId: TestHelpers.favoritesId,
@@ -93,12 +93,10 @@ void main() {
       final favoritesTalk = TestHelpers.favoritesTalkSingle.items.first!;
       setUp(() {
         when(
-          () => cache.getOrElse<Favorites>(
-            key: favoritesCacheKey(request.userId),
-            fromJson: any(named: 'fromJson'),
-            orElse: any(named: 'orElse'),
+          () => cache.get(
+            favoritesCacheKey(request.userId),
           ),
-        ).thenAnswer((_) async => TestHelpers.favorites);
+        ).thenAnswer((_) async => jsonEncode(TestHelpers.favoritesJson));
         when(
           () => dataSource.getFavoritesTalks(
             favoritesId: TestHelpers.favoritesId,
@@ -200,21 +198,17 @@ void main() {
 
       setUp(() {
         when(
-          () => cache.getOrElse<Favorites>(
-            key: favoritesCacheKey(TestHelpers.userId),
-            fromJson: any(named: 'fromJson'),
-            orElse: any(named: 'orElse'),
+          () => cache.get(
+            favoritesCacheKey(TestHelpers.userId),
           ),
-        ).thenAnswer((_) async => TestHelpers.favorites);
+        ).thenAnswer((_) async => jsonEncode(TestHelpers.favoritesJson));
         when(
-          () => cache.getOrElse<PaginatedData<SpeakerTalk?>>(
-            key: speakerTalksCacheKey(
+          () => cache.get(
+            speakerTalksCacheKey(
               TestHelpers.favorites.talks!.map((e) => e.talk!.id).join(','),
             ),
-            fromJson: any(named: 'fromJson'),
-            orElse: any(named: 'orElse'),
           ),
-        ).thenAnswer((_) async => TestHelpers.speakerData);
+        ).thenAnswer((_) async => jsonEncode(TestHelpers.speakerDataJson));
       });
 
       test('returns $TalkTimeSlot data', () async {
@@ -226,28 +220,25 @@ void main() {
     group('getTalks', () {
       setUp(() {
         when(
-          () => cache.getOrElse<PaginatedData<Talk?>>(
-            key: talksCacheKey,
-            fromJson: any(named: 'fromJson'),
-            orElse: any(named: 'orElse'),
+          () => cache.get(
+            talksCacheKey,
           ),
-        ).thenAnswer((_) async => TestHelpers.talksData);
+        ).thenAnswer((_) async => jsonEncode(TestHelpers.talksDataJson));
         when(
-          () => cache.getOrElse<PaginatedData<SpeakerTalk?>>(
-            key: speakerTalksCacheKey(
-              TestHelpers.talksData.items.map((e) => e?.id).join(','),
+          () => cache.get(
+            speakerTalksCacheKey(
+              TestHelpers.talksData.items
+                  .where((e) => e != null)
+                  .map((e) => e?.id)
+                  .join(','),
             ),
-            fromJson: any(named: 'fromJson'),
-            orElse: any(named: 'orElse'),
           ),
-        ).thenAnswer((_) async => TestHelpers.speakerData);
+        ).thenAnswer((_) async => jsonEncode(TestHelpers.speakerDataJson));
         when(
-          () => cache.getOrElse<Favorites>(
-            key: favoritesCacheKey(TestHelpers.userId),
-            fromJson: any(named: 'fromJson'),
-            orElse: any(named: 'orElse'),
+          () => cache.get(
+            favoritesCacheKey(TestHelpers.userId),
           ),
-        ).thenAnswer((_) async => TestHelpers.favorites);
+        ).thenAnswer((_) async => jsonEncode(TestHelpers.favoritesJson));
       });
 
       test('returns $TalkTimeSlot data', () async {
@@ -262,12 +253,10 @@ void main() {
       final talkDetail = TestHelpers.talkDetail;
       setUp(() {
         when(
-          () => cache.getOrElse<TalkDetail>(
-            key: talkCacheKey(talkDetail.id),
-            fromJson: any(named: 'fromJson'),
-            orElse: any(named: 'orElse'),
+          () => cache.get(
+            talkCacheKey(talkDetail.id),
           ),
-        ).thenAnswer((_) async => talkDetail);
+        ).thenAnswer((_) async => jsonEncode(TestHelpers.talkDetailJson));
       });
 
       test('returns $TalkDetail', () async {

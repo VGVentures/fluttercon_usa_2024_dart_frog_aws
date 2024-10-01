@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:convert';
+
 import 'package:fluttercon_cache/fluttercon_cache.dart';
 import 'package:fluttercon_data_source/fluttercon_data_source.dart';
 import 'package:fluttercon_shared_models/fluttercon_shared_models.dart';
@@ -41,51 +43,27 @@ void main() {
     group('getSpeakers', () {
       setUp(() {
         when(
-          () => cache.getOrElse<PaginatedData<SpeakerPreview>>(
-            key: speakersCacheKey,
-            fromJson: any(named: 'fromJson'),
-            orElse: any(named: 'orElse'),
+          () => cache.get(
+            speakersCacheKey,
           ),
-        ).thenAnswer((_) async => TestHelpers.speakerPreviews);
+        ).thenAnswer((_) async => jsonEncode(TestHelpers.speakerPreviewsJson));
       });
 
       test('returns $SpeakerPreview list', () async {
         final speakers = await speakersRepository.getSpeakers();
         expect(speakers, equals(TestHelpers.speakerPreviews));
       });
-    });
 
-    group('getSpeaker', () {
-      setUp(() {
-        when(
-          () => cache.getOrElse<SpeakerDetail>(
-            key: speakerCacheKey(TestHelpers.speakers.items[0]!.id),
-            fromJson: any(named: 'fromJson'),
-            orElse: any(named: 'orElse'),
-          ),
-        ).thenAnswer((_) async => TestHelpers.speakerDetail);
-      });
-
-      test('returns $SpeakerDetail', () async {
-        final speakers = await speakersRepository.getSpeaker(
-          id: TestHelpers.speakers.items[0]!.id,
-          userId: TestHelpers.userId,
-        );
-        expect(speakers, equals(TestHelpers.speakerDetail));
-      });
-    });
-
-    group('getSpeakersFromApi', () {
-      setUp(() {
+      test('fetches from api when cache is null', () async {
+        when(() => cache.get(speakersCacheKey)).thenAnswer((_) async => null);
         when(() => dataSource.getSpeakers())
             .thenAnswer((_) async => TestHelpers.speakers);
         when(() => cache.set(speakersCacheKey, any<String>())).thenAnswer(
           (_) async => {},
         );
-      });
+        final speakers = await speakersRepository.getSpeakers();
+        expect(speakers, equals(TestHelpers.speakerPreviews));
 
-      test('fetches $Speaker list from api and caches', () async {
-        await speakersRepository.getSpeakersFromApi();
         verify(
           () => dataSource.getSpeakers(),
         ).called(1);
@@ -98,9 +76,28 @@ void main() {
       });
     });
 
-    group('getSpeakerDetailFromApi', () {
-      final speaker = TestHelpers.speakers.items[0]!;
+    group('getSpeaker', () {
       setUp(() {
+        when(
+          () => cache.get(
+            speakerCacheKey(TestHelpers.speakers.items[0]!.id),
+          ),
+        ).thenAnswer((_) async => jsonEncode(TestHelpers.speakerDetailJson));
+      });
+
+      test('returns $SpeakerDetail', () async {
+        final speakers = await speakersRepository.getSpeaker(
+          id: TestHelpers.speakers.items[0]!.id,
+          userId: TestHelpers.userId,
+        );
+        expect(speakers, equals(TestHelpers.speakerDetail));
+      });
+
+      test('fetches from api when cache is null', () async {
+        final speaker = TestHelpers.speakers.items[0]!;
+        when(() => cache.get(speakerCacheKey(speaker.id))).thenAnswer(
+          (_) async => null,
+        );
         when(() => dataSource.getSpeaker(id: speaker.id))
             .thenAnswer((_) async => speaker);
         when(() => dataSource.getLinks(speaker: speaker))
@@ -110,21 +107,25 @@ void main() {
         when(() => dataSource.getSpeakerTalks(talks: [TestHelpers.talk]))
             .thenAnswer((_) async => TestHelpers.talks);
         when(
-          () => cache.getOrElse<Favorites?>(
-            key: favoritesCacheKey(TestHelpers.userId),
-            fromJson: any(named: 'fromJson'),
-            orElse: any(named: 'orElse'),
+          () => cache.get(
+            favoritesCacheKey(TestHelpers.userId),
           ),
-        ).thenAnswer((_) async => TestHelpers.favorites);
+        ).thenAnswer((_) async => null);
+        when(
+          () => dataSource.getFavorites(
+            userId: TestHelpers.userId,
+          ),
+        ).thenAnswer((_) async => TestHelpers.favoritesResult);
+
         when(() => cache.set(speakerCacheKey(speaker.id), any()))
             .thenAnswer((_) async => {});
-      });
 
-      test('fetches $SpeakerDetail from api and caches', () async {
-        await speakersRepository.getSpeakerDetailFromApi(
+        final speakers = await speakersRepository.getSpeaker(
           id: speaker.id,
           userId: TestHelpers.userId,
         );
+        expect(speakers, equals(TestHelpers.speakerDetail));
+
         verify(
           () => dataSource.getSpeaker(id: speaker.id),
         ).called(1);
