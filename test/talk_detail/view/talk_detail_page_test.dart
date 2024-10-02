@@ -2,6 +2,7 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fluttercon_usa_2024/speaker_detail/view/speaker_detail_page.dart';
 import 'package:fluttercon_usa_2024/talk_detail/talk_detail.dart';
 import 'package:fluttercon_usa_2024/widgets/widgets.dart';
 import 'package:mocktail/mocktail.dart';
@@ -72,7 +73,8 @@ void main() {
       });
 
       group('TalkDetailContent', () {
-        testWidgets('can tap on $SpeakerTile', (tester) async {
+        testWidgets('can tap $SpeakerTile to navigate to detail',
+            (tester) async {
           await tester.pumpApp(
             TalkDetailContent(talk: TestData.talkDetail),
           );
@@ -80,7 +82,7 @@ void main() {
           await tester.tap(find.byType(SpeakerTile).first);
           await tester.pumpAndSettle();
 
-          expect(find.byType(TalkDetailContent), findsOneWidget);
+          expect(find.byType(SpeakerDetailPage), findsOneWidget);
         });
       });
     });

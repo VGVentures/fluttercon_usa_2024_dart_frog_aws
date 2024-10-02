@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttercon_api/fluttercon_api.dart';
 import 'package:fluttercon_shared_models/fluttercon_shared_models.dart';
+import 'package:fluttercon_usa_2024/speaker_detail/view/speaker_detail_page.dart';
 import 'package:fluttercon_usa_2024/speakers/speakers.dart';
+import 'package:fluttercon_usa_2024/user/cubit/user_cubit.dart';
 import 'package:fluttercon_usa_2024/widgets/widgets.dart';
 
 class SpeakersPage extends StatelessWidget {
@@ -58,7 +60,16 @@ class SpeakersList extends StatelessWidget {
           name: speaker.name,
           title: speaker.title,
           imageUrl: speaker.imageUrl,
-          onTap: () {},
+          onTap: () async {
+            await Navigator.of(context).push<void>(
+              MaterialPageRoute(
+                builder: (context) => SpeakerDetailPage(
+                  id: speaker.id,
+                  userId: context.read<UserCubit>().state?.id ?? '',
+                ),
+              ),
+            );
+          },
         );
       },
     );

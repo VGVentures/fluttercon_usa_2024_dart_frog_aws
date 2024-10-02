@@ -2,7 +2,9 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fluttercon_usa_2024/speaker_detail/speaker_detail.dart';
 import 'package:fluttercon_usa_2024/speakers/speakers.dart';
+import 'package:fluttercon_usa_2024/widgets/widgets.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../helpers/helpers.dart';
@@ -86,21 +88,27 @@ void main() {
       });
 
       group('SpeakersList', () {
-        testWidgets('can tap speaker list tile', (tester) async {
+        testWidgets('can tap $SpeakerTile to navigate to detail',
+            (tester) async {
           when(() => speakersBloc.state).thenReturn(
             SpeakersLoaded(speakers: TestData.speakerData.items),
           );
 
           await tester.pumpApp(
-            BlocProvider.value(
-              value: speakersBloc,
+            MultiBlocProvider(
+              providers: [
+                BlocProvider.value(
+                  value: speakersBloc,
+                ),
+              ],
               child: const SpeakersView(),
             ),
           );
 
-          await tester.tap(find.byType(ListTile).first);
+          await tester.tap(find.byType(SpeakerTile).first);
+          await tester.pumpAndSettle();
 
-          expect(find.byType(SpeakersList), findsOneWidget);
+          expect(find.byType(SpeakerDetailPage), findsOneWidget);
         });
       });
     });

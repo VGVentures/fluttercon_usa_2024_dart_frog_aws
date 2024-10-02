@@ -118,6 +118,20 @@ class FlutterconDataSource {
     }
   }
 
+  /// Fetches a [Speaker] entity by [id].
+  Future<Speaker> getSpeaker({required String id}) async {
+    try {
+      final request =
+          _apiClient.get(Speaker.classType, SpeakerModelIdentifier(id: id));
+      return await _sendGraphQLRequest(
+        request: request,
+        operation: (request) => _apiClient.query(request: request),
+      );
+    } on Exception catch (e) {
+      throw AmplifyApiException(exception: e);
+    }
+  }
+
   /// Fetches a paginated list of talks.
   Future<PaginatedResult<Talk>> getTalks() async {
     try {
@@ -138,6 +152,22 @@ class FlutterconDataSource {
     try {
       final request =
           _apiClient.get(Talk.classType, TalkModelIdentifier(id: id));
+      return await _sendGraphQLRequest(
+        request: request,
+        operation: (request) => _apiClient.query(request: request),
+      );
+    } on Exception catch (e) {
+      throw AmplifyApiException(exception: e);
+    }
+  }
+
+  /// Fetches a paginated list of [Link] entities for a [speaker].
+  Future<PaginatedResult<Link>> getLinks({required Speaker speaker}) async {
+    try {
+      final request = _apiClient.list(
+        Link.classType,
+        where: Link.SPEAKER.eq(speaker.id),
+      );
       return await _sendGraphQLRequest(
         request: request,
         operation: (request) => _apiClient.query(request: request),
@@ -176,22 +206,21 @@ class FlutterconDataSource {
   /// A [SpeakerTalk] contains an ID for a speaker and
   /// an ID for a corresponding talk.
   ///
-  /// Consumers can optionally provide either a [Speaker]
-  /// and/or a [Talk] to filter the results.
+  /// Consumers can optionally provide a list of [Speaker]
+  /// and/or [Talk] entities to filter the results.
   Future<PaginatedResult<SpeakerTalk>> getSpeakerTalks({
-    Speaker? speaker,
-    Talk? talk,
+    List<Speaker?> speakers = const [],
+    List<Talk?> talks = const [],
   }) async {
-    assert(speaker == null || talk == null, 'Only one filter can be applied');
     try {
-      final queryPredicate = speaker != null
-          ? SpeakerTalk.SPEAKER.eq(speaker.id)
-          : talk != null
-              ? SpeakerTalk.TALK.eq(talk.id)
-              : null;
+      final queryPredicateGroup =
+          QueryPredicateGroup(QueryPredicateGroupType.or, [
+        for (final speaker in speakers) SpeakerTalk.SPEAKER.eq(speaker?.id),
+        for (final talk in talks) SpeakerTalk.TALK.eq(talk?.id),
+      ]);
       final request = _apiClient.list(
         SpeakerTalk.classType,
-        where: queryPredicate,
+        where: queryPredicateGroup,
       );
       return _sendGraphQLRequest(
         request: request,

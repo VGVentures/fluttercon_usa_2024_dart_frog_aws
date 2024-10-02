@@ -2,7 +2,7 @@ import 'package:fluttercon_api/fluttercon_api.dart';
 import 'package:fluttercon_shared_models/fluttercon_shared_models.dart';
 
 class TestData {
-  static const user = User(id: 'id', sessionToken: 'sessionToken');
+  static const user = User(id: 'userId', sessionToken: 'sessionToken');
 
   static PaginatedData<TalkTimeSlot> talkTimeSlotData({
     bool favorites = false,
@@ -93,5 +93,32 @@ class TestData {
       ),
     ],
     description: '',
+  );
+
+  static final speakerDetail = SpeakerDetail(
+    id: speakerData.items[0].id,
+    name: speakerData.items[0].name,
+    title: speakerData.items[0].title,
+    imageUrl: speakerData.items[0].imageUrl,
+    bio: 'Test bio',
+    links: const [
+      SpeakerLink(
+        id: '1',
+        type: SpeakerLinkType.other,
+        url: 'https://example.com',
+      ),
+    ],
+    talks: [
+      TalkPreview(
+        id: '1',
+        title: 'Talk 1',
+        room: 'Room 1',
+        startTime: DateTime(2024),
+        speakerNames: const [
+          'Speaker 1',
+        ],
+        isFavorite: false,
+      ),
+    ],
   );
 }

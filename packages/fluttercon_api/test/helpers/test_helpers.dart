@@ -51,6 +51,16 @@ class TestHelpers {
     'description': 'description',
   };
 
+  static final speakerDetailResponse = {
+    'id': 'id',
+    'name': 'name',
+    'title': 'title',
+    'imageUrl': 'imageUrl',
+    'bio': 'bio',
+    'links': <SpeakerLink>[],
+    'talks': <TalkPreview>[],
+  };
+
   static const createFavoriteRequest = CreateFavoriteRequest(
     userId: userId,
     talkId: talkId,

@@ -4,20 +4,26 @@
         "type": "linkedin",
         "url": "https://www.linkedin.com/in/stefanhk31/",
         "description": "",
-        "speakerId": "1"
+        "speakerId": "1",
+        "createdAt": "2023-01-01T00:00:00Z",
+        "updatedAt": "2023-01-01T00:00:00Z"
     },
     {
         "id": "2",
         "type": "twitter",
         "url": "https://x.com/tom_arra",
         "description": "",
-        "speakerId": "2"
+        "speakerId": "2",
+        "createdAt": "2023-01-01T00:00:00Z",
+        "updatedAt": "2023-01-01T00:00:00Z"
     },
     {
         "id": "3",
         "type": "linkedin",
         "url": "https://www.linkedin.com/in/tomarra/",
         "description": "",
-        "speakerId": "2"
+        "speakerId": "2",
+        "createdAt": "2023-01-01T00:00:00Z",
+        "updatedAt": "2023-01-01T00:00:00Z"
     }
 ]

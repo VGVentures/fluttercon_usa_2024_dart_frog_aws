@@ -19,16 +19,14 @@ extension PumpApp on WidgetTester {
       () => pumpWidget(
         RepositoryProvider.value(
           value: api ?? _MockFlutterconApi(),
-          child: MaterialApp(
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
-            supportedLocales: AppLocalizations.supportedLocales,
-            home: Material(
-              child: userCubit != null
-                  ? BlocProvider.value(
-                      value: userCubit,
-                      child: widget,
-                    )
-                  : widget,
+          child: BlocProvider.value(
+            value: userCubit ?? UserCubit(api: api ?? _MockFlutterconApi()),
+            child: MaterialApp(
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+              home: Material(
+                child: widget,
+              ),
             ),
           ),
         ),

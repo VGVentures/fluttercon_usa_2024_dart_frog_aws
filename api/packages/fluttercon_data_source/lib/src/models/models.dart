@@ -1,3 +1,4 @@
+export 'favorites_from_json.dart';
 export 'gen/Link.dart';
 export 'gen/LinkType.dart';
 export 'gen/ModelProvider.dart';

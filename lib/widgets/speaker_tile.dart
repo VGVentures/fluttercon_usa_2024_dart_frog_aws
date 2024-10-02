@@ -5,14 +5,14 @@ class SpeakerTile extends StatelessWidget {
     required this.name,
     required this.title,
     required this.imageUrl,
-    required this.onTap,
+    this.onTap,
     super.key,
   });
 
   final String name;
   final String title;
   final String imageUrl;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
