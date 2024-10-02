@@ -26,7 +26,7 @@ class TalksRepository {
     final favorites = await tryGetFromCache(
       getFromCache: () => _cache.get(favoritesCacheKey(request.userId)),
       fromJson: favoritesFromJson,
-      orElse: () async => getFavoritesFromApi(request.userId),
+      orElse: () async => _getFavoritesFromApi(request.userId),
     );
 
     final createResponse = await _dataSource.createFavoritesTalk(
@@ -57,7 +57,7 @@ class TalksRepository {
     final favorites = await tryGetFromCache(
       getFromCache: () => _cache.get(favoritesCacheKey(request.userId)),
       fromJson: favoritesFromJson,
-      orElse: () async => getFavoritesFromApi(request.userId),
+      orElse: () async => _getFavoritesFromApi(request.userId),
     );
 
     final favoritesTalkResponse = await _dataSource.getFavoritesTalks(
@@ -109,7 +109,7 @@ class TalksRepository {
         json,
         (val) => Talk.fromJson((val ?? {}) as Map<String, dynamic>),
       ),
-      orElse: getTalksFromApi,
+      orElse: _getTalksFromApi,
     );
 
     final speakerData = await tryGetFromCache(
@@ -122,13 +122,13 @@ class TalksRepository {
         json,
         (val) => SpeakerTalk.fromJson((val ?? {}) as Map<String, dynamic>),
       ),
-      orElse: () => getSpeakersFromApi(talkData.items),
+      orElse: () => _getSpeakersFromApi(talkData.items),
     );
 
     final favorites = await tryGetFromCache(
       getFromCache: () => _cache.get(favoritesCacheKey(userId)),
       fromJson: favoritesFromJson,
-      orElse: () async => getFavoritesFromApi(userId),
+      orElse: () async => _getFavoritesFromApi(userId),
     );
 
     final timeSlots = await _buildTalkTimeSlots(
@@ -148,7 +148,7 @@ class TalksRepository {
   Future<TalkDetail> getTalk({required String id}) async => tryGetFromCache(
         getFromCache: () => _cache.get(talkCacheKey(id)),
         fromJson: TalkDetail.fromJson,
-        orElse: () => getTalkDetailFromApi(id),
+        orElse: () => _getTalkDetailFromApi(id),
       );
 
   /// Fetches a paginated list of talks for a given [userId].
@@ -161,7 +161,7 @@ class TalksRepository {
     final favorites = await tryGetFromCache(
       getFromCache: () => _cache.get(favoritesCacheKey(userId)),
       fromJson: favoritesFromJson,
-      orElse: () async => getFavoritesFromApi(userId),
+      orElse: () async => _getFavoritesFromApi(userId),
     );
 
     final favoritesTalks = favorites.talks ?? [];
@@ -181,7 +181,7 @@ class TalksRepository {
         json,
         (val) => SpeakerTalk.fromJson((val ?? {}) as Map<String, dynamic>),
       ),
-      orElse: () => getSpeakersFromApi(talks),
+      orElse: () => _getSpeakersFromApi(talks),
     );
 
     final timeSlots = await _buildTalkTimeSlots(
@@ -236,8 +236,7 @@ class TalksRepository {
     return sortedTimeSlots;
   }
 
-  /// Fetch [Favorites] from the api.
-  Future<Favorites> getFavoritesFromApi(String userId) async {
+  Future<Favorites> _getFavoritesFromApi(String userId) async {
     var favorites = await _dataSource.createFavorites(
       userId: userId,
     );
@@ -260,9 +259,7 @@ class TalksRepository {
     return favorites;
   }
 
-  /// Get [SpeakerTalk] entities from the api.
-  /// For internal use inside [TalksRepository].
-  Future<PaginatedData<SpeakerTalk?>> getSpeakersFromApi(
+  Future<PaginatedData<SpeakerTalk?>> _getSpeakersFromApi(
     List<Talk?> talks,
   ) async {
     final response = await _dataSource.getSpeakerTalks(
@@ -286,9 +283,7 @@ class TalksRepository {
     return data;
   }
 
-  /// Get [Talk] entities from the api.
-  /// For internal use inside [TalksRepository].
-  Future<PaginatedData<Talk?>> getTalksFromApi() async {
+  Future<PaginatedData<Talk?>> _getTalksFromApi() async {
     final response = await _dataSource.getTalks();
     final data = PaginatedData(
       items: response.items,
@@ -306,9 +301,7 @@ class TalksRepository {
     return data;
   }
 
-  /// Get a [TalkDetail] entity from the api.
-  /// For internal use inside [TalksRepository].
-  Future<TalkDetail> getTalkDetailFromApi(String id) async {
+  Future<TalkDetail> _getTalkDetailFromApi(String id) async {
     final talk = await _dataSource.getTalk(id: id);
     final speakerTalks = await _dataSource.getSpeakerTalks(
       talks: [talk],
